@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../configuration-schema.json
+package: domain
+output: client.gen.go
+generate:
+  models: true
+  client: true
+output-options:
+  include-tags:
+    - Domains
+  exclude-tags:
+    - Certificates
+    - Identity Providers
+    - Reporters

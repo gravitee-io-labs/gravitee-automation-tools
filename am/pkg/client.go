@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/getkin/kin-openapi/openapi3filter"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk"
+	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/domain"
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/auth"
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/errors"
 )
@@ -14,20 +14,20 @@ import (
 type AMClient struct {
 	orgID string
 	envID string
-	sdk.ClientWithResponsesInterface
+	domain.ClientWithResponsesInterface
 }
 
 func NewClient(apiContext auth.APIContext, timeoutMs int) (*AMClient, error) {
 
-	authOption, err := apiContext.AuthClientOption()
+	requestEditor, err := apiContext.RequestEditor()
 	if err != nil {
 		return nil, err
 	}
 
-	client, err := sdk.NewClientWithResponses(
+	client, err := domain.NewClientWithResponses(
 		apiContext.BaseURL,
-		authOption,
-		sdk.WithHTTPClient(&http.Client{
+		domain.WithRequestEditorFn(requestEditor),
+		domain.WithHTTPClient(&http.Client{
 			Timeout: time.Duration(timeoutMs) * time.Millisecond,
 		}))
 
@@ -38,7 +38,7 @@ func NewClient(apiContext auth.APIContext, timeoutMs int) (*AMClient, error) {
 	return &AMClient{orgID: apiContext.OrgID, envID: apiContext.EnvID, ClientWithResponsesInterface: client}, nil
 }
 
-func (c *AMClient) GetDomain(ctx context.Context, domainKey string) (*sdk.AutomationDomain, error) {
+func (c *AMClient) GetDomain(ctx context.Context, domainKey string) (*domain.AutomationDomain, error) {
 	if resp, err := c.AutomationGetDomainWithResponse(ctx, c.orgID, c.envID, domainKey); err != nil {
 		return nil, errors.NewClientError(err)
 	} else {
@@ -46,8 +46,8 @@ func (c *AMClient) GetDomain(ctx context.Context, domainKey string) (*sdk.Automa
 	}
 }
 
-func (c *AMClient) UpsertDomain(ctx context.Context, domain sdk.AutomationDomain) (*sdk.AutomationDomain, error) {
-	if resp, err := c.AutomationCreateOrUpdateDomainWithResponse(ctx, c.orgID, c.envID, domain); err != nil {
+func (c *AMClient) UpsertDomain(ctx context.Context, domainBody domain.AutomationDomain) (*domain.AutomationDomain, error) {
+	if resp, err := c.AutomationCreateOrUpdateDomainWithResponse(ctx, c.orgID, c.envID, domainBody); err != nil {
 		return nil, errors.NewClientError(err)
 	} else {
 		return respond(resp.JSON200, resp, resp.Body, resp.JSON400, resp.JSON403)
@@ -63,7 +63,7 @@ func (c *AMClient) DeleteDomain(ctx context.Context, domainKey string) error {
 	}
 }
 
-func respond[T any](entity *T, statusCoder openapi3filter.StatusCoder, body []byte, errs ...*sdk.Error) (*T, error) {
+func respond[T any](entity *T, statusCoder openapi3filter.StatusCoder, body []byte, errs ...*domain.Error) (*T, error) {
 
 	// r is never nil according to generated code
 	switch {

@@ -1,7 +1,10 @@
 package auth
 
 import (
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk"
+	"context"
+	"net/http"
+
+	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/errors"
 	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
 )
 
@@ -32,21 +35,21 @@ type BasicAuth struct {
 	Password string
 }
 
-func (c APIContext) AuthClientOption() (sdk.ClientOption, error) {
+func (c APIContext) RequestEditor() (func(ctx context.Context, req *http.Request) error, error) {
 	if c.isBasicAuth() {
 		basicAuth, err := securityprovider.NewSecurityProviderBasicAuth(
 			c.Auth.BasicAuth.Username,
 			c.Auth.BasicAuth.Password)
 		if err != nil {
-			return nil, ClientError{err: err}
+			return nil, errors.NewClientError(err)
 		}
-		return sdk.WithRequestEditorFn(basicAuth.Intercept), nil
+		return basicAuth.Intercept, nil
 	} else if c.isBearerAuth() {
 		bearerAuth, err := securityprovider.NewSecurityProviderBearerToken(*c.Auth.BearerToken)
 		if err != nil {
-			return nil, ClientError{err: err}
+			return nil, errors.NewClientError(err)
 		}
-		return sdk.WithRequestEditorFn(bearerAuth.Intercept), nil
+		return bearerAuth.Intercept, nil
 	}
 	return nil, NoAuthProvided
 }
