@@ -52,7 +52,10 @@ func NewScopedServerURL(baseUrl ScopedServerURLBaseUrlVariable, envId ScopedServ
 }
 
 // AutomationCertificate A certificate managed under a domain by the Automation API. The key field is the stable, immutable identity used for idempotent create-or-update.
-type AutomationCertificate struct {
+type AutomationCertificate = Certificate
+
+// Certificate A certificate managed under a domain by the Automation API. The key field is the stable, immutable identity used for idempotent create-or-update.
+type Certificate struct {
 	// Configuration Plugin-specific configuration as a JSON-encoded string. Its shape is defined by the selected certificate type.
 	//
 	// Example: {"jks":{"content":"...","name":"keystore.jks"},"storepass":"secret","alias":"mykey","keypass":"secret"}

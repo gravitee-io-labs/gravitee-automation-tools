@@ -166,7 +166,10 @@ func (e WebAuthnSettingsUserVerification) Valid() bool {
 }
 
 // AutomationAccountSettings User account settings for the domain: brute-force protection, registration, password reset, remember-me, and MFA challenge behavior.
-type AutomationAccountSettings struct {
+type AutomationAccountSettings = AccountSettings
+
+// AccountSettings User account settings for the domain: brute-force protection, registration, password reset, remember-me, and MFA challenge behavior.
+type AccountSettings struct {
 	// AccountBlockedDuration Duration, in seconds, for which the account remains blocked after too many failed login attempts.
 	//
 	// Example: 7200
@@ -262,7 +265,10 @@ type AutomationAccountSettings struct {
 }
 
 // AutomationCIBASettings Client-Initiated Backchannel Authentication (CIBA) settings for the domain. CIBA lets a relying party initiate end-user authentication from a separate consumption device, without redirecting the user through the browser. Authentication device notifiers are not managed by the Automation API and are not exposed here.
-type AutomationCIBASettings struct {
+type AutomationCIBASettings = CIBASettings
+
+// CIBASettings Client-Initiated Backchannel Authentication (CIBA) settings for the domain. CIBA lets a relying party initiate end-user authentication from a separate consumption device, without redirecting the user through the browser. Authentication device notifiers are not managed by the Automation API and are not exposed here.
+type CIBASettings struct {
 	// AuthReqExpiry Default validity period, in seconds, of the issued auth_req_id.
 	//
 	// Example: 600
@@ -283,7 +289,10 @@ type AutomationCIBASettings struct {
 }
 
 // AutomationCertificateSettings Domain-level certificate settings.
-type AutomationCertificateSettings struct {
+type AutomationCertificateSettings = CertificateSettings
+
+// CertificateSettings Domain-level certificate settings.
+type CertificateSettings struct {
 	// FallbackCertificate Key of a certificate managed under this domain, used as the fallback certificate when a client does not specify one. Must reference a certificate created via the domain's certificate endpoints.
 	//
 	// Example: default
@@ -291,7 +300,10 @@ type AutomationCertificateSettings struct {
 }
 
 // AutomationClientRegistrationSettings OpenID Connect Dynamic Client Registration configuration for the domain.
-type AutomationClientRegistrationSettings struct {
+type AutomationClientRegistrationSettings = ClientRegistrationSettings
+
+// ClientRegistrationSettings OpenID Connect Dynamic Client Registration configuration for the domain.
+type ClientRegistrationSettings struct {
 	// AllowHttpSchemeRedirectUri Whether the unsecured http scheme is permitted in redirect URIs.
 	AllowHttpSchemeRedirectUri *bool `json:"allowHttpSchemeRedirectUri,omitempty"`
 
@@ -324,7 +336,10 @@ type AutomationClientRegistrationSettings struct {
 }
 
 // AutomationDomain A security domain managed by the Automation API. The key field is the stable, immutable identity used for idempotent create-or-update. Certificates, identity providers, and reporters are not embedded; they are managed via the domain's sub-resource endpoints and referenced here by key.
-type AutomationDomain struct {
+type AutomationDomain = Domain
+
+// Domain A security domain managed by the Automation API. The key field is the stable, immutable identity used for idempotent create-or-update. Certificates, identity providers, and reporters are not embedded; they are managed via the domain's sub-resource endpoints and referenced here by key.
+type Domain struct {
 	// AccountSettings User account settings for the domain: brute-force protection, registration, password reset, remember-me, and MFA challenge behavior.
 	AccountSettings *AutomationAccountSettings `json:"accountSettings,omitempty"`
 
@@ -420,7 +435,10 @@ type AutomationDomain struct {
 }
 
 // AutomationOidcSettings OpenID Connect settings for the domain. CIMD (client identity metadata document) settings are not exposed by the Automation API and are reset on update.
-type AutomationOidcSettings struct {
+type AutomationOidcSettings = OidcSettings
+
+// OidcSettings OpenID Connect settings for the domain. CIMD (client identity metadata document) settings are not exposed by the Automation API and are reset on update.
+type OidcSettings struct {
 	// CibaSettings Client-Initiated Backchannel Authentication (CIBA) settings for the domain. CIBA lets a relying party initiate end-user authentication from a separate consumption device, without redirecting the user through the browser. Authentication device notifiers are not managed by the Automation API and are not exposed here.
 	CibaSettings *AutomationCIBASettings `json:"cibaSettings,omitempty"`
 
@@ -444,7 +462,10 @@ type AutomationOidcSettings struct {
 }
 
 // AutomationSamlSettings Settings for the domain acting as a SAML 2.0 identity provider (IdP).
-type AutomationSamlSettings struct {
+type AutomationSamlSettings = SamlSettings
+
+// SamlSettings Settings for the domain acting as a SAML 2.0 identity provider (IdP).
+type SamlSettings struct {
 	// Certificate Key of a certificate managed under this domain, used to sign SAML responses. Must reference a certificate created via the domain's certificate endpoints.
 	//
 	// Example: signing-cert

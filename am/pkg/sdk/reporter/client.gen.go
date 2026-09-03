@@ -52,7 +52,10 @@ func NewScopedServerURL(baseUrl ScopedServerURLBaseUrlVariable, envId ScopedServ
 }
 
 // AutomationReporter A reporter managed under a domain by the Automation API. Reporters persist audit events to a backend. The key field is the stable, immutable identity used for idempotent create-or-update.
-type AutomationReporter struct {
+type AutomationReporter = Reporter
+
+// Reporter A reporter managed under a domain by the Automation API. Reporters persist audit events to a backend. The key field is the stable, immutable identity used for idempotent create-or-update.
+type Reporter struct {
 	// AttributeMappings Additional attributes exported alongside the regular audit payload. Each entry pairs an expression read from the audit context with the field name its value is exported under. Ignored when system is true; a system reporter exports no additional attributes.
 	AttributeMappings *[]ReporterAttributeMapping `json:"attributeMappings,omitempty"`
 

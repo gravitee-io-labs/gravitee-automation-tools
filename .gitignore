@@ -1,1 +1,3 @@
 /.idea
+/am/pkg/sdk/overlay.yaml
+/am/pkg/crd/domain/overlay.merged.yaml

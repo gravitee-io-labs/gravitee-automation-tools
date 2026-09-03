@@ -1,0 +1,68 @@
+overlay: 1.1.0
+info:
+  title: Scope org/env on the server URL
+  version: 0.0.1
+actions:
+  - target: $.servers[0]
+    description: Bake org/env into the server so operations drop those path params
+    update:
+      url: "{baseUrl}/organizations/{orgId}/environments/{envId}"
+      description: Organization and environment scoped Automation API
+      x-go-name: ScopedServerURL
+      variables:
+        baseUrl:
+          default: http://localhost:8093/automation
+        orgId:
+          default: DEFAULT
+        envId:
+          default: DEFAULT
+
+  - target: $.paths
+    update:
+      /domains: {}
+      "/domains/{domainKey}": {}
+      "/domains/{domainKey}/certificates": {}
+      "/domains/{domainKey}/certificates/{certKey}": {}
+      "/domains/{domainKey}/identities": {}
+      "/domains/{domainKey}/identities/{identityKey}": {}
+      "/domains/{domainKey}/reporters": {}
+      "/domains/{domainKey}/reporters/{reporterKey}": {}
+
+  - target: $.paths["/domains"]
+    copy: $.paths["/organizations/{orgId}/environments/{envId}/domains"]
+  - target: $.paths["/domains/{domainKey}"]
+    copy: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}"]
+  - target: $.paths["/domains/{domainKey}/certificates"]
+    copy: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates"]
+  - target: $.paths["/domains/{domainKey}/certificates/{certKey}"]
+    copy: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey}"]
+  - target: $.paths["/domains/{domainKey}/identities"]
+    copy: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities"]
+  - target: $.paths["/domains/{domainKey}/identities/{identityKey}"]
+    copy: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey}"]
+  - target: $.paths["/domains/{domainKey}/reporters"]
+    copy: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters"]
+  - target: $.paths["/domains/{domainKey}/reporters/{reporterKey}"]
+    copy: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey}"]
+
+  - target: $.paths["/organizations/{orgId}/environments/{envId}/domains"]
+    remove: true
+  - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}"]
+    remove: true
+  - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates"]
+    remove: true
+  - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey}"]
+    remove: true
+  - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities"]
+    remove: true
+  - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey}"]
+    remove: true
+  - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters"]
+    remove: true
+  - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey}"]
+    remove: true
+
+  - target: $.paths.*.*.parameters[?(@.name=='orgId')]
+    remove: true
+  - target: $.paths.*.*.parameters[?(@.name=='envId')]
+    remove: true

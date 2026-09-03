@@ -52,7 +52,10 @@ func NewScopedServerURL(baseUrl ScopedServerURLBaseUrlVariable, envId ScopedServ
 }
 
 // AutomationIdentityProvider An identity provider managed under a domain by the Automation API. The key field is the stable, immutable identity used for idempotent create-or-update.
-type AutomationIdentityProvider struct {
+type AutomationIdentityProvider = IdentityProvider
+
+// IdentityProvider An identity provider managed under a domain by the Automation API. The key field is the stable, immutable identity used for idempotent create-or-update.
+type IdentityProvider struct {
 	// Configuration Plugin-specific configuration as a JSON-encoded string. Its shape is defined by the selected identity provider type.
 	//
 	// Example: {"users":[{"username":"admin","password":"..."}]}

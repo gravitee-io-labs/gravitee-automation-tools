@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../configuration-schema.json
+package: server
+output: server.gen.go
+generate:
+  models: true
+  chi-server: true
+  strict-server: true
+output-options:
+  overlay:
+    path: ../overlays/models.yaml
