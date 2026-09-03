@@ -4,7 +4,10 @@ output: client.gen.go
 generate:
   models: true
   client: true
+  server-urls: true
 output-options:
+  overlay:
+    path: ../overlay.yaml
   include-tags:
     - Domains
   exclude-tags:

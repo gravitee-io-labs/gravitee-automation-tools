@@ -1,88 +1,81 @@
 package pkg
 
 import (
-	"context"
 	"net/http"
+	"strings"
 	"time"
 
-	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/certificate"
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/domain"
+	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/identityprovider"
+	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/reporter"
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/auth"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/errors"
 )
 
 type AMClient struct {
-	orgID string
-	envID string
-	domain.ClientWithResponsesInterface
+	Domains           domain.ClientWithResponsesInterface
+	Certificates      certificate.ClientWithResponsesInterface
+	IdentityProviders identityprovider.ClientWithResponsesInterface
+	Reporters         reporter.ClientWithResponsesInterface
 }
 
 func NewClient(apiContext auth.APIContext, timeoutMs int) (*AMClient, error) {
-
-	requestEditor, err := apiContext.RequestEditor()
+	editor, err := apiContext.RequestEditor()
 	if err != nil {
 		return nil, err
 	}
 
-	client, err := domain.NewClientWithResponses(
-		apiContext.BaseURL,
-		domain.WithRequestEditorFn(requestEditor),
-		domain.WithHTTPClient(&http.Client{
-			Timeout: time.Duration(timeoutMs) * time.Millisecond,
-		}))
-
+	server, err := domain.NewScopedServerURL(
+		domain.ScopedServerURLBaseUrlVariable(strings.TrimRight(apiContext.BaseURL, "/")),
+		domain.ScopedServerURLEnvIdVariable(apiContext.EnvID),
+		domain.ScopedServerURLOrgIdVariable(apiContext.OrgID),
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	return &AMClient{orgID: apiContext.OrgID, envID: apiContext.EnvID, ClientWithResponsesInterface: client}, nil
-}
+	httpClient := &http.Client{Timeout: time.Duration(timeoutMs) * time.Millisecond}
 
-func (c *AMClient) GetDomain(ctx context.Context, domainKey string) (*domain.AutomationDomain, error) {
-	if resp, err := c.AutomationGetDomainWithResponse(ctx, c.orgID, c.envID, domainKey); err != nil {
-		return nil, errors.NewClientError(err)
-	} else {
-		return respond(resp.JSON200, resp, resp.Body, resp.JSON403, resp.JSON404)
+	domains, err := domain.NewClientWithResponses(
+		server,
+		domain.WithHTTPClient(httpClient),
+		domain.WithRequestEditorFn(editor),
+	)
+	if err != nil {
+		return nil, err
 	}
-}
 
-func (c *AMClient) UpsertDomain(ctx context.Context, domainBody domain.AutomationDomain) (*domain.AutomationDomain, error) {
-	if resp, err := c.AutomationCreateOrUpdateDomainWithResponse(ctx, c.orgID, c.envID, domainBody); err != nil {
-		return nil, errors.NewClientError(err)
-	} else {
-		return respond(resp.JSON200, resp, resp.Body, resp.JSON400, resp.JSON403)
+	certificates, err := certificate.NewClientWithResponses(
+		server,
+		certificate.WithHTTPClient(httpClient),
+		certificate.WithRequestEditorFn(editor),
+	)
+	if err != nil {
+		return nil, err
 	}
-}
 
-func (c *AMClient) DeleteDomain(ctx context.Context, domainKey string) error {
-	if resp, err := c.AutomationDeleteDomainWithResponse(ctx, c.orgID, c.orgID, domainKey); err != nil {
-		return errors.NewClientError(err)
-	} else {
-		_, err := respond(empty(), resp, resp.Body, resp.JSON403, resp.JSONDefault)
-		return err
+	identities, err := identityprovider.NewClientWithResponses(
+		server,
+		identityprovider.WithHTTPClient(httpClient),
+		identityprovider.WithRequestEditorFn(editor),
+	)
+	if err != nil {
+		return nil, err
 	}
-}
 
-func respond[T any](entity *T, statusCoder openapi3filter.StatusCoder, body []byte, errs ...*domain.Error) (*T, error) {
-
-	// r is never nil according to generated code
-	switch {
-	case statusCoder.StatusCode() < 300:
-		return entity, nil
-	case len(errs) > 0:
-		return nil, errors.HttpError{Status: statusCoder.StatusCode(), Body: deref(errs[0].Message)}
-	default:
-		return nil, errors.HttpError{Status: statusCoder.StatusCode(), Body: string(body)}
+	reporters, err := reporter.NewClientWithResponses(
+		server,
+		reporter.WithHTTPClient(httpClient),
+		reporter.WithRequestEditorFn(editor),
+	)
+	if err != nil {
+		return nil, err
 	}
-}
 
-func deref(message *string) string {
-	if message == nil {
-		return ""
-	}
-	return *message
-}
-
-func empty() *struct{} {
-	return nil
+	return &AMClient{
+		Domains:           domains,
+		Certificates:      certificates,
+		IdentityProviders: identities,
+		Reporters:         reporters,
+	}, nil
 }

@@ -17,6 +17,40 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
+// ScopedServerURLBaseUrlVariable is the `baseUrl` variable for ScopedServerURL
+type ScopedServerURLBaseUrlVariable string
+
+// ScopedServerURLBaseUrlVariableDefault is the default value for the `baseUrl` variable for ScopedServerURL
+const ScopedServerURLBaseUrlVariableDefault = "http://localhost:8093/automation"
+
+// ScopedServerURLEnvIdVariable is the `envId` variable for ScopedServerURL
+type ScopedServerURLEnvIdVariable string
+
+// ScopedServerURLEnvIdVariableDefault is the default value for the `envId` variable for ScopedServerURL
+const ScopedServerURLEnvIdVariableDefault = "DEFAULT"
+
+// ScopedServerURLOrgIdVariable is the `orgId` variable for ScopedServerURL
+type ScopedServerURLOrgIdVariable string
+
+// ScopedServerURLOrgIdVariableDefault is the default value for the `orgId` variable for ScopedServerURL
+const ScopedServerURLOrgIdVariableDefault = "DEFAULT"
+
+// NewScopedServerURL constructs the Server URL for Organization and environment scoped Automation API, with the provided variables.
+func NewScopedServerURL(baseUrl ScopedServerURLBaseUrlVariable, envId ScopedServerURLEnvIdVariable, orgId ScopedServerURLOrgIdVariable) (string, error) {
+
+	u := "{baseUrl}/organizations/{orgId}/environments/{envId}"
+
+	u = strings.ReplaceAll(u, "{baseUrl}", string(baseUrl))
+	u = strings.ReplaceAll(u, "{envId}", string(envId))
+	u = strings.ReplaceAll(u, "{orgId}", string(orgId))
+
+	if strings.Contains(u, "{") || strings.Contains(u, "}") {
+		return "", fmt.Errorf("after mapping variables, there were still `{` or `}` characters in the string: %#v", u)
+	}
+
+	return u, nil
+}
+
 // AutomationCertificate A certificate managed under a domain by the Automation API. The key field is the stable, immutable identity used for idempotent create-or-update.
 type AutomationCertificate struct {
 	// Configuration Plugin-specific configuration as a JSON-encoded string. Its shape is defined by the selected certificate type.
@@ -144,8 +178,8 @@ type ClientInterface interface {
 	//
 	// Returns all certificates managed by the Automation API under the domain. Certificates created outside the Automation API are not returned.
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates (the `AutomationListCertificates` operationId).
-	AutomationListCertificates(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey}/certificates (the `AutomationListCertificates` operationId).
+	AutomationListCertificates(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationCreateOrUpdateCertificateWithBody Create or update a certificate
 	//
@@ -153,8 +187,8 @@ type ClientInterface interface {
 	//
 	// Takes any type of body and a specified content type.
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-	AutomationCreateOrUpdateCertificateWithBody(ctx context.Context, orgId string, envId string, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
+	AutomationCreateOrUpdateCertificateWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationCreateOrUpdateCertificate Create or update a certificate
 	//
@@ -162,31 +196,31 @@ type ClientInterface interface {
 	//
 	// Takes a body of the `application/json` content type.
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-	AutomationCreateOrUpdateCertificate(ctx context.Context, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
+	AutomationCreateOrUpdateCertificate(ctx context.Context, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationDeleteCertificate Delete a certificate
 	//
 	// Deletes an Automation-managed certificate by its key. Deleting a certificate that does not exist also returns 204.
 	//
-	// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey} (the `AutomationDeleteCertificate` operationId).
-	AutomationDeleteCertificate(ctx context.Context, orgId string, envId string, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with DELETE /domains/{domainKey}/certificates/{certKey} (the `AutomationDeleteCertificate` operationId).
+	AutomationDeleteCertificate(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationGetCertificate Get a certificate
 	//
 	// Retrieves a single Automation-managed certificate by its key.
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey} (the `AutomationGetCertificate` operationId).
-	AutomationGetCertificate(ctx context.Context, orgId string, envId string, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey}/certificates/{certKey} (the `AutomationGetCertificate` operationId).
+	AutomationGetCertificate(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // AutomationListCertificates List a domain's certificates
 //
 // Returns all certificates managed by the Automation API under the domain. Certificates created outside the Automation API are not returned.
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates (the `AutomationListCertificates` operationId).
-func (c *Client) AutomationListCertificates(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationListCertificatesRequest(c.Server, orgId, envId, domainKey)
+// Corresponds with GET /domains/{domainKey}/certificates (the `AutomationListCertificates` operationId).
+func (c *Client) AutomationListCertificates(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationListCertificatesRequest(c.Server, domainKey)
 	if err != nil {
 		return nil, err
 	}
@@ -203,9 +237,9 @@ func (c *Client) AutomationListCertificates(ctx context.Context, orgId string, e
 //
 // Takes any type of body and a specified content type.
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-func (c *Client) AutomationCreateOrUpdateCertificateWithBody(ctx context.Context, orgId string, envId string, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateCertificateRequestWithBody(c.Server, orgId, envId, domainKey, contentType, body)
+// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
+func (c *Client) AutomationCreateOrUpdateCertificateWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationCreateOrUpdateCertificateRequestWithBody(c.Server, domainKey, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -222,9 +256,9 @@ func (c *Client) AutomationCreateOrUpdateCertificateWithBody(ctx context.Context
 //
 // Takes a body of the `application/json` content type.
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-func (c *Client) AutomationCreateOrUpdateCertificate(ctx context.Context, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateCertificateRequest(c.Server, orgId, envId, domainKey, body)
+// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
+func (c *Client) AutomationCreateOrUpdateCertificate(ctx context.Context, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationCreateOrUpdateCertificateRequest(c.Server, domainKey, body)
 	if err != nil {
 		return nil, err
 	}
@@ -239,9 +273,9 @@ func (c *Client) AutomationCreateOrUpdateCertificate(ctx context.Context, orgId 
 //
 // Deletes an Automation-managed certificate by its key. Deleting a certificate that does not exist also returns 204.
 //
-// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey} (the `AutomationDeleteCertificate` operationId).
-func (c *Client) AutomationDeleteCertificate(ctx context.Context, orgId string, envId string, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationDeleteCertificateRequest(c.Server, orgId, envId, domainKey, certKey)
+// Corresponds with DELETE /domains/{domainKey}/certificates/{certKey} (the `AutomationDeleteCertificate` operationId).
+func (c *Client) AutomationDeleteCertificate(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationDeleteCertificateRequest(c.Server, domainKey, certKey)
 	if err != nil {
 		return nil, err
 	}
@@ -256,9 +290,9 @@ func (c *Client) AutomationDeleteCertificate(ctx context.Context, orgId string, 
 //
 // Retrieves a single Automation-managed certificate by its key.
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey} (the `AutomationGetCertificate` operationId).
-func (c *Client) AutomationGetCertificate(ctx context.Context, orgId string, envId string, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationGetCertificateRequest(c.Server, orgId, envId, domainKey, certKey)
+// Corresponds with GET /domains/{domainKey}/certificates/{certKey} (the `AutomationGetCertificate` operationId).
+func (c *Client) AutomationGetCertificate(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationGetCertificateRequest(c.Server, domainKey, certKey)
 	if err != nil {
 		return nil, err
 	}
@@ -270,26 +304,12 @@ func (c *Client) AutomationGetCertificate(ctx context.Context, orgId string, env
 }
 
 // NewAutomationListCertificatesRequest constructs an http.Request for the AutomationListCertificates method
-func NewAutomationListCertificatesRequest(server string, orgId string, envId string, domainKey string) (*http.Request, error) {
+func NewAutomationListCertificatesRequest(server string, domainKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -299,7 +319,7 @@ func NewAutomationListCertificatesRequest(server string, orgId string, envId str
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s/certificates", pathParam0, pathParam1, pathParam2)
+	operationPath := fmt.Sprintf("/domains/%s/certificates", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -318,37 +338,23 @@ func NewAutomationListCertificatesRequest(server string, orgId string, envId str
 }
 
 // NewAutomationCreateOrUpdateCertificateRequest calls the generic AutomationCreateOrUpdateCertificate builder with application/json body
-func NewAutomationCreateOrUpdateCertificateRequest(server string, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody) (*http.Request, error) {
+func NewAutomationCreateOrUpdateCertificateRequest(server string, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAutomationCreateOrUpdateCertificateRequestWithBody(server, orgId, envId, domainKey, "application/json", bodyReader)
+	return NewAutomationCreateOrUpdateCertificateRequestWithBody(server, domainKey, "application/json", bodyReader)
 }
 
 // NewAutomationCreateOrUpdateCertificateRequestWithBody constructs an http.Request for the AutomationCreateOrUpdateCertificate method, with any body, and a specified content type
-func NewAutomationCreateOrUpdateCertificateRequestWithBody(server string, orgId string, envId string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
+func NewAutomationCreateOrUpdateCertificateRequestWithBody(server string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -358,7 +364,7 @@ func NewAutomationCreateOrUpdateCertificateRequestWithBody(server string, orgId 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s/certificates", pathParam0, pathParam1, pathParam2)
+	operationPath := fmt.Sprintf("/domains/%s/certificates", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -379,33 +385,19 @@ func NewAutomationCreateOrUpdateCertificateRequestWithBody(server string, orgId 
 }
 
 // NewAutomationDeleteCertificateRequest constructs an http.Request for the AutomationDeleteCertificate method
-func NewAutomationDeleteCertificateRequest(server string, orgId string, envId string, domainKey string, certKey string) (*http.Request, error) {
+func NewAutomationDeleteCertificateRequest(server string, domainKey string, certKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam3 string
-
-	pathParam3, err = runtime.StyleParamWithOptions("simple", false, "certKey", certKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "certKey", certKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -415,7 +407,7 @@ func NewAutomationDeleteCertificateRequest(server string, orgId string, envId st
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s/certificates/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	operationPath := fmt.Sprintf("/domains/%s/certificates/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -434,33 +426,19 @@ func NewAutomationDeleteCertificateRequest(server string, orgId string, envId st
 }
 
 // NewAutomationGetCertificateRequest constructs an http.Request for the AutomationGetCertificate method
-func NewAutomationGetCertificateRequest(server string, orgId string, envId string, domainKey string, certKey string) (*http.Request, error) {
+func NewAutomationGetCertificateRequest(server string, domainKey string, certKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam3 string
-
-	pathParam3, err = runtime.StyleParamWithOptions("simple", false, "certKey", certKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "certKey", certKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -470,7 +448,7 @@ func NewAutomationGetCertificateRequest(server string, orgId string, envId strin
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s/certificates/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	operationPath := fmt.Sprintf("/domains/%s/certificates/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -538,8 +516,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates (the `AutomationListCertificates` operationId).
-	AutomationListCertificatesWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListCertificatesResponse, error)
+	// Corresponds with GET /domains/{domainKey}/certificates (the `AutomationListCertificates` operationId).
+	AutomationListCertificatesWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListCertificatesResponse, error)
 
 	// AutomationCreateOrUpdateCertificateWithBodyWithResponse Create or update a certificate
 	//
@@ -547,8 +525,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-	AutomationCreateOrUpdateCertificateWithBodyWithResponse(ctx context.Context, orgId string, envId string, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateCertificateResponse, error)
+	// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
+	AutomationCreateOrUpdateCertificateWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateCertificateResponse, error)
 
 	// AutomationCreateOrUpdateCertificateWithResponse Create or update a certificate
 	//
@@ -556,8 +534,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-	AutomationCreateOrUpdateCertificateWithResponse(ctx context.Context, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateCertificateResponse, error)
+	// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
+	AutomationCreateOrUpdateCertificateWithResponse(ctx context.Context, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateCertificateResponse, error)
 
 	// AutomationDeleteCertificateWithResponse Delete a certificate
 	//
@@ -565,8 +543,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey} (the `AutomationDeleteCertificate` operationId).
-	AutomationDeleteCertificateWithResponse(ctx context.Context, orgId string, envId string, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteCertificateResponse, error)
+	// Corresponds with DELETE /domains/{domainKey}/certificates/{certKey} (the `AutomationDeleteCertificate` operationId).
+	AutomationDeleteCertificateWithResponse(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteCertificateResponse, error)
 
 	// AutomationGetCertificateWithResponse Get a certificate
 	//
@@ -574,8 +552,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey} (the `AutomationGetCertificate` operationId).
-	AutomationGetCertificateWithResponse(ctx context.Context, orgId string, envId string, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*AutomationGetCertificateResponse, error)
+	// Corresponds with GET /domains/{domainKey}/certificates/{certKey} (the `AutomationGetCertificate` operationId).
+	AutomationGetCertificateWithResponse(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*AutomationGetCertificateResponse, error)
 }
 
 type AutomationListCertificatesResponse struct {
@@ -804,9 +782,9 @@ func (r AutomationGetCertificateResponse) ContentType() string {
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates (the `AutomationListCertificates` operationId).
-func (c *ClientWithResponses) AutomationListCertificatesWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListCertificatesResponse, error) {
-	rsp, err := c.AutomationListCertificates(ctx, orgId, envId, domainKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey}/certificates (the `AutomationListCertificates` operationId).
+func (c *ClientWithResponses) AutomationListCertificatesWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListCertificatesResponse, error) {
+	rsp, err := c.AutomationListCertificates(ctx, domainKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -819,9 +797,9 @@ func (c *ClientWithResponses) AutomationListCertificatesWithResponse(ctx context
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateCertificateWithBodyWithResponse(ctx context.Context, orgId string, envId string, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateCertificateResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateCertificateWithBody(ctx, orgId, envId, domainKey, contentType, body, reqEditors...)
+// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
+func (c *ClientWithResponses) AutomationCreateOrUpdateCertificateWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateCertificateResponse, error) {
+	rsp, err := c.AutomationCreateOrUpdateCertificateWithBody(ctx, domainKey, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -834,9 +812,9 @@ func (c *ClientWithResponses) AutomationCreateOrUpdateCertificateWithBodyWithRes
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateCertificateWithResponse(ctx context.Context, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateCertificateResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateCertificate(ctx, orgId, envId, domainKey, body, reqEditors...)
+// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
+func (c *ClientWithResponses) AutomationCreateOrUpdateCertificateWithResponse(ctx context.Context, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateCertificateResponse, error) {
+	rsp, err := c.AutomationCreateOrUpdateCertificate(ctx, domainKey, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -849,9 +827,9 @@ func (c *ClientWithResponses) AutomationCreateOrUpdateCertificateWithResponse(ct
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey} (the `AutomationDeleteCertificate` operationId).
-func (c *ClientWithResponses) AutomationDeleteCertificateWithResponse(ctx context.Context, orgId string, envId string, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteCertificateResponse, error) {
-	rsp, err := c.AutomationDeleteCertificate(ctx, orgId, envId, domainKey, certKey, reqEditors...)
+// Corresponds with DELETE /domains/{domainKey}/certificates/{certKey} (the `AutomationDeleteCertificate` operationId).
+func (c *ClientWithResponses) AutomationDeleteCertificateWithResponse(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteCertificateResponse, error) {
+	rsp, err := c.AutomationDeleteCertificate(ctx, domainKey, certKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -864,9 +842,9 @@ func (c *ClientWithResponses) AutomationDeleteCertificateWithResponse(ctx contex
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey} (the `AutomationGetCertificate` operationId).
-func (c *ClientWithResponses) AutomationGetCertificateWithResponse(ctx context.Context, orgId string, envId string, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*AutomationGetCertificateResponse, error) {
-	rsp, err := c.AutomationGetCertificate(ctx, orgId, envId, domainKey, certKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey}/certificates/{certKey} (the `AutomationGetCertificate` operationId).
+func (c *ClientWithResponses) AutomationGetCertificateWithResponse(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*AutomationGetCertificateResponse, error) {
+	rsp, err := c.AutomationGetCertificate(ctx, domainKey, certKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

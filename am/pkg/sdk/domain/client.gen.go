@@ -17,6 +17,40 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
+// ScopedServerURLBaseUrlVariable is the `baseUrl` variable for ScopedServerURL
+type ScopedServerURLBaseUrlVariable string
+
+// ScopedServerURLBaseUrlVariableDefault is the default value for the `baseUrl` variable for ScopedServerURL
+const ScopedServerURLBaseUrlVariableDefault = "http://localhost:8093/automation"
+
+// ScopedServerURLEnvIdVariable is the `envId` variable for ScopedServerURL
+type ScopedServerURLEnvIdVariable string
+
+// ScopedServerURLEnvIdVariableDefault is the default value for the `envId` variable for ScopedServerURL
+const ScopedServerURLEnvIdVariableDefault = "DEFAULT"
+
+// ScopedServerURLOrgIdVariable is the `orgId` variable for ScopedServerURL
+type ScopedServerURLOrgIdVariable string
+
+// ScopedServerURLOrgIdVariableDefault is the default value for the `orgId` variable for ScopedServerURL
+const ScopedServerURLOrgIdVariableDefault = "DEFAULT"
+
+// NewScopedServerURL constructs the Server URL for Organization and environment scoped Automation API, with the provided variables.
+func NewScopedServerURL(baseUrl ScopedServerURLBaseUrlVariable, envId ScopedServerURLEnvIdVariable, orgId ScopedServerURLOrgIdVariable) (string, error) {
+
+	u := "{baseUrl}/organizations/{orgId}/environments/{envId}"
+
+	u = strings.ReplaceAll(u, "{baseUrl}", string(baseUrl))
+	u = strings.ReplaceAll(u, "{envId}", string(envId))
+	u = strings.ReplaceAll(u, "{orgId}", string(orgId))
+
+	if strings.Contains(u, "{") || strings.Contains(u, "}") {
+		return "", fmt.Errorf("after mapping variables, there were still `{` or `}` characters in the string: %#v", u)
+	}
+
+	return u, nil
+}
+
 // Defines values for TokenExchangeClaimMappingSource.
 const (
 	ActorToken   TokenExchangeClaimMappingSource = "actor_token"
@@ -978,8 +1012,8 @@ type ClientInterface interface {
 	//
 	// Returns all security domains within the specified environment.
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains (the `AutomationListDomains` operationId).
-	AutomationListDomains(ctx context.Context, orgId string, envId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains (the `AutomationListDomains` operationId).
+	AutomationListDomains(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationCreateOrUpdateDomainWithBody Create or update a domain
 	//
@@ -987,8 +1021,8 @@ type ClientInterface interface {
 	//
 	// Takes any type of body and a specified content type.
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains (the `AutomationCreateOrUpdateDomain` operationId).
-	AutomationCreateOrUpdateDomainWithBody(ctx context.Context, orgId string, envId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
+	AutomationCreateOrUpdateDomainWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationCreateOrUpdateDomain Create or update a domain
 	//
@@ -996,31 +1030,31 @@ type ClientInterface interface {
 	//
 	// Takes a body of the `application/json` content type.
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains (the `AutomationCreateOrUpdateDomain` operationId).
-	AutomationCreateOrUpdateDomain(ctx context.Context, orgId string, envId string, body AutomationCreateOrUpdateDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
+	AutomationCreateOrUpdateDomain(ctx context.Context, body AutomationCreateOrUpdateDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationDeleteDomain Delete a domain
 	//
 	// Deletes an Automation-managed domain. Deletion cascades to the domain's sub-resources (certificates, identity providers, and reporters). Deleting a domain that does not exist also returns 204.
 	//
-	// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey} (the `AutomationDeleteDomain` operationId).
-	AutomationDeleteDomain(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with DELETE /domains/{domainKey} (the `AutomationDeleteDomain` operationId).
+	AutomationDeleteDomain(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationGetDomain Get a domain
 	//
 	// Retrieves a single Automation-managed security domain by its key.
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey} (the `AutomationGetDomain` operationId).
-	AutomationGetDomain(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey} (the `AutomationGetDomain` operationId).
+	AutomationGetDomain(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // AutomationListDomains List all domains
 //
 // Returns all security domains within the specified environment.
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains (the `AutomationListDomains` operationId).
-func (c *Client) AutomationListDomains(ctx context.Context, orgId string, envId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationListDomainsRequest(c.Server, orgId, envId)
+// Corresponds with GET /domains (the `AutomationListDomains` operationId).
+func (c *Client) AutomationListDomains(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationListDomainsRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -1037,9 +1071,9 @@ func (c *Client) AutomationListDomains(ctx context.Context, orgId string, envId 
 //
 // Takes any type of body and a specified content type.
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains (the `AutomationCreateOrUpdateDomain` operationId).
-func (c *Client) AutomationCreateOrUpdateDomainWithBody(ctx context.Context, orgId string, envId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateDomainRequestWithBody(c.Server, orgId, envId, contentType, body)
+// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
+func (c *Client) AutomationCreateOrUpdateDomainWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationCreateOrUpdateDomainRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1056,9 +1090,9 @@ func (c *Client) AutomationCreateOrUpdateDomainWithBody(ctx context.Context, org
 //
 // Takes a body of the `application/json` content type.
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains (the `AutomationCreateOrUpdateDomain` operationId).
-func (c *Client) AutomationCreateOrUpdateDomain(ctx context.Context, orgId string, envId string, body AutomationCreateOrUpdateDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateDomainRequest(c.Server, orgId, envId, body)
+// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
+func (c *Client) AutomationCreateOrUpdateDomain(ctx context.Context, body AutomationCreateOrUpdateDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationCreateOrUpdateDomainRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1073,9 +1107,9 @@ func (c *Client) AutomationCreateOrUpdateDomain(ctx context.Context, orgId strin
 //
 // Deletes an Automation-managed domain. Deletion cascades to the domain's sub-resources (certificates, identity providers, and reporters). Deleting a domain that does not exist also returns 204.
 //
-// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey} (the `AutomationDeleteDomain` operationId).
-func (c *Client) AutomationDeleteDomain(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationDeleteDomainRequest(c.Server, orgId, envId, domainKey)
+// Corresponds with DELETE /domains/{domainKey} (the `AutomationDeleteDomain` operationId).
+func (c *Client) AutomationDeleteDomain(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationDeleteDomainRequest(c.Server, domainKey)
 	if err != nil {
 		return nil, err
 	}
@@ -1090,9 +1124,9 @@ func (c *Client) AutomationDeleteDomain(ctx context.Context, orgId string, envId
 //
 // Retrieves a single Automation-managed security domain by its key.
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey} (the `AutomationGetDomain` operationId).
-func (c *Client) AutomationGetDomain(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationGetDomainRequest(c.Server, orgId, envId, domainKey)
+// Corresponds with GET /domains/{domainKey} (the `AutomationGetDomain` operationId).
+func (c *Client) AutomationGetDomain(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationGetDomainRequest(c.Server, domainKey)
 	if err != nil {
 		return nil, err
 	}
@@ -1104,29 +1138,15 @@ func (c *Client) AutomationGetDomain(ctx context.Context, orgId string, envId st
 }
 
 // NewAutomationListDomainsRequest constructs an http.Request for the AutomationListDomains method
-func NewAutomationListDomainsRequest(server string, orgId string, envId string) (*http.Request, error) {
+func NewAutomationListDomainsRequest(server string) (*http.Request, error) {
 	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
 
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/domains")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -1145,40 +1165,26 @@ func NewAutomationListDomainsRequest(server string, orgId string, envId string) 
 }
 
 // NewAutomationCreateOrUpdateDomainRequest calls the generic AutomationCreateOrUpdateDomain builder with application/json body
-func NewAutomationCreateOrUpdateDomainRequest(server string, orgId string, envId string, body AutomationCreateOrUpdateDomainJSONRequestBody) (*http.Request, error) {
+func NewAutomationCreateOrUpdateDomainRequest(server string, body AutomationCreateOrUpdateDomainJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAutomationCreateOrUpdateDomainRequestWithBody(server, orgId, envId, "application/json", bodyReader)
+	return NewAutomationCreateOrUpdateDomainRequestWithBody(server, "application/json", bodyReader)
 }
 
 // NewAutomationCreateOrUpdateDomainRequestWithBody constructs an http.Request for the AutomationCreateOrUpdateDomain method, with any body, and a specified content type
-func NewAutomationCreateOrUpdateDomainRequestWithBody(server string, orgId string, envId string, contentType string, body io.Reader) (*http.Request, error) {
+func NewAutomationCreateOrUpdateDomainRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
 
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/domains")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -1199,26 +1205,12 @@ func NewAutomationCreateOrUpdateDomainRequestWithBody(server string, orgId strin
 }
 
 // NewAutomationDeleteDomainRequest constructs an http.Request for the AutomationDeleteDomain method
-func NewAutomationDeleteDomainRequest(server string, orgId string, envId string, domainKey string) (*http.Request, error) {
+func NewAutomationDeleteDomainRequest(server string, domainKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -1228,7 +1220,7 @@ func NewAutomationDeleteDomainRequest(server string, orgId string, envId string,
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s", pathParam0, pathParam1, pathParam2)
+	operationPath := fmt.Sprintf("/domains/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -1247,26 +1239,12 @@ func NewAutomationDeleteDomainRequest(server string, orgId string, envId string,
 }
 
 // NewAutomationGetDomainRequest constructs an http.Request for the AutomationGetDomain method
-func NewAutomationGetDomainRequest(server string, orgId string, envId string, domainKey string) (*http.Request, error) {
+func NewAutomationGetDomainRequest(server string, domainKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -1276,7 +1254,7 @@ func NewAutomationGetDomainRequest(server string, orgId string, envId string, do
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s", pathParam0, pathParam1, pathParam2)
+	operationPath := fmt.Sprintf("/domains/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -1344,8 +1322,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains (the `AutomationListDomains` operationId).
-	AutomationListDomainsWithResponse(ctx context.Context, orgId string, envId string, reqEditors ...RequestEditorFn) (*AutomationListDomainsResponse, error)
+	// Corresponds with GET /domains (the `AutomationListDomains` operationId).
+	AutomationListDomainsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*AutomationListDomainsResponse, error)
 
 	// AutomationCreateOrUpdateDomainWithBodyWithResponse Create or update a domain
 	//
@@ -1353,8 +1331,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains (the `AutomationCreateOrUpdateDomain` operationId).
-	AutomationCreateOrUpdateDomainWithBodyWithResponse(ctx context.Context, orgId string, envId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateDomainResponse, error)
+	// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
+	AutomationCreateOrUpdateDomainWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateDomainResponse, error)
 
 	// AutomationCreateOrUpdateDomainWithResponse Create or update a domain
 	//
@@ -1362,8 +1340,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains (the `AutomationCreateOrUpdateDomain` operationId).
-	AutomationCreateOrUpdateDomainWithResponse(ctx context.Context, orgId string, envId string, body AutomationCreateOrUpdateDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateDomainResponse, error)
+	// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
+	AutomationCreateOrUpdateDomainWithResponse(ctx context.Context, body AutomationCreateOrUpdateDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateDomainResponse, error)
 
 	// AutomationDeleteDomainWithResponse Delete a domain
 	//
@@ -1371,8 +1349,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey} (the `AutomationDeleteDomain` operationId).
-	AutomationDeleteDomainWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteDomainResponse, error)
+	// Corresponds with DELETE /domains/{domainKey} (the `AutomationDeleteDomain` operationId).
+	AutomationDeleteDomainWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteDomainResponse, error)
 
 	// AutomationGetDomainWithResponse Get a domain
 	//
@@ -1380,8 +1358,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey} (the `AutomationGetDomain` operationId).
-	AutomationGetDomainWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*AutomationGetDomainResponse, error)
+	// Corresponds with GET /domains/{domainKey} (the `AutomationGetDomain` operationId).
+	AutomationGetDomainWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationGetDomainResponse, error)
 }
 
 type AutomationListDomainsResponse struct {
@@ -1603,9 +1581,9 @@ func (r AutomationGetDomainResponse) ContentType() string {
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains (the `AutomationListDomains` operationId).
-func (c *ClientWithResponses) AutomationListDomainsWithResponse(ctx context.Context, orgId string, envId string, reqEditors ...RequestEditorFn) (*AutomationListDomainsResponse, error) {
-	rsp, err := c.AutomationListDomains(ctx, orgId, envId, reqEditors...)
+// Corresponds with GET /domains (the `AutomationListDomains` operationId).
+func (c *ClientWithResponses) AutomationListDomainsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*AutomationListDomainsResponse, error) {
+	rsp, err := c.AutomationListDomains(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -1618,9 +1596,9 @@ func (c *ClientWithResponses) AutomationListDomainsWithResponse(ctx context.Cont
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains (the `AutomationCreateOrUpdateDomain` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateDomainWithBodyWithResponse(ctx context.Context, orgId string, envId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateDomainResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateDomainWithBody(ctx, orgId, envId, contentType, body, reqEditors...)
+// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
+func (c *ClientWithResponses) AutomationCreateOrUpdateDomainWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateDomainResponse, error) {
+	rsp, err := c.AutomationCreateOrUpdateDomainWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -1633,9 +1611,9 @@ func (c *ClientWithResponses) AutomationCreateOrUpdateDomainWithBodyWithResponse
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains (the `AutomationCreateOrUpdateDomain` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateDomainWithResponse(ctx context.Context, orgId string, envId string, body AutomationCreateOrUpdateDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateDomainResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateDomain(ctx, orgId, envId, body, reqEditors...)
+// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
+func (c *ClientWithResponses) AutomationCreateOrUpdateDomainWithResponse(ctx context.Context, body AutomationCreateOrUpdateDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateDomainResponse, error) {
+	rsp, err := c.AutomationCreateOrUpdateDomain(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -1648,9 +1626,9 @@ func (c *ClientWithResponses) AutomationCreateOrUpdateDomainWithResponse(ctx con
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey} (the `AutomationDeleteDomain` operationId).
-func (c *ClientWithResponses) AutomationDeleteDomainWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteDomainResponse, error) {
-	rsp, err := c.AutomationDeleteDomain(ctx, orgId, envId, domainKey, reqEditors...)
+// Corresponds with DELETE /domains/{domainKey} (the `AutomationDeleteDomain` operationId).
+func (c *ClientWithResponses) AutomationDeleteDomainWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteDomainResponse, error) {
+	rsp, err := c.AutomationDeleteDomain(ctx, domainKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -1663,9 +1641,9 @@ func (c *ClientWithResponses) AutomationDeleteDomainWithResponse(ctx context.Con
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey} (the `AutomationGetDomain` operationId).
-func (c *ClientWithResponses) AutomationGetDomainWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*AutomationGetDomainResponse, error) {
-	rsp, err := c.AutomationGetDomain(ctx, orgId, envId, domainKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey} (the `AutomationGetDomain` operationId).
+func (c *ClientWithResponses) AutomationGetDomainWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationGetDomainResponse, error) {
+	rsp, err := c.AutomationGetDomain(ctx, domainKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

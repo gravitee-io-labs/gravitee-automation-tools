@@ -17,6 +17,40 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
+// ScopedServerURLBaseUrlVariable is the `baseUrl` variable for ScopedServerURL
+type ScopedServerURLBaseUrlVariable string
+
+// ScopedServerURLBaseUrlVariableDefault is the default value for the `baseUrl` variable for ScopedServerURL
+const ScopedServerURLBaseUrlVariableDefault = "http://localhost:8093/automation"
+
+// ScopedServerURLEnvIdVariable is the `envId` variable for ScopedServerURL
+type ScopedServerURLEnvIdVariable string
+
+// ScopedServerURLEnvIdVariableDefault is the default value for the `envId` variable for ScopedServerURL
+const ScopedServerURLEnvIdVariableDefault = "DEFAULT"
+
+// ScopedServerURLOrgIdVariable is the `orgId` variable for ScopedServerURL
+type ScopedServerURLOrgIdVariable string
+
+// ScopedServerURLOrgIdVariableDefault is the default value for the `orgId` variable for ScopedServerURL
+const ScopedServerURLOrgIdVariableDefault = "DEFAULT"
+
+// NewScopedServerURL constructs the Server URL for Organization and environment scoped Automation API, with the provided variables.
+func NewScopedServerURL(baseUrl ScopedServerURLBaseUrlVariable, envId ScopedServerURLEnvIdVariable, orgId ScopedServerURLOrgIdVariable) (string, error) {
+
+	u := "{baseUrl}/organizations/{orgId}/environments/{envId}"
+
+	u = strings.ReplaceAll(u, "{baseUrl}", string(baseUrl))
+	u = strings.ReplaceAll(u, "{envId}", string(envId))
+	u = strings.ReplaceAll(u, "{orgId}", string(orgId))
+
+	if strings.Contains(u, "{") || strings.Contains(u, "}") {
+		return "", fmt.Errorf("after mapping variables, there were still `{` or `}` characters in the string: %#v", u)
+	}
+
+	return u, nil
+}
+
 // AutomationIdentityProvider An identity provider managed under a domain by the Automation API. The key field is the stable, immutable identity used for idempotent create-or-update.
 type AutomationIdentityProvider struct {
 	// Configuration Plugin-specific configuration as a JSON-encoded string. Its shape is defined by the selected identity provider type.
@@ -157,8 +191,8 @@ type ClientInterface interface {
 	//
 	// Returns all identity providers managed by the Automation API under the domain. Identity providers created outside the Automation API are not returned.
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities (the `AutomationListIdentityProviders` operationId).
-	AutomationListIdentityProviders(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey}/identities (the `AutomationListIdentityProviders` operationId).
+	AutomationListIdentityProviders(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationCreateOrUpdateIdentityProviderWithBody Create or update an identity provider
 	//
@@ -166,8 +200,8 @@ type ClientInterface interface {
 	//
 	// Takes any type of body and a specified content type.
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-	AutomationCreateOrUpdateIdentityProviderWithBody(ctx context.Context, orgId string, envId string, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
+	AutomationCreateOrUpdateIdentityProviderWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationCreateOrUpdateIdentityProvider Create or update an identity provider
 	//
@@ -175,31 +209,31 @@ type ClientInterface interface {
 	//
 	// Takes a body of the `application/json` content type.
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-	AutomationCreateOrUpdateIdentityProvider(ctx context.Context, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
+	AutomationCreateOrUpdateIdentityProvider(ctx context.Context, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationDeleteIdentityProvider Delete an identity provider
 	//
 	// Deletes an Automation-managed identity provider by its key. Deleting an identity provider that does not exist also returns 204.
 	//
-	// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey} (the `AutomationDeleteIdentityProvider` operationId).
-	AutomationDeleteIdentityProvider(ctx context.Context, orgId string, envId string, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with DELETE /domains/{domainKey}/identities/{identityKey} (the `AutomationDeleteIdentityProvider` operationId).
+	AutomationDeleteIdentityProvider(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationGetIdentityProvider Get an identity provider
 	//
 	// Retrieves a single Automation-managed identity provider by its key.
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey} (the `AutomationGetIdentityProvider` operationId).
-	AutomationGetIdentityProvider(ctx context.Context, orgId string, envId string, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey}/identities/{identityKey} (the `AutomationGetIdentityProvider` operationId).
+	AutomationGetIdentityProvider(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // AutomationListIdentityProviders List a domain's identity providers
 //
 // Returns all identity providers managed by the Automation API under the domain. Identity providers created outside the Automation API are not returned.
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities (the `AutomationListIdentityProviders` operationId).
-func (c *Client) AutomationListIdentityProviders(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationListIdentityProvidersRequest(c.Server, orgId, envId, domainKey)
+// Corresponds with GET /domains/{domainKey}/identities (the `AutomationListIdentityProviders` operationId).
+func (c *Client) AutomationListIdentityProviders(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationListIdentityProvidersRequest(c.Server, domainKey)
 	if err != nil {
 		return nil, err
 	}
@@ -216,9 +250,9 @@ func (c *Client) AutomationListIdentityProviders(ctx context.Context, orgId stri
 //
 // Takes any type of body and a specified content type.
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-func (c *Client) AutomationCreateOrUpdateIdentityProviderWithBody(ctx context.Context, orgId string, envId string, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateIdentityProviderRequestWithBody(c.Server, orgId, envId, domainKey, contentType, body)
+// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
+func (c *Client) AutomationCreateOrUpdateIdentityProviderWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationCreateOrUpdateIdentityProviderRequestWithBody(c.Server, domainKey, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -235,9 +269,9 @@ func (c *Client) AutomationCreateOrUpdateIdentityProviderWithBody(ctx context.Co
 //
 // Takes a body of the `application/json` content type.
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-func (c *Client) AutomationCreateOrUpdateIdentityProvider(ctx context.Context, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateIdentityProviderRequest(c.Server, orgId, envId, domainKey, body)
+// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
+func (c *Client) AutomationCreateOrUpdateIdentityProvider(ctx context.Context, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationCreateOrUpdateIdentityProviderRequest(c.Server, domainKey, body)
 	if err != nil {
 		return nil, err
 	}
@@ -252,9 +286,9 @@ func (c *Client) AutomationCreateOrUpdateIdentityProvider(ctx context.Context, o
 //
 // Deletes an Automation-managed identity provider by its key. Deleting an identity provider that does not exist also returns 204.
 //
-// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey} (the `AutomationDeleteIdentityProvider` operationId).
-func (c *Client) AutomationDeleteIdentityProvider(ctx context.Context, orgId string, envId string, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationDeleteIdentityProviderRequest(c.Server, orgId, envId, domainKey, identityKey)
+// Corresponds with DELETE /domains/{domainKey}/identities/{identityKey} (the `AutomationDeleteIdentityProvider` operationId).
+func (c *Client) AutomationDeleteIdentityProvider(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationDeleteIdentityProviderRequest(c.Server, domainKey, identityKey)
 	if err != nil {
 		return nil, err
 	}
@@ -269,9 +303,9 @@ func (c *Client) AutomationDeleteIdentityProvider(ctx context.Context, orgId str
 //
 // Retrieves a single Automation-managed identity provider by its key.
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey} (the `AutomationGetIdentityProvider` operationId).
-func (c *Client) AutomationGetIdentityProvider(ctx context.Context, orgId string, envId string, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationGetIdentityProviderRequest(c.Server, orgId, envId, domainKey, identityKey)
+// Corresponds with GET /domains/{domainKey}/identities/{identityKey} (the `AutomationGetIdentityProvider` operationId).
+func (c *Client) AutomationGetIdentityProvider(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationGetIdentityProviderRequest(c.Server, domainKey, identityKey)
 	if err != nil {
 		return nil, err
 	}
@@ -283,26 +317,12 @@ func (c *Client) AutomationGetIdentityProvider(ctx context.Context, orgId string
 }
 
 // NewAutomationListIdentityProvidersRequest constructs an http.Request for the AutomationListIdentityProviders method
-func NewAutomationListIdentityProvidersRequest(server string, orgId string, envId string, domainKey string) (*http.Request, error) {
+func NewAutomationListIdentityProvidersRequest(server string, domainKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -312,7 +332,7 @@ func NewAutomationListIdentityProvidersRequest(server string, orgId string, envI
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s/identities", pathParam0, pathParam1, pathParam2)
+	operationPath := fmt.Sprintf("/domains/%s/identities", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -331,37 +351,23 @@ func NewAutomationListIdentityProvidersRequest(server string, orgId string, envI
 }
 
 // NewAutomationCreateOrUpdateIdentityProviderRequest calls the generic AutomationCreateOrUpdateIdentityProvider builder with application/json body
-func NewAutomationCreateOrUpdateIdentityProviderRequest(server string, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody) (*http.Request, error) {
+func NewAutomationCreateOrUpdateIdentityProviderRequest(server string, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAutomationCreateOrUpdateIdentityProviderRequestWithBody(server, orgId, envId, domainKey, "application/json", bodyReader)
+	return NewAutomationCreateOrUpdateIdentityProviderRequestWithBody(server, domainKey, "application/json", bodyReader)
 }
 
 // NewAutomationCreateOrUpdateIdentityProviderRequestWithBody constructs an http.Request for the AutomationCreateOrUpdateIdentityProvider method, with any body, and a specified content type
-func NewAutomationCreateOrUpdateIdentityProviderRequestWithBody(server string, orgId string, envId string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
+func NewAutomationCreateOrUpdateIdentityProviderRequestWithBody(server string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -371,7 +377,7 @@ func NewAutomationCreateOrUpdateIdentityProviderRequestWithBody(server string, o
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s/identities", pathParam0, pathParam1, pathParam2)
+	operationPath := fmt.Sprintf("/domains/%s/identities", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -392,33 +398,19 @@ func NewAutomationCreateOrUpdateIdentityProviderRequestWithBody(server string, o
 }
 
 // NewAutomationDeleteIdentityProviderRequest constructs an http.Request for the AutomationDeleteIdentityProvider method
-func NewAutomationDeleteIdentityProviderRequest(server string, orgId string, envId string, domainKey string, identityKey string) (*http.Request, error) {
+func NewAutomationDeleteIdentityProviderRequest(server string, domainKey string, identityKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam3 string
-
-	pathParam3, err = runtime.StyleParamWithOptions("simple", false, "identityKey", identityKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "identityKey", identityKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -428,7 +420,7 @@ func NewAutomationDeleteIdentityProviderRequest(server string, orgId string, env
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s/identities/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	operationPath := fmt.Sprintf("/domains/%s/identities/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -447,33 +439,19 @@ func NewAutomationDeleteIdentityProviderRequest(server string, orgId string, env
 }
 
 // NewAutomationGetIdentityProviderRequest constructs an http.Request for the AutomationGetIdentityProvider method
-func NewAutomationGetIdentityProviderRequest(server string, orgId string, envId string, domainKey string, identityKey string) (*http.Request, error) {
+func NewAutomationGetIdentityProviderRequest(server string, domainKey string, identityKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam3 string
-
-	pathParam3, err = runtime.StyleParamWithOptions("simple", false, "identityKey", identityKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "identityKey", identityKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -483,7 +461,7 @@ func NewAutomationGetIdentityProviderRequest(server string, orgId string, envId 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s/identities/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	operationPath := fmt.Sprintf("/domains/%s/identities/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -551,8 +529,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities (the `AutomationListIdentityProviders` operationId).
-	AutomationListIdentityProvidersWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListIdentityProvidersResponse, error)
+	// Corresponds with GET /domains/{domainKey}/identities (the `AutomationListIdentityProviders` operationId).
+	AutomationListIdentityProvidersWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListIdentityProvidersResponse, error)
 
 	// AutomationCreateOrUpdateIdentityProviderWithBodyWithResponse Create or update an identity provider
 	//
@@ -560,8 +538,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-	AutomationCreateOrUpdateIdentityProviderWithBodyWithResponse(ctx context.Context, orgId string, envId string, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateIdentityProviderResponse, error)
+	// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
+	AutomationCreateOrUpdateIdentityProviderWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateIdentityProviderResponse, error)
 
 	// AutomationCreateOrUpdateIdentityProviderWithResponse Create or update an identity provider
 	//
@@ -569,8 +547,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-	AutomationCreateOrUpdateIdentityProviderWithResponse(ctx context.Context, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateIdentityProviderResponse, error)
+	// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
+	AutomationCreateOrUpdateIdentityProviderWithResponse(ctx context.Context, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateIdentityProviderResponse, error)
 
 	// AutomationDeleteIdentityProviderWithResponse Delete an identity provider
 	//
@@ -578,8 +556,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey} (the `AutomationDeleteIdentityProvider` operationId).
-	AutomationDeleteIdentityProviderWithResponse(ctx context.Context, orgId string, envId string, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteIdentityProviderResponse, error)
+	// Corresponds with DELETE /domains/{domainKey}/identities/{identityKey} (the `AutomationDeleteIdentityProvider` operationId).
+	AutomationDeleteIdentityProviderWithResponse(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteIdentityProviderResponse, error)
 
 	// AutomationGetIdentityProviderWithResponse Get an identity provider
 	//
@@ -587,8 +565,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey} (the `AutomationGetIdentityProvider` operationId).
-	AutomationGetIdentityProviderWithResponse(ctx context.Context, orgId string, envId string, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*AutomationGetIdentityProviderResponse, error)
+	// Corresponds with GET /domains/{domainKey}/identities/{identityKey} (the `AutomationGetIdentityProvider` operationId).
+	AutomationGetIdentityProviderWithResponse(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*AutomationGetIdentityProviderResponse, error)
 }
 
 type AutomationListIdentityProvidersResponse struct {
@@ -817,9 +795,9 @@ func (r AutomationGetIdentityProviderResponse) ContentType() string {
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities (the `AutomationListIdentityProviders` operationId).
-func (c *ClientWithResponses) AutomationListIdentityProvidersWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListIdentityProvidersResponse, error) {
-	rsp, err := c.AutomationListIdentityProviders(ctx, orgId, envId, domainKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey}/identities (the `AutomationListIdentityProviders` operationId).
+func (c *ClientWithResponses) AutomationListIdentityProvidersWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListIdentityProvidersResponse, error) {
+	rsp, err := c.AutomationListIdentityProviders(ctx, domainKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -832,9 +810,9 @@ func (c *ClientWithResponses) AutomationListIdentityProvidersWithResponse(ctx co
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateIdentityProviderWithBodyWithResponse(ctx context.Context, orgId string, envId string, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateIdentityProviderResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateIdentityProviderWithBody(ctx, orgId, envId, domainKey, contentType, body, reqEditors...)
+// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
+func (c *ClientWithResponses) AutomationCreateOrUpdateIdentityProviderWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateIdentityProviderResponse, error) {
+	rsp, err := c.AutomationCreateOrUpdateIdentityProviderWithBody(ctx, domainKey, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -847,9 +825,9 @@ func (c *ClientWithResponses) AutomationCreateOrUpdateIdentityProviderWithBodyWi
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateIdentityProviderWithResponse(ctx context.Context, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateIdentityProviderResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateIdentityProvider(ctx, orgId, envId, domainKey, body, reqEditors...)
+// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
+func (c *ClientWithResponses) AutomationCreateOrUpdateIdentityProviderWithResponse(ctx context.Context, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateIdentityProviderResponse, error) {
+	rsp, err := c.AutomationCreateOrUpdateIdentityProvider(ctx, domainKey, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -862,9 +840,9 @@ func (c *ClientWithResponses) AutomationCreateOrUpdateIdentityProviderWithRespon
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey} (the `AutomationDeleteIdentityProvider` operationId).
-func (c *ClientWithResponses) AutomationDeleteIdentityProviderWithResponse(ctx context.Context, orgId string, envId string, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteIdentityProviderResponse, error) {
-	rsp, err := c.AutomationDeleteIdentityProvider(ctx, orgId, envId, domainKey, identityKey, reqEditors...)
+// Corresponds with DELETE /domains/{domainKey}/identities/{identityKey} (the `AutomationDeleteIdentityProvider` operationId).
+func (c *ClientWithResponses) AutomationDeleteIdentityProviderWithResponse(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteIdentityProviderResponse, error) {
+	rsp, err := c.AutomationDeleteIdentityProvider(ctx, domainKey, identityKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -877,9 +855,9 @@ func (c *ClientWithResponses) AutomationDeleteIdentityProviderWithResponse(ctx c
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey} (the `AutomationGetIdentityProvider` operationId).
-func (c *ClientWithResponses) AutomationGetIdentityProviderWithResponse(ctx context.Context, orgId string, envId string, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*AutomationGetIdentityProviderResponse, error) {
-	rsp, err := c.AutomationGetIdentityProvider(ctx, orgId, envId, domainKey, identityKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey}/identities/{identityKey} (the `AutomationGetIdentityProvider` operationId).
+func (c *ClientWithResponses) AutomationGetIdentityProviderWithResponse(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*AutomationGetIdentityProviderResponse, error) {
+	rsp, err := c.AutomationGetIdentityProvider(ctx, domainKey, identityKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

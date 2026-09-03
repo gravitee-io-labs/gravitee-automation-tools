@@ -17,6 +17,40 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
+// ScopedServerURLBaseUrlVariable is the `baseUrl` variable for ScopedServerURL
+type ScopedServerURLBaseUrlVariable string
+
+// ScopedServerURLBaseUrlVariableDefault is the default value for the `baseUrl` variable for ScopedServerURL
+const ScopedServerURLBaseUrlVariableDefault = "http://localhost:8093/automation"
+
+// ScopedServerURLEnvIdVariable is the `envId` variable for ScopedServerURL
+type ScopedServerURLEnvIdVariable string
+
+// ScopedServerURLEnvIdVariableDefault is the default value for the `envId` variable for ScopedServerURL
+const ScopedServerURLEnvIdVariableDefault = "DEFAULT"
+
+// ScopedServerURLOrgIdVariable is the `orgId` variable for ScopedServerURL
+type ScopedServerURLOrgIdVariable string
+
+// ScopedServerURLOrgIdVariableDefault is the default value for the `orgId` variable for ScopedServerURL
+const ScopedServerURLOrgIdVariableDefault = "DEFAULT"
+
+// NewScopedServerURL constructs the Server URL for Organization and environment scoped Automation API, with the provided variables.
+func NewScopedServerURL(baseUrl ScopedServerURLBaseUrlVariable, envId ScopedServerURLEnvIdVariable, orgId ScopedServerURLOrgIdVariable) (string, error) {
+
+	u := "{baseUrl}/organizations/{orgId}/environments/{envId}"
+
+	u = strings.ReplaceAll(u, "{baseUrl}", string(baseUrl))
+	u = strings.ReplaceAll(u, "{envId}", string(envId))
+	u = strings.ReplaceAll(u, "{orgId}", string(orgId))
+
+	if strings.Contains(u, "{") || strings.Contains(u, "}") {
+		return "", fmt.Errorf("after mapping variables, there were still `{` or `}` characters in the string: %#v", u)
+	}
+
+	return u, nil
+}
+
 // AutomationReporter A reporter managed under a domain by the Automation API. Reporters persist audit events to a backend. The key field is the stable, immutable identity used for idempotent create-or-update.
 type AutomationReporter struct {
 	// AttributeMappings Additional attributes exported alongside the regular audit payload. Each entry pairs an expression read from the audit context with the field name its value is exported under. Ignored when system is true; a system reporter exports no additional attributes.
@@ -163,8 +197,8 @@ type ClientInterface interface {
 	//
 	// Returns all reporters managed by the Automation API under the domain. Reporters created outside the Automation API are not returned.
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters (the `AutomationListReporters` operationId).
-	AutomationListReporters(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey}/reporters (the `AutomationListReporters` operationId).
+	AutomationListReporters(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationCreateOrUpdateReporterWithBody Create or update a reporter
 	//
@@ -172,8 +206,8 @@ type ClientInterface interface {
 	//
 	// Takes any type of body and a specified content type.
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-	AutomationCreateOrUpdateReporterWithBody(ctx context.Context, orgId string, envId string, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
+	AutomationCreateOrUpdateReporterWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationCreateOrUpdateReporter Create or update a reporter
 	//
@@ -181,31 +215,31 @@ type ClientInterface interface {
 	//
 	// Takes a body of the `application/json` content type.
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-	AutomationCreateOrUpdateReporter(ctx context.Context, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
+	AutomationCreateOrUpdateReporter(ctx context.Context, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationDeleteReporter Delete a reporter
 	//
 	// Deletes an Automation-managed reporter by its key. Deleting a reporter that does not exist also returns 204.
 	//
-	// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey} (the `AutomationDeleteReporter` operationId).
-	AutomationDeleteReporter(ctx context.Context, orgId string, envId string, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with DELETE /domains/{domainKey}/reporters/{reporterKey} (the `AutomationDeleteReporter` operationId).
+	AutomationDeleteReporter(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// AutomationGetReporter Get a reporter
 	//
 	// Retrieves a single Automation-managed reporter by its key.
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey} (the `AutomationGetReporter` operationId).
-	AutomationGetReporter(ctx context.Context, orgId string, envId string, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey}/reporters/{reporterKey} (the `AutomationGetReporter` operationId).
+	AutomationGetReporter(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // AutomationListReporters List a domain's reporters
 //
 // Returns all reporters managed by the Automation API under the domain. Reporters created outside the Automation API are not returned.
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters (the `AutomationListReporters` operationId).
-func (c *Client) AutomationListReporters(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationListReportersRequest(c.Server, orgId, envId, domainKey)
+// Corresponds with GET /domains/{domainKey}/reporters (the `AutomationListReporters` operationId).
+func (c *Client) AutomationListReporters(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationListReportersRequest(c.Server, domainKey)
 	if err != nil {
 		return nil, err
 	}
@@ -222,9 +256,9 @@ func (c *Client) AutomationListReporters(ctx context.Context, orgId string, envI
 //
 // Takes any type of body and a specified content type.
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-func (c *Client) AutomationCreateOrUpdateReporterWithBody(ctx context.Context, orgId string, envId string, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateReporterRequestWithBody(c.Server, orgId, envId, domainKey, contentType, body)
+// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
+func (c *Client) AutomationCreateOrUpdateReporterWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationCreateOrUpdateReporterRequestWithBody(c.Server, domainKey, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -241,9 +275,9 @@ func (c *Client) AutomationCreateOrUpdateReporterWithBody(ctx context.Context, o
 //
 // Takes a body of the `application/json` content type.
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-func (c *Client) AutomationCreateOrUpdateReporter(ctx context.Context, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateReporterRequest(c.Server, orgId, envId, domainKey, body)
+// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
+func (c *Client) AutomationCreateOrUpdateReporter(ctx context.Context, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationCreateOrUpdateReporterRequest(c.Server, domainKey, body)
 	if err != nil {
 		return nil, err
 	}
@@ -258,9 +292,9 @@ func (c *Client) AutomationCreateOrUpdateReporter(ctx context.Context, orgId str
 //
 // Deletes an Automation-managed reporter by its key. Deleting a reporter that does not exist also returns 204.
 //
-// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey} (the `AutomationDeleteReporter` operationId).
-func (c *Client) AutomationDeleteReporter(ctx context.Context, orgId string, envId string, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationDeleteReporterRequest(c.Server, orgId, envId, domainKey, reporterKey)
+// Corresponds with DELETE /domains/{domainKey}/reporters/{reporterKey} (the `AutomationDeleteReporter` operationId).
+func (c *Client) AutomationDeleteReporter(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationDeleteReporterRequest(c.Server, domainKey, reporterKey)
 	if err != nil {
 		return nil, err
 	}
@@ -275,9 +309,9 @@ func (c *Client) AutomationDeleteReporter(ctx context.Context, orgId string, env
 //
 // Retrieves a single Automation-managed reporter by its key.
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey} (the `AutomationGetReporter` operationId).
-func (c *Client) AutomationGetReporter(ctx context.Context, orgId string, envId string, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationGetReporterRequest(c.Server, orgId, envId, domainKey, reporterKey)
+// Corresponds with GET /domains/{domainKey}/reporters/{reporterKey} (the `AutomationGetReporter` operationId).
+func (c *Client) AutomationGetReporter(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAutomationGetReporterRequest(c.Server, domainKey, reporterKey)
 	if err != nil {
 		return nil, err
 	}
@@ -289,26 +323,12 @@ func (c *Client) AutomationGetReporter(ctx context.Context, orgId string, envId 
 }
 
 // NewAutomationListReportersRequest constructs an http.Request for the AutomationListReporters method
-func NewAutomationListReportersRequest(server string, orgId string, envId string, domainKey string) (*http.Request, error) {
+func NewAutomationListReportersRequest(server string, domainKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -318,7 +338,7 @@ func NewAutomationListReportersRequest(server string, orgId string, envId string
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s/reporters", pathParam0, pathParam1, pathParam2)
+	operationPath := fmt.Sprintf("/domains/%s/reporters", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -337,37 +357,23 @@ func NewAutomationListReportersRequest(server string, orgId string, envId string
 }
 
 // NewAutomationCreateOrUpdateReporterRequest calls the generic AutomationCreateOrUpdateReporter builder with application/json body
-func NewAutomationCreateOrUpdateReporterRequest(server string, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody) (*http.Request, error) {
+func NewAutomationCreateOrUpdateReporterRequest(server string, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAutomationCreateOrUpdateReporterRequestWithBody(server, orgId, envId, domainKey, "application/json", bodyReader)
+	return NewAutomationCreateOrUpdateReporterRequestWithBody(server, domainKey, "application/json", bodyReader)
 }
 
 // NewAutomationCreateOrUpdateReporterRequestWithBody constructs an http.Request for the AutomationCreateOrUpdateReporter method, with any body, and a specified content type
-func NewAutomationCreateOrUpdateReporterRequestWithBody(server string, orgId string, envId string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
+func NewAutomationCreateOrUpdateReporterRequestWithBody(server string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -377,7 +383,7 @@ func NewAutomationCreateOrUpdateReporterRequestWithBody(server string, orgId str
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s/reporters", pathParam0, pathParam1, pathParam2)
+	operationPath := fmt.Sprintf("/domains/%s/reporters", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -398,33 +404,19 @@ func NewAutomationCreateOrUpdateReporterRequestWithBody(server string, orgId str
 }
 
 // NewAutomationDeleteReporterRequest constructs an http.Request for the AutomationDeleteReporter method
-func NewAutomationDeleteReporterRequest(server string, orgId string, envId string, domainKey string, reporterKey string) (*http.Request, error) {
+func NewAutomationDeleteReporterRequest(server string, domainKey string, reporterKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam3 string
-
-	pathParam3, err = runtime.StyleParamWithOptions("simple", false, "reporterKey", reporterKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "reporterKey", reporterKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -434,7 +426,7 @@ func NewAutomationDeleteReporterRequest(server string, orgId string, envId strin
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s/reporters/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	operationPath := fmt.Sprintf("/domains/%s/reporters/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -453,33 +445,19 @@ func NewAutomationDeleteReporterRequest(server string, orgId string, envId strin
 }
 
 // NewAutomationGetReporterRequest constructs an http.Request for the AutomationGetReporter method
-func NewAutomationGetReporterRequest(server string, orgId string, envId string, domainKey string, reporterKey string) (*http.Request, error) {
+func NewAutomationGetReporterRequest(server string, domainKey string, reporterKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "orgId", orgId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
 
 	var pathParam1 string
 
-	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "envId", envId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "domainKey", domainKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam3 string
-
-	pathParam3, err = runtime.StyleParamWithOptions("simple", false, "reporterKey", reporterKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "reporterKey", reporterKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
 	if err != nil {
 		return nil, err
 	}
@@ -489,7 +467,7 @@ func NewAutomationGetReporterRequest(server string, orgId string, envId string, 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/organizations/%s/environments/%s/domains/%s/reporters/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	operationPath := fmt.Sprintf("/domains/%s/reporters/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -557,8 +535,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters (the `AutomationListReporters` operationId).
-	AutomationListReportersWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListReportersResponse, error)
+	// Corresponds with GET /domains/{domainKey}/reporters (the `AutomationListReporters` operationId).
+	AutomationListReportersWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListReportersResponse, error)
 
 	// AutomationCreateOrUpdateReporterWithBodyWithResponse Create or update a reporter
 	//
@@ -566,8 +544,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-	AutomationCreateOrUpdateReporterWithBodyWithResponse(ctx context.Context, orgId string, envId string, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateReporterResponse, error)
+	// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
+	AutomationCreateOrUpdateReporterWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateReporterResponse, error)
 
 	// AutomationCreateOrUpdateReporterWithResponse Create or update a reporter
 	//
@@ -575,8 +553,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-	AutomationCreateOrUpdateReporterWithResponse(ctx context.Context, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateReporterResponse, error)
+	// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
+	AutomationCreateOrUpdateReporterWithResponse(ctx context.Context, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateReporterResponse, error)
 
 	// AutomationDeleteReporterWithResponse Delete a reporter
 	//
@@ -584,8 +562,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey} (the `AutomationDeleteReporter` operationId).
-	AutomationDeleteReporterWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteReporterResponse, error)
+	// Corresponds with DELETE /domains/{domainKey}/reporters/{reporterKey} (the `AutomationDeleteReporter` operationId).
+	AutomationDeleteReporterWithResponse(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteReporterResponse, error)
 
 	// AutomationGetReporterWithResponse Get a reporter
 	//
@@ -593,8 +571,8 @@ type ClientWithResponsesInterface interface {
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey} (the `AutomationGetReporter` operationId).
-	AutomationGetReporterWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*AutomationGetReporterResponse, error)
+	// Corresponds with GET /domains/{domainKey}/reporters/{reporterKey} (the `AutomationGetReporter` operationId).
+	AutomationGetReporterWithResponse(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*AutomationGetReporterResponse, error)
 }
 
 type AutomationListReportersResponse struct {
@@ -823,9 +801,9 @@ func (r AutomationGetReporterResponse) ContentType() string {
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters (the `AutomationListReporters` operationId).
-func (c *ClientWithResponses) AutomationListReportersWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListReportersResponse, error) {
-	rsp, err := c.AutomationListReporters(ctx, orgId, envId, domainKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey}/reporters (the `AutomationListReporters` operationId).
+func (c *ClientWithResponses) AutomationListReportersWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListReportersResponse, error) {
+	rsp, err := c.AutomationListReporters(ctx, domainKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -838,9 +816,9 @@ func (c *ClientWithResponses) AutomationListReportersWithResponse(ctx context.Co
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateReporterWithBodyWithResponse(ctx context.Context, orgId string, envId string, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateReporterResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateReporterWithBody(ctx, orgId, envId, domainKey, contentType, body, reqEditors...)
+// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
+func (c *ClientWithResponses) AutomationCreateOrUpdateReporterWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateReporterResponse, error) {
+	rsp, err := c.AutomationCreateOrUpdateReporterWithBody(ctx, domainKey, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -853,9 +831,9 @@ func (c *ClientWithResponses) AutomationCreateOrUpdateReporterWithBodyWithRespon
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateReporterWithResponse(ctx context.Context, orgId string, envId string, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateReporterResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateReporter(ctx, orgId, envId, domainKey, body, reqEditors...)
+// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
+func (c *ClientWithResponses) AutomationCreateOrUpdateReporterWithResponse(ctx context.Context, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateReporterResponse, error) {
+	rsp, err := c.AutomationCreateOrUpdateReporter(ctx, domainKey, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -868,9 +846,9 @@ func (c *ClientWithResponses) AutomationCreateOrUpdateReporterWithResponse(ctx c
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey} (the `AutomationDeleteReporter` operationId).
-func (c *ClientWithResponses) AutomationDeleteReporterWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteReporterResponse, error) {
-	rsp, err := c.AutomationDeleteReporter(ctx, orgId, envId, domainKey, reporterKey, reqEditors...)
+// Corresponds with DELETE /domains/{domainKey}/reporters/{reporterKey} (the `AutomationDeleteReporter` operationId).
+func (c *ClientWithResponses) AutomationDeleteReporterWithResponse(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteReporterResponse, error) {
+	rsp, err := c.AutomationDeleteReporter(ctx, domainKey, reporterKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -883,9 +861,9 @@ func (c *ClientWithResponses) AutomationDeleteReporterWithResponse(ctx context.C
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey} (the `AutomationGetReporter` operationId).
-func (c *ClientWithResponses) AutomationGetReporterWithResponse(ctx context.Context, orgId string, envId string, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*AutomationGetReporterResponse, error) {
-	rsp, err := c.AutomationGetReporter(ctx, orgId, envId, domainKey, reporterKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey}/reporters/{reporterKey} (the `AutomationGetReporter` operationId).
+func (c *ClientWithResponses) AutomationGetReporterWithResponse(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*AutomationGetReporterResponse, error) {
+	rsp, err := c.AutomationGetReporter(ctx, domainKey, reporterKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
