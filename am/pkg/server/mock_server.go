@@ -2,13 +2,10 @@ package server
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/server/store"
 )
-
-var ErrNotImplemented = errors.New("not implemented")
 
 type MockAM struct {
 	Domains           *store.Store[Domain]
@@ -38,10 +35,7 @@ func (m *MockAM) AutomationCreateOrUpdateDomain(_ context.Context, req Automatio
 		m.Domains.Put(body)
 		return AutomationCreateOrUpdateDomain200JSONResponse(body), nil
 	}
-	return AutomationCreateOrUpdateDomain400JSONResponse(Error{
-		HttpStatus: new(int32(http.StatusBadRequest)),
-		Message:    new("Empty body"),
-	}), nil
+	return AutomationCreateOrUpdateDomain400JSONResponse(emptyBodyError()), nil
 }
 
 func (m *MockAM) AutomationDeleteDomain(_ context.Context, req AutomationDeleteDomainRequestObject) (AutomationDeleteDomainResponseObject, error) {
@@ -54,56 +48,97 @@ func (m *MockAM) AutomationGetDomain(_ context.Context, req AutomationGetDomainR
 	if ok {
 		return AutomationGetDomain200JSONResponse(domain), nil
 	}
-	return AutomationGetDomain404JSONResponse{
+	return AutomationGetDomain404JSONResponse(notFoundError("Domain", req.DomainKey)), nil
+}
+
+func (m *MockAM) AutomationListCertificates(context.Context, AutomationListCertificatesRequestObject) (AutomationListCertificatesResponseObject, error) {
+	return AutomationListCertificates200JSONResponse(m.Certificates.GetAll()), nil
+}
+
+func (m *MockAM) AutomationCreateOrUpdateCertificate(_ context.Context, req AutomationCreateOrUpdateCertificateRequestObject) (AutomationCreateOrUpdateCertificateResponseObject, error) {
+	if req.Body != nil {
+		body := *req.Body
+		m.Certificates.Put(body)
+		return AutomationCreateOrUpdateCertificate200JSONResponse(body), nil
+	}
+	return AutomationCreateOrUpdateCertificate400JSONResponse(emptyBodyError()), nil
+}
+
+func (m *MockAM) AutomationDeleteCertificate(_ context.Context, req AutomationDeleteCertificateRequestObject) (AutomationDeleteCertificateResponseObject, error) {
+	m.Certificates.DeleteByKey(req.CertKey)
+	return AutomationDeleteCertificate204Response{}, nil
+}
+
+func (m *MockAM) AutomationGetCertificate(_ context.Context, req AutomationGetCertificateRequestObject) (AutomationGetCertificateResponseObject, error) {
+	cert, ok := m.Certificates.Get(req.CertKey)
+	if ok {
+		return AutomationGetCertificate200JSONResponse(cert), nil
+	}
+	return AutomationGetCertificate404JSONResponse(notFoundError("Certificate", req.CertKey)), nil
+}
+
+func (m *MockAM) AutomationListIdentityProviders(context.Context, AutomationListIdentityProvidersRequestObject) (AutomationListIdentityProvidersResponseObject, error) {
+	return AutomationListIdentityProviders200JSONResponse(m.IdentityProviders.GetAll()), nil
+}
+
+func (m *MockAM) AutomationCreateOrUpdateIdentityProvider(_ context.Context, req AutomationCreateOrUpdateIdentityProviderRequestObject) (AutomationCreateOrUpdateIdentityProviderResponseObject, error) {
+	if req.Body != nil {
+		body := *req.Body
+		m.IdentityProviders.Put(body)
+		return AutomationCreateOrUpdateIdentityProvider200JSONResponse(body), nil
+	}
+	return AutomationCreateOrUpdateIdentityProvider400JSONResponse(emptyBodyError()), nil
+}
+
+func (m *MockAM) AutomationDeleteIdentityProvider(_ context.Context, req AutomationDeleteIdentityProviderRequestObject) (AutomationDeleteIdentityProviderResponseObject, error) {
+	m.IdentityProviders.DeleteByKey(req.IdentityKey)
+	return AutomationDeleteIdentityProvider204Response{}, nil
+}
+
+func (m *MockAM) AutomationGetIdentityProvider(_ context.Context, req AutomationGetIdentityProviderRequestObject) (AutomationGetIdentityProviderResponseObject, error) {
+	idp, ok := m.IdentityProviders.Get(req.IdentityKey)
+	if ok {
+		return AutomationGetIdentityProvider200JSONResponse(idp), nil
+	}
+	return AutomationGetIdentityProvider404JSONResponse(notFoundError("IdentityProvider", req.IdentityKey)), nil
+}
+
+func (m *MockAM) AutomationListReporters(context.Context, AutomationListReportersRequestObject) (AutomationListReportersResponseObject, error) {
+	return AutomationListReporters200JSONResponse(m.Reporters.GetAll()), nil
+}
+
+func (m *MockAM) AutomationCreateOrUpdateReporter(_ context.Context, req AutomationCreateOrUpdateReporterRequestObject) (AutomationCreateOrUpdateReporterResponseObject, error) {
+	if req.Body != nil {
+		body := *req.Body
+		m.Reporters.Put(body)
+		return AutomationCreateOrUpdateReporter200JSONResponse(body), nil
+	}
+	return AutomationCreateOrUpdateReporter400JSONResponse(emptyBodyError()), nil
+}
+
+func (m *MockAM) AutomationDeleteReporter(_ context.Context, req AutomationDeleteReporterRequestObject) (AutomationDeleteReporterResponseObject, error) {
+	m.Reporters.DeleteByKey(req.ReporterKey)
+	return AutomationDeleteReporter204Response{}, nil
+}
+
+func (m *MockAM) AutomationGetReporter(_ context.Context, req AutomationGetReporterRequestObject) (AutomationGetReporterResponseObject, error) {
+	reporter, ok := m.Reporters.Get(req.ReporterKey)
+	if ok {
+		return AutomationGetReporter200JSONResponse(reporter), nil
+	}
+	return AutomationGetReporter404JSONResponse(notFoundError("Reporter", req.ReporterKey)), nil
+}
+
+func emptyBodyError() Error {
+	return Error{
+		HttpStatus: new(int32(http.StatusBadRequest)),
+		Message:    new("Empty body"),
+	}
+}
+
+func notFoundError(kind, key string) Error {
+	return Error{
 		HttpStatus: new(int32(http.StatusNotFound)),
-		Message:    new("Domain [" + req.DomainKey + "] not found"),
-	}, nil
-}
-
-func (MockAM) AutomationListCertificates(context.Context, AutomationListCertificatesRequestObject) (AutomationListCertificatesResponseObject, error) {
-	return nil, ErrNotImplemented
-}
-
-func (MockAM) AutomationCreateOrUpdateCertificate(context.Context, AutomationCreateOrUpdateCertificateRequestObject) (AutomationCreateOrUpdateCertificateResponseObject, error) {
-	return nil, ErrNotImplemented
-}
-
-func (MockAM) AutomationDeleteCertificate(context.Context, AutomationDeleteCertificateRequestObject) (AutomationDeleteCertificateResponseObject, error) {
-	return nil, ErrNotImplemented
-}
-
-func (MockAM) AutomationGetCertificate(context.Context, AutomationGetCertificateRequestObject) (AutomationGetCertificateResponseObject, error) {
-	return nil, ErrNotImplemented
-}
-
-func (MockAM) AutomationListIdentityProviders(context.Context, AutomationListIdentityProvidersRequestObject) (AutomationListIdentityProvidersResponseObject, error) {
-	return nil, ErrNotImplemented
-}
-
-func (MockAM) AutomationCreateOrUpdateIdentityProvider(context.Context, AutomationCreateOrUpdateIdentityProviderRequestObject) (AutomationCreateOrUpdateIdentityProviderResponseObject, error) {
-	return nil, ErrNotImplemented
-}
-
-func (MockAM) AutomationDeleteIdentityProvider(context.Context, AutomationDeleteIdentityProviderRequestObject) (AutomationDeleteIdentityProviderResponseObject, error) {
-	return nil, ErrNotImplemented
-}
-
-func (MockAM) AutomationGetIdentityProvider(context.Context, AutomationGetIdentityProviderRequestObject) (AutomationGetIdentityProviderResponseObject, error) {
-	return nil, ErrNotImplemented
-}
-
-func (MockAM) AutomationListReporters(context.Context, AutomationListReportersRequestObject) (AutomationListReportersResponseObject, error) {
-	return nil, ErrNotImplemented
-}
-
-func (MockAM) AutomationCreateOrUpdateReporter(context.Context, AutomationCreateOrUpdateReporterRequestObject) (AutomationCreateOrUpdateReporterResponseObject, error) {
-	return nil, ErrNotImplemented
-}
-
-func (MockAM) AutomationDeleteReporter(context.Context, AutomationDeleteReporterRequestObject) (AutomationDeleteReporterResponseObject, error) {
-	return nil, ErrNotImplemented
-}
-
-func (MockAM) AutomationGetReporter(context.Context, AutomationGetReporterRequestObject) (AutomationGetReporterResponseObject, error) {
-	return nil, ErrNotImplemented
+		Message:    new(kind + " [" + key + "] not found"),
+	}
 }
