@@ -10,6 +10,10 @@ import (
 const BasePath = "/automation"
 
 func New(impl StrictServerInterface) http.Handler {
+	return NewWithPath(impl, BasePath)
+}
+
+func NewWithPath(impl StrictServerInterface, basePath string) http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 
@@ -19,7 +23,7 @@ func New(impl StrictServerInterface) http.Handler {
 	}
 
 	return HandlerWithOptions(si, ChiServerOptions{
-		BaseURL:    BasePath,
+		BaseURL:    basePath,
 		BaseRouter: r,
 	})
 }

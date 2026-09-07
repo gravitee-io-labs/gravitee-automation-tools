@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../configuration-schema.json
+package: domain
+output: model.gen.go
+generate:
+  models: true
+  client: false
+output-options:
+  overlay:
+    path: overlay.merged.yaml
+  include-tags:
+    - Domains

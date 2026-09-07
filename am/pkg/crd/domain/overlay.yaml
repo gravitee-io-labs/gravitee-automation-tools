@@ -1,0 +1,39 @@
+overlay: 1.0.0
+x-speakeasy-jsonpath: rfc9535
+info:
+  title: AM Test
+  version: 0.0.1
+actions:
+  - target: $.components.schemas
+    update:
+      Status:
+        type: object
+        description: All purpose status object
+        properties:
+          id:
+            type: string
+          orgId:
+            type: string
+          envId:
+            type: string
+          conditions:
+            type: array
+            item:
+              type: object
+              x-go-type: metav1.Condition
+              x-go-import:
+                name: metav1
+                path: k8s.io/apimachinery/pkg/apis/meta/v1
+
+  - target: $.components.schemas.AutomationDomain
+    update:
+      x-go-type-name: DomainSpec
+      x-gko-spec: true
+  - target: $.components.schemas.AutomationDomain.properties
+    update:
+      contextRef:
+        type: object
+        description: The reference to the AMContext
+        x-go-type: refs.NamespaceName
+        x-go-import:
+          path: github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/refs

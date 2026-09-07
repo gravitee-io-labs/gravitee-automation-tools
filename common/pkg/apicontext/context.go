@@ -1,4 +1,4 @@
-package auth
+package apicontext
 
 import (
 	"context"
@@ -35,8 +35,16 @@ type BasicAuth struct {
 	Password string
 }
 
-func (c APIContext) RequestEditor() (func(ctx context.Context, req *http.Request) error, error) {
-	if c.isBasicAuth() {
+func (c APIContext) AuthInterceptor() (func(ctx context.Context, req *http.Request) error, error) {
+	if c.isBearerAuth() && c.isBasicAuth() {
+		return nil, errors.NewClientError(errors.ManyAuthProvided)
+	} else if c.isBearerAuth() {
+		bearerAuth, err := securityprovider.NewSecurityProviderBearerToken(*c.Auth.BearerToken)
+		if err != nil {
+			return nil, errors.NewClientError(err)
+		}
+		return bearerAuth.Intercept, nil
+	} else if c.isBasicAuth() {
 		basicAuth, err := securityprovider.NewSecurityProviderBasicAuth(
 			c.Auth.BasicAuth.Username,
 			c.Auth.BasicAuth.Password)
@@ -44,12 +52,20 @@ func (c APIContext) RequestEditor() (func(ctx context.Context, req *http.Request
 			return nil, errors.NewClientError(err)
 		}
 		return basicAuth.Intercept, nil
-	} else if c.isBearerAuth() {
-		bearerAuth, err := securityprovider.NewSecurityProviderBearerToken(*c.Auth.BearerToken)
-		if err != nil {
-			return nil, errors.NewClientError(err)
-		}
-		return bearerAuth.Intercept, nil
 	}
-	return nil, NoAuthProvided
+	return nil, errors.NewClientError(errors.NoAuthProvided)
+}
+
+func (c APIContext) getOrgID() string {
+	if c.OrgID != "" {
+		return c.OrgID
+	}
+	return "DEFAULT"
+}
+
+func (c APIContext) getEnvID() string {
+	if c.EnvID != "" {
+		return c.EnvID
+	}
+	return "DEFAULT"
 }

@@ -20,7 +20,7 @@ type bodyGetter interface {
 }
 
 // Respond maps a generated *WithResponse result to T.
-//
+// TODO not OK should only to unwrap the error, and it is not wired
 // On 2xx it returns the JSON2xx field whose type is *T.
 // On 204 (no JSON2xx field) it returns (nil, nil).
 // On error status it reads JSON{status}, then JSONDefault, then the raw body.
