@@ -10,7 +10,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/server"
+	"github.com/gravitee-io-labs/gravitee-automation-sdks/am-mock-server/server"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +28,7 @@ func newCommand() *cobra.Command {
 	var basePath string
 
 	cmd := &cobra.Command{
-		Use:          "am-server",
+		Use:          "am-mock-server",
 		Short:        "Start the AM automation mock server",
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, _ []string) error {

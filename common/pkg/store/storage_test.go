@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/server/store"
+	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/store"
 	"github.com/stretchr/testify/assert"
 )
 

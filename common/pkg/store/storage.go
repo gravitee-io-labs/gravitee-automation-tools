@@ -15,6 +15,7 @@ const (
 	noop = iota
 	opRead
 	opList
+	opListAll
 	opWrite
 	opDelete
 )
@@ -99,6 +100,14 @@ func (s *Store[T]) start(ctx context.Context) {
 					}
 					s.manySupplier <- r
 				}()
+			case opListAll:
+				go func() {
+					r := make([]T, 0, len(s.identifiers))
+					for _, k := range s.identifiers {
+						r = append(r, s.data[k])
+					}
+					s.manySupplier <- r
+				}()
 			case opWrite:
 				s.identifiers = append(s.identifiers, action.identified.Identity())
 				s.data[action.identified.Identity()] = action.identified
@@ -119,10 +128,7 @@ func (s *Store[T]) start(ctx context.Context) {
 }
 
 func (s *Store[T]) GetAll() []T {
-	s.do(operation[T]{
-		opType: opList,
-		page:   pageRange{page: 0, size: len(s.identifiers)},
-	})
+	s.do(operation[T]{opType: opListAll})
 	return <-s.manySupplier
 }
 
