@@ -952,8 +952,8 @@ type XssProtectionSettings struct {
 	Inherited *bool `json:"inherited,omitempty"`
 }
 
-// AutomationCreateOrUpdateDomainJSONRequestBody defines body for AutomationCreateOrUpdateDomain for application/json ContentType.
-type AutomationCreateOrUpdateDomainJSONRequestBody = AutomationDomain
+// UpsertDomainJSONRequestBody defines body for UpsertDomain for application/json ContentType.
+type UpsertDomainJSONRequestBody = AutomationDomain
 
 // RequestEditorFn is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -1029,53 +1029,53 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 // The interface specification for the client above.
 type ClientInterface interface {
 
-	// AutomationListDomains List all domains
+	// ListDomains List all domains
 	//
 	// Returns all security domains within the specified environment.
 	//
-	// Corresponds with GET /domains (the `AutomationListDomains` operationId).
-	AutomationListDomains(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains (the `ListDomains` operationId).
+	ListDomains(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationCreateOrUpdateDomainWithBody Create or update a domain
+	// UpsertDomainWithBody Create or update a domain
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
 	//
 	// Takes any type of body and a specified content type.
 	//
-	// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
-	AutomationCreateOrUpdateDomainWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains (the `UpsertDomain` operationId).
+	UpsertDomainWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationCreateOrUpdateDomain Create or update a domain
+	// UpsertDomain Create or update a domain
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
 	//
 	// Takes a body of the `application/json` content type.
 	//
-	// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
-	AutomationCreateOrUpdateDomain(ctx context.Context, body AutomationCreateOrUpdateDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains (the `UpsertDomain` operationId).
+	UpsertDomain(ctx context.Context, body UpsertDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationDeleteDomain Delete a domain
+	// DeleteDomain Delete a domain
 	//
 	// Deletes an Automation-managed domain. Deletion cascades to the domain's sub-resources (certificates, identity providers, and reporters). Deleting a domain that does not exist also returns 204.
 	//
-	// Corresponds with DELETE /domains/{domainKey} (the `AutomationDeleteDomain` operationId).
-	AutomationDeleteDomain(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with DELETE /domains/{domainKey} (the `DeleteDomain` operationId).
+	DeleteDomain(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationGetDomain Get a domain
+	// GetDomain Get a domain
 	//
 	// Retrieves a single Automation-managed security domain by its key.
 	//
-	// Corresponds with GET /domains/{domainKey} (the `AutomationGetDomain` operationId).
-	AutomationGetDomain(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey} (the `GetDomain` operationId).
+	GetDomain(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-// AutomationListDomains List all domains
+// ListDomains List all domains
 //
 // Returns all security domains within the specified environment.
 //
-// Corresponds with GET /domains (the `AutomationListDomains` operationId).
-func (c *Client) AutomationListDomains(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationListDomainsRequest(c.Server)
+// Corresponds with GET /domains (the `ListDomains` operationId).
+func (c *Client) ListDomains(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListDomainsRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -1086,15 +1086,15 @@ func (c *Client) AutomationListDomains(ctx context.Context, reqEditors ...Reques
 	return c.Client.Do(req)
 }
 
-// AutomationCreateOrUpdateDomainWithBody Create or update a domain
+// UpsertDomainWithBody Create or update a domain
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
 //
 // Takes any type of body and a specified content type.
 //
-// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
-func (c *Client) AutomationCreateOrUpdateDomainWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateDomainRequestWithBody(c.Server, contentType, body)
+// Corresponds with PUT /domains (the `UpsertDomain` operationId).
+func (c *Client) UpsertDomainWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertDomainRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1105,15 +1105,15 @@ func (c *Client) AutomationCreateOrUpdateDomainWithBody(ctx context.Context, con
 	return c.Client.Do(req)
 }
 
-// AutomationCreateOrUpdateDomain Create or update a domain
+// UpsertDomain Create or update a domain
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
 //
 // Takes a body of the `application/json` content type.
 //
-// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
-func (c *Client) AutomationCreateOrUpdateDomain(ctx context.Context, body AutomationCreateOrUpdateDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateDomainRequest(c.Server, body)
+// Corresponds with PUT /domains (the `UpsertDomain` operationId).
+func (c *Client) UpsertDomain(ctx context.Context, body UpsertDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertDomainRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1124,13 +1124,13 @@ func (c *Client) AutomationCreateOrUpdateDomain(ctx context.Context, body Automa
 	return c.Client.Do(req)
 }
 
-// AutomationDeleteDomain Delete a domain
+// DeleteDomain Delete a domain
 //
 // Deletes an Automation-managed domain. Deletion cascades to the domain's sub-resources (certificates, identity providers, and reporters). Deleting a domain that does not exist also returns 204.
 //
-// Corresponds with DELETE /domains/{domainKey} (the `AutomationDeleteDomain` operationId).
-func (c *Client) AutomationDeleteDomain(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationDeleteDomainRequest(c.Server, domainKey)
+// Corresponds with DELETE /domains/{domainKey} (the `DeleteDomain` operationId).
+func (c *Client) DeleteDomain(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteDomainRequest(c.Server, domainKey)
 	if err != nil {
 		return nil, err
 	}
@@ -1141,13 +1141,13 @@ func (c *Client) AutomationDeleteDomain(ctx context.Context, domainKey string, r
 	return c.Client.Do(req)
 }
 
-// AutomationGetDomain Get a domain
+// GetDomain Get a domain
 //
 // Retrieves a single Automation-managed security domain by its key.
 //
-// Corresponds with GET /domains/{domainKey} (the `AutomationGetDomain` operationId).
-func (c *Client) AutomationGetDomain(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationGetDomainRequest(c.Server, domainKey)
+// Corresponds with GET /domains/{domainKey} (the `GetDomain` operationId).
+func (c *Client) GetDomain(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetDomainRequest(c.Server, domainKey)
 	if err != nil {
 		return nil, err
 	}
@@ -1158,8 +1158,8 @@ func (c *Client) AutomationGetDomain(ctx context.Context, domainKey string, reqE
 	return c.Client.Do(req)
 }
 
-// NewAutomationListDomainsRequest constructs an http.Request for the AutomationListDomains method
-func NewAutomationListDomainsRequest(server string) (*http.Request, error) {
+// NewListDomainsRequest constructs an http.Request for the ListDomains method
+func NewListDomainsRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1185,19 +1185,19 @@ func NewAutomationListDomainsRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewAutomationCreateOrUpdateDomainRequest calls the generic AutomationCreateOrUpdateDomain builder with application/json body
-func NewAutomationCreateOrUpdateDomainRequest(server string, body AutomationCreateOrUpdateDomainJSONRequestBody) (*http.Request, error) {
+// NewUpsertDomainRequest calls the generic UpsertDomain builder with application/json body
+func NewUpsertDomainRequest(server string, body UpsertDomainJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAutomationCreateOrUpdateDomainRequestWithBody(server, "application/json", bodyReader)
+	return NewUpsertDomainRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewAutomationCreateOrUpdateDomainRequestWithBody constructs an http.Request for the AutomationCreateOrUpdateDomain method, with any body, and a specified content type
-func NewAutomationCreateOrUpdateDomainRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUpsertDomainRequestWithBody constructs an http.Request for the UpsertDomain method, with any body, and a specified content type
+func NewUpsertDomainRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1225,8 +1225,8 @@ func NewAutomationCreateOrUpdateDomainRequestWithBody(server string, contentType
 	return req, nil
 }
 
-// NewAutomationDeleteDomainRequest constructs an http.Request for the AutomationDeleteDomain method
-func NewAutomationDeleteDomainRequest(server string, domainKey string) (*http.Request, error) {
+// NewDeleteDomainRequest constructs an http.Request for the DeleteDomain method
+func NewDeleteDomainRequest(server string, domainKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1259,8 +1259,8 @@ func NewAutomationDeleteDomainRequest(server string, domainKey string) (*http.Re
 	return req, nil
 }
 
-// NewAutomationGetDomainRequest constructs an http.Request for the AutomationGetDomain method
-func NewAutomationGetDomainRequest(server string, domainKey string) (*http.Request, error) {
+// NewGetDomainRequest constructs an http.Request for the GetDomain method
+func NewGetDomainRequest(server string, domainKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1337,53 +1337,53 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 
-	// AutomationListDomainsWithResponse List all domains
+	// ListDomainsWithResponse List all domains
 	//
 	// Returns all security domains within the specified environment.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /domains (the `AutomationListDomains` operationId).
-	AutomationListDomainsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*AutomationListDomainsResponse, error)
+	// Corresponds with GET /domains (the `ListDomains` operationId).
+	ListDomainsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListDomainsResponse, error)
 
-	// AutomationCreateOrUpdateDomainWithBodyWithResponse Create or update a domain
+	// UpsertDomainWithBodyWithResponse Create or update a domain
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
-	AutomationCreateOrUpdateDomainWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateDomainResponse, error)
+	// Corresponds with PUT /domains (the `UpsertDomain` operationId).
+	UpsertDomainWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertDomainResponse, error)
 
-	// AutomationCreateOrUpdateDomainWithResponse Create or update a domain
+	// UpsertDomainWithResponse Create or update a domain
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
-	AutomationCreateOrUpdateDomainWithResponse(ctx context.Context, body AutomationCreateOrUpdateDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateDomainResponse, error)
+	// Corresponds with PUT /domains (the `UpsertDomain` operationId).
+	UpsertDomainWithResponse(ctx context.Context, body UpsertDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertDomainResponse, error)
 
-	// AutomationDeleteDomainWithResponse Delete a domain
+	// DeleteDomainWithResponse Delete a domain
 	//
 	// Deletes an Automation-managed domain. Deletion cascades to the domain's sub-resources (certificates, identity providers, and reporters). Deleting a domain that does not exist also returns 204.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with DELETE /domains/{domainKey} (the `AutomationDeleteDomain` operationId).
-	AutomationDeleteDomainWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteDomainResponse, error)
+	// Corresponds with DELETE /domains/{domainKey} (the `DeleteDomain` operationId).
+	DeleteDomainWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*DeleteDomainResponse, error)
 
-	// AutomationGetDomainWithResponse Get a domain
+	// GetDomainWithResponse Get a domain
 	//
 	// Retrieves a single Automation-managed security domain by its key.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /domains/{domainKey} (the `AutomationGetDomain` operationId).
-	AutomationGetDomainWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationGetDomainResponse, error)
+	// Corresponds with GET /domains/{domainKey} (the `GetDomain` operationId).
+	GetDomainWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*GetDomainResponse, error)
 }
 
-type AutomationListDomainsResponse struct {
+type ListDomainsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -1395,27 +1395,27 @@ type AutomationListDomainsResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r AutomationListDomainsResponse) GetJSON200() *[]AutomationDomain {
+func (r ListDomainsResponse) GetJSON200() *[]AutomationDomain {
 	return r.JSON200
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationListDomainsResponse) GetJSON403() *Error {
+func (r ListDomainsResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSONDefault returns the response for an HTTP default `application/json` response
-func (r AutomationListDomainsResponse) GetJSONDefault() *Error {
+func (r ListDomainsResponse) GetJSONDefault() *Error {
 	return r.JSONDefault
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationListDomainsResponse) GetBody() []byte {
+func (r ListDomainsResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationListDomainsResponse) Status() string {
+func (r ListDomainsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1423,7 +1423,7 @@ func (r AutomationListDomainsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationListDomainsResponse) StatusCode() int {
+func (r ListDomainsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1431,14 +1431,14 @@ func (r AutomationListDomainsResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationListDomainsResponse) ContentType() string {
+func (r ListDomainsResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-type AutomationCreateOrUpdateDomainResponse struct {
+type UpsertDomainResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -1450,27 +1450,27 @@ type AutomationCreateOrUpdateDomainResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r AutomationCreateOrUpdateDomainResponse) GetJSON200() *AutomationDomain {
+func (r UpsertDomainResponse) GetJSON200() *AutomationDomain {
 	return r.JSON200
 }
 
 // GetJSON400 returns the response for an HTTP 400 `application/json` response
-func (r AutomationCreateOrUpdateDomainResponse) GetJSON400() *Error {
+func (r UpsertDomainResponse) GetJSON400() *Error {
 	return r.JSON400
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationCreateOrUpdateDomainResponse) GetJSON403() *Error {
+func (r UpsertDomainResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationCreateOrUpdateDomainResponse) GetBody() []byte {
+func (r UpsertDomainResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationCreateOrUpdateDomainResponse) Status() string {
+func (r UpsertDomainResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1478,7 +1478,7 @@ func (r AutomationCreateOrUpdateDomainResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationCreateOrUpdateDomainResponse) StatusCode() int {
+func (r UpsertDomainResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1486,14 +1486,14 @@ func (r AutomationCreateOrUpdateDomainResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationCreateOrUpdateDomainResponse) ContentType() string {
+func (r UpsertDomainResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-type AutomationDeleteDomainResponse struct {
+type DeleteDomainResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON403 the response for an HTTP 403 `application/json` response
@@ -1503,22 +1503,22 @@ type AutomationDeleteDomainResponse struct {
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationDeleteDomainResponse) GetJSON403() *Error {
+func (r DeleteDomainResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSONDefault returns the response for an HTTP default `application/json` response
-func (r AutomationDeleteDomainResponse) GetJSONDefault() *Error {
+func (r DeleteDomainResponse) GetJSONDefault() *Error {
 	return r.JSONDefault
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationDeleteDomainResponse) GetBody() []byte {
+func (r DeleteDomainResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationDeleteDomainResponse) Status() string {
+func (r DeleteDomainResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1526,7 +1526,7 @@ func (r AutomationDeleteDomainResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationDeleteDomainResponse) StatusCode() int {
+func (r DeleteDomainResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1534,14 +1534,14 @@ func (r AutomationDeleteDomainResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationDeleteDomainResponse) ContentType() string {
+func (r DeleteDomainResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-type AutomationGetDomainResponse struct {
+type GetDomainResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -1553,27 +1553,27 @@ type AutomationGetDomainResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r AutomationGetDomainResponse) GetJSON200() *AutomationDomain {
+func (r GetDomainResponse) GetJSON200() *AutomationDomain {
 	return r.JSON200
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationGetDomainResponse) GetJSON403() *Error {
+func (r GetDomainResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r AutomationGetDomainResponse) GetJSON404() *Error {
+func (r GetDomainResponse) GetJSON404() *Error {
 	return r.JSON404
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationGetDomainResponse) GetBody() []byte {
+func (r GetDomainResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationGetDomainResponse) Status() string {
+func (r GetDomainResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1581,7 +1581,7 @@ func (r AutomationGetDomainResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationGetDomainResponse) StatusCode() int {
+func (r GetDomainResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1589,97 +1589,97 @@ func (r AutomationGetDomainResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationGetDomainResponse) ContentType() string {
+func (r GetDomainResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-// AutomationListDomainsWithResponse List all domains
+// ListDomainsWithResponse List all domains
 //
 // Returns all security domains within the specified environment.
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /domains (the `AutomationListDomains` operationId).
-func (c *ClientWithResponses) AutomationListDomainsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*AutomationListDomainsResponse, error) {
-	rsp, err := c.AutomationListDomains(ctx, reqEditors...)
+// Corresponds with GET /domains (the `ListDomains` operationId).
+func (c *ClientWithResponses) ListDomainsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*ListDomainsResponse, error) {
+	rsp, err := c.ListDomains(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationListDomainsResponse(rsp)
+	return ParseListDomainsResponse(rsp)
 }
 
-// AutomationCreateOrUpdateDomainWithBodyWithResponse Create or update a domain
+// UpsertDomainWithBodyWithResponse Create or update a domain
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateDomainWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateDomainResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateDomainWithBody(ctx, contentType, body, reqEditors...)
+// Corresponds with PUT /domains (the `UpsertDomain` operationId).
+func (c *ClientWithResponses) UpsertDomainWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertDomainResponse, error) {
+	rsp, err := c.UpsertDomainWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationCreateOrUpdateDomainResponse(rsp)
+	return ParseUpsertDomainResponse(rsp)
 }
 
-// AutomationCreateOrUpdateDomainWithResponse Create or update a domain
+// UpsertDomainWithResponse Create or update a domain
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /domains (the `AutomationCreateOrUpdateDomain` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateDomainWithResponse(ctx context.Context, body AutomationCreateOrUpdateDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateDomainResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateDomain(ctx, body, reqEditors...)
+// Corresponds with PUT /domains (the `UpsertDomain` operationId).
+func (c *ClientWithResponses) UpsertDomainWithResponse(ctx context.Context, body UpsertDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertDomainResponse, error) {
+	rsp, err := c.UpsertDomain(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationCreateOrUpdateDomainResponse(rsp)
+	return ParseUpsertDomainResponse(rsp)
 }
 
-// AutomationDeleteDomainWithResponse Delete a domain
+// DeleteDomainWithResponse Delete a domain
 //
 // Deletes an Automation-managed domain. Deletion cascades to the domain's sub-resources (certificates, identity providers, and reporters). Deleting a domain that does not exist also returns 204.
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with DELETE /domains/{domainKey} (the `AutomationDeleteDomain` operationId).
-func (c *ClientWithResponses) AutomationDeleteDomainWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteDomainResponse, error) {
-	rsp, err := c.AutomationDeleteDomain(ctx, domainKey, reqEditors...)
+// Corresponds with DELETE /domains/{domainKey} (the `DeleteDomain` operationId).
+func (c *ClientWithResponses) DeleteDomainWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*DeleteDomainResponse, error) {
+	rsp, err := c.DeleteDomain(ctx, domainKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationDeleteDomainResponse(rsp)
+	return ParseDeleteDomainResponse(rsp)
 }
 
-// AutomationGetDomainWithResponse Get a domain
+// GetDomainWithResponse Get a domain
 //
 // Retrieves a single Automation-managed security domain by its key.
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /domains/{domainKey} (the `AutomationGetDomain` operationId).
-func (c *ClientWithResponses) AutomationGetDomainWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationGetDomainResponse, error) {
-	rsp, err := c.AutomationGetDomain(ctx, domainKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey} (the `GetDomain` operationId).
+func (c *ClientWithResponses) GetDomainWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*GetDomainResponse, error) {
+	rsp, err := c.GetDomain(ctx, domainKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationGetDomainResponse(rsp)
+	return ParseGetDomainResponse(rsp)
 }
 
-// ParseAutomationListDomainsResponse parses an HTTP response from a AutomationListDomainsWithResponse call
-func ParseAutomationListDomainsResponse(rsp *http.Response) (*AutomationListDomainsResponse, error) {
+// ParseListDomainsResponse parses an HTTP response from a ListDomainsWithResponse call
+func ParseListDomainsResponse(rsp *http.Response) (*ListDomainsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationListDomainsResponse{
+	response := &ListDomainsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1711,15 +1711,15 @@ func ParseAutomationListDomainsResponse(rsp *http.Response) (*AutomationListDoma
 	return response, nil
 }
 
-// ParseAutomationCreateOrUpdateDomainResponse parses an HTTP response from a AutomationCreateOrUpdateDomainWithResponse call
-func ParseAutomationCreateOrUpdateDomainResponse(rsp *http.Response) (*AutomationCreateOrUpdateDomainResponse, error) {
+// ParseUpsertDomainResponse parses an HTTP response from a UpsertDomainWithResponse call
+func ParseUpsertDomainResponse(rsp *http.Response) (*UpsertDomainResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationCreateOrUpdateDomainResponse{
+	response := &UpsertDomainResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1751,15 +1751,15 @@ func ParseAutomationCreateOrUpdateDomainResponse(rsp *http.Response) (*Automatio
 	return response, nil
 }
 
-// ParseAutomationDeleteDomainResponse parses an HTTP response from a AutomationDeleteDomainWithResponse call
-func ParseAutomationDeleteDomainResponse(rsp *http.Response) (*AutomationDeleteDomainResponse, error) {
+// ParseDeleteDomainResponse parses an HTTP response from a DeleteDomainWithResponse call
+func ParseDeleteDomainResponse(rsp *http.Response) (*DeleteDomainResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationDeleteDomainResponse{
+	response := &DeleteDomainResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1787,15 +1787,15 @@ func ParseAutomationDeleteDomainResponse(rsp *http.Response) (*AutomationDeleteD
 	return response, nil
 }
 
-// ParseAutomationGetDomainResponse parses an HTTP response from a AutomationGetDomainWithResponse call
-func ParseAutomationGetDomainResponse(rsp *http.Response) (*AutomationGetDomainResponse, error) {
+// ParseGetDomainResponse parses an HTTP response from a GetDomainWithResponse call
+func ParseGetDomainResponse(rsp *http.Response) (*GetDomainResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationGetDomainResponse{
+	response := &GetDomainResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

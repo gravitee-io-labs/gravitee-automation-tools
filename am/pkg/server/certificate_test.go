@@ -54,7 +54,7 @@ func TestListCertificatesSDK(t *testing.T) {
 	am.Certificates.Put(testCertificate())
 	client := newAMClient(t, srv)
 
-	res, err := client.Certificates.AutomationListCertificatesWithResponse(t.Context(), defaultDomainKey)
+	res, err := client.Certificates.ListCertificatesWithResponse(t.Context(), defaultDomainKey)
 	assertSDKOK(t, res, err, []certificate.Certificate{testCertificateSDK()})
 }
 
@@ -63,7 +63,7 @@ func TestGetCertificateSDK(t *testing.T) {
 	am.Certificates.Put(testCertificate())
 	client := newAMClient(t, srv)
 
-	res, err := client.Certificates.AutomationGetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
+	res, err := client.Certificates.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKOK(t, res, err, testCertificateSDK())
 }
 
@@ -71,7 +71,7 @@ func TestGetCertificate404SDK(t *testing.T) {
 	_, srv := createAMServer(t)
 	client := newAMClient(t, srv)
 
-	res, err := client.Certificates.AutomationGetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
+	res, err := client.Certificates.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDK404(t, res, err)
 }
 
@@ -80,10 +80,10 @@ func TestPutGetCertificateSDK(t *testing.T) {
 	client := newAMClient(t, srv)
 	body := testCertificateSDK()
 
-	put, err := client.Certificates.AutomationCreateOrUpdateCertificateWithResponse(t.Context(), defaultDomainKey, body)
+	put, err := client.Certificates.UpsertCertificateWithResponse(t.Context(), defaultDomainKey, body)
 	assertSDKOK(t, put, err, body)
 
-	get, err := client.Certificates.AutomationGetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
+	get, err := client.Certificates.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKOK(t, get, err, body)
 }
 
@@ -92,9 +92,9 @@ func TestDeleteCertificateSDK(t *testing.T) {
 	am.Certificates.Put(testCertificate())
 	client := newAMClient(t, srv)
 
-	del, err := client.Certificates.AutomationDeleteCertificateWithResponse(t.Context(), defaultDomainKey, "test")
+	del, err := client.Certificates.DeleteCertificateWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKNoContent(t, del, err)
 
-	get, err := client.Certificates.AutomationGetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
+	get, err := client.Certificates.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDK404(t, get, err)
 }

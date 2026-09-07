@@ -33,6 +33,54 @@ actions:
     - target: $.components.schemas.AutomationSamlSettings
       update:
         x-go-type-name: SamlSettings
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains"].get
+      update:
+        operationId: listDomains
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains"].put
+      update:
+        operationId: upsertDomain
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}"].get
+      update:
+        operationId: getDomain
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}"].delete
+      update:
+        operationId: deleteDomain
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates"].get
+      update:
+        operationId: listCertificates
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates"].put
+      update:
+        operationId: upsertCertificate
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey}"].get
+      update:
+        operationId: getCertificate
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey}"].delete
+      update:
+        operationId: deleteCertificate
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities"].get
+      update:
+        operationId: listIdentityProviders
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities"].put
+      update:
+        operationId: upsertIdentityProvider
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey}"].get
+      update:
+        operationId: getIdentityProvider
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey}"].delete
+      update:
+        operationId: deleteIdentityProvider
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters"].get
+      update:
+        operationId: listReporters
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters"].put
+      update:
+        operationId: upsertReporter
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey}"].get
+      update:
+        operationId: getReporter
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey}"].delete
+      update:
+        operationId: deleteReporter
     - target: $.servers[0]
       description: Bake org/env into the server so operations drop those path params
       update:

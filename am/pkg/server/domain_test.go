@@ -46,7 +46,7 @@ func TestListDomainsSDK(t *testing.T) {
 	am.Domains.Put(Domain{Key: "test", Name: "Test domain"})
 	client := newAMClient(t, srv)
 
-	res, err := client.Domains.AutomationListDomainsWithResponse(t.Context())
+	res, err := client.Domains.ListDomainsWithResponse(t.Context())
 	assertSDKOK(t, res, err, []domain.Domain{{Key: "test", Name: "Test domain"}})
 }
 
@@ -55,7 +55,7 @@ func TestGetDomainSDK(t *testing.T) {
 	am.Domains.Put(Domain{Key: "test", Name: "Test domain"})
 	client := newAMClient(t, srv)
 
-	res, err := client.Domains.AutomationGetDomainWithResponse(t.Context(), "test")
+	res, err := client.Domains.GetDomainWithResponse(t.Context(), "test")
 	assertSDKOK(t, res, err, domain.Domain{Key: "test", Name: "Test domain"})
 }
 
@@ -63,7 +63,7 @@ func TestGetDomain404SDK(t *testing.T) {
 	_, srv := createAMServer(t)
 	client := newAMClient(t, srv)
 
-	res, err := client.Domains.AutomationGetDomainWithResponse(t.Context(), "test")
+	res, err := client.Domains.GetDomainWithResponse(t.Context(), "test")
 	assertSDK404(t, res, err)
 }
 
@@ -72,10 +72,10 @@ func TestPutGetDomainSDK(t *testing.T) {
 	client := newAMClient(t, srv)
 	body := domain.Domain{Key: "test", Name: "Test domain"}
 
-	put, err := client.Domains.AutomationCreateOrUpdateDomainWithResponse(t.Context(), body)
+	put, err := client.Domains.UpsertDomainWithResponse(t.Context(), body)
 	assertSDKOK(t, put, err, body)
 
-	get, err := client.Domains.AutomationGetDomainWithResponse(t.Context(), "test")
+	get, err := client.Domains.GetDomainWithResponse(t.Context(), "test")
 	assertSDKOK(t, get, err, body)
 }
 
@@ -84,9 +84,9 @@ func TestDeleteDomainSDK(t *testing.T) {
 	am.Domains.Put(Domain{Key: "test", Name: "Test domain"})
 	client := newAMClient(t, srv)
 
-	del, err := client.Domains.AutomationDeleteDomainWithResponse(t.Context(), "test")
+	del, err := client.Domains.DeleteDomainWithResponse(t.Context(), "test")
 	assertSDKNoContent(t, del, err)
 
-	get, err := client.Domains.AutomationGetDomainWithResponse(t.Context(), "test")
+	get, err := client.Domains.GetDomainWithResponse(t.Context(), "test")
 	assertSDK404(t, get, err)
 }

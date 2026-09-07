@@ -1062,167 +1062,167 @@ type XssProtectionSettings struct {
 	Inherited *bool `json:"inherited,omitempty"`
 }
 
-// AutomationCreateOrUpdateDomainJSONRequestBody defines body for AutomationCreateOrUpdateDomain for application/json ContentType.
-type AutomationCreateOrUpdateDomainJSONRequestBody = AutomationDomain
+// UpsertDomainJSONRequestBody defines body for UpsertDomain for application/json ContentType.
+type UpsertDomainJSONRequestBody = AutomationDomain
 
-// AutomationCreateOrUpdateCertificateJSONRequestBody defines body for AutomationCreateOrUpdateCertificate for application/json ContentType.
-type AutomationCreateOrUpdateCertificateJSONRequestBody = AutomationCertificate
+// UpsertCertificateJSONRequestBody defines body for UpsertCertificate for application/json ContentType.
+type UpsertCertificateJSONRequestBody = AutomationCertificate
 
-// AutomationCreateOrUpdateIdentityProviderJSONRequestBody defines body for AutomationCreateOrUpdateIdentityProvider for application/json ContentType.
-type AutomationCreateOrUpdateIdentityProviderJSONRequestBody = AutomationIdentityProvider
+// UpsertIdentityProviderJSONRequestBody defines body for UpsertIdentityProvider for application/json ContentType.
+type UpsertIdentityProviderJSONRequestBody = AutomationIdentityProvider
 
-// AutomationCreateOrUpdateReporterJSONRequestBody defines body for AutomationCreateOrUpdateReporter for application/json ContentType.
-type AutomationCreateOrUpdateReporterJSONRequestBody = AutomationReporter
+// UpsertReporterJSONRequestBody defines body for UpsertReporter for application/json ContentType.
+type UpsertReporterJSONRequestBody = AutomationReporter
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// AutomationListDomains List all domains
+	// ListDomains List all domains
 	// (GET /organizations/{orgId}/environments/{envId}/domains)
-	AutomationListDomains(w http.ResponseWriter, r *http.Request, orgId string, envId string)
-	// AutomationCreateOrUpdateDomain Create or update a domain
+	ListDomains(w http.ResponseWriter, r *http.Request, orgId string, envId string)
+	// UpsertDomain Create or update a domain
 	// (PUT /organizations/{orgId}/environments/{envId}/domains)
-	AutomationCreateOrUpdateDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string)
-	// AutomationDeleteDomain Delete a domain
+	UpsertDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string)
+	// DeleteDomain Delete a domain
 	// (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey})
-	AutomationDeleteDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
-	// AutomationGetDomain Get a domain
+	DeleteDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
+	// GetDomain Get a domain
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey})
-	AutomationGetDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
-	// AutomationListCertificates List a domain's certificates
+	GetDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
+	// ListCertificates List a domain's certificates
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates)
-	AutomationListCertificates(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
-	// AutomationCreateOrUpdateCertificate Create or update a certificate
+	ListCertificates(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
+	// UpsertCertificate Create or update a certificate
 	// (PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates)
-	AutomationCreateOrUpdateCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
-	// AutomationDeleteCertificate Delete a certificate
+	UpsertCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
+	// DeleteCertificate Delete a certificate
 	// (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey})
-	AutomationDeleteCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, certKey string)
-	// AutomationGetCertificate Get a certificate
+	DeleteCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, certKey string)
+	// GetCertificate Get a certificate
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey})
-	AutomationGetCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, certKey string)
-	// AutomationListIdentityProviders List a domain's identity providers
+	GetCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, certKey string)
+	// ListIdentityProviders List a domain's identity providers
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities)
-	AutomationListIdentityProviders(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
-	// AutomationCreateOrUpdateIdentityProvider Create or update an identity provider
+	ListIdentityProviders(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
+	// UpsertIdentityProvider Create or update an identity provider
 	// (PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities)
-	AutomationCreateOrUpdateIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
-	// AutomationDeleteIdentityProvider Delete an identity provider
+	UpsertIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
+	// DeleteIdentityProvider Delete an identity provider
 	// (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey})
-	AutomationDeleteIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, identityKey string)
-	// AutomationGetIdentityProvider Get an identity provider
+	DeleteIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, identityKey string)
+	// GetIdentityProvider Get an identity provider
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey})
-	AutomationGetIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, identityKey string)
-	// AutomationListReporters List a domain's reporters
+	GetIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, identityKey string)
+	// ListReporters List a domain's reporters
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters)
-	AutomationListReporters(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
-	// AutomationCreateOrUpdateReporter Create or update a reporter
+	ListReporters(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
+	// UpsertReporter Create or update a reporter
 	// (PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters)
-	AutomationCreateOrUpdateReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
-	// AutomationDeleteReporter Delete a reporter
+	UpsertReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
+	// DeleteReporter Delete a reporter
 	// (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey})
-	AutomationDeleteReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, reporterKey string)
-	// AutomationGetReporter Get a reporter
+	DeleteReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, reporterKey string)
+	// GetReporter Get a reporter
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey})
-	AutomationGetReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, reporterKey string)
+	GetReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, reporterKey string)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
 
-// AutomationListDomains List all domains
+// ListDomains List all domains
 // (GET /organizations/{orgId}/environments/{envId}/domains)
-func (_ Unimplemented) AutomationListDomains(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
+func (_ Unimplemented) ListDomains(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationCreateOrUpdateDomain Create or update a domain
+// UpsertDomain Create or update a domain
 // (PUT /organizations/{orgId}/environments/{envId}/domains)
-func (_ Unimplemented) AutomationCreateOrUpdateDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
+func (_ Unimplemented) UpsertDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationDeleteDomain Delete a domain
+// DeleteDomain Delete a domain
 // (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey})
-func (_ Unimplemented) AutomationDeleteDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+func (_ Unimplemented) DeleteDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationGetDomain Get a domain
+// GetDomain Get a domain
 // (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey})
-func (_ Unimplemented) AutomationGetDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+func (_ Unimplemented) GetDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationListCertificates List a domain's certificates
+// ListCertificates List a domain's certificates
 // (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates)
-func (_ Unimplemented) AutomationListCertificates(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+func (_ Unimplemented) ListCertificates(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationCreateOrUpdateCertificate Create or update a certificate
+// UpsertCertificate Create or update a certificate
 // (PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates)
-func (_ Unimplemented) AutomationCreateOrUpdateCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+func (_ Unimplemented) UpsertCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationDeleteCertificate Delete a certificate
+// DeleteCertificate Delete a certificate
 // (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey})
-func (_ Unimplemented) AutomationDeleteCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, certKey string) {
+func (_ Unimplemented) DeleteCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, certKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationGetCertificate Get a certificate
+// GetCertificate Get a certificate
 // (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey})
-func (_ Unimplemented) AutomationGetCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, certKey string) {
+func (_ Unimplemented) GetCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, certKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationListIdentityProviders List a domain's identity providers
+// ListIdentityProviders List a domain's identity providers
 // (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities)
-func (_ Unimplemented) AutomationListIdentityProviders(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+func (_ Unimplemented) ListIdentityProviders(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationCreateOrUpdateIdentityProvider Create or update an identity provider
+// UpsertIdentityProvider Create or update an identity provider
 // (PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities)
-func (_ Unimplemented) AutomationCreateOrUpdateIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+func (_ Unimplemented) UpsertIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationDeleteIdentityProvider Delete an identity provider
+// DeleteIdentityProvider Delete an identity provider
 // (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey})
-func (_ Unimplemented) AutomationDeleteIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, identityKey string) {
+func (_ Unimplemented) DeleteIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, identityKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationGetIdentityProvider Get an identity provider
+// GetIdentityProvider Get an identity provider
 // (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey})
-func (_ Unimplemented) AutomationGetIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, identityKey string) {
+func (_ Unimplemented) GetIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, identityKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationListReporters List a domain's reporters
+// ListReporters List a domain's reporters
 // (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters)
-func (_ Unimplemented) AutomationListReporters(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+func (_ Unimplemented) ListReporters(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationCreateOrUpdateReporter Create or update a reporter
+// UpsertReporter Create or update a reporter
 // (PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters)
-func (_ Unimplemented) AutomationCreateOrUpdateReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+func (_ Unimplemented) UpsertReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationDeleteReporter Delete a reporter
+// DeleteReporter Delete a reporter
 // (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey})
-func (_ Unimplemented) AutomationDeleteReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, reporterKey string) {
+func (_ Unimplemented) DeleteReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, reporterKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// AutomationGetReporter Get a reporter
+// GetReporter Get a reporter
 // (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey})
-func (_ Unimplemented) AutomationGetReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, reporterKey string) {
+func (_ Unimplemented) GetReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, reporterKey string) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -1235,8 +1235,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// AutomationListDomains operation middleware
-func (siw *ServerInterfaceWrapper) AutomationListDomains(w http.ResponseWriter, r *http.Request) {
+// ListDomains operation middleware
+func (siw *ServerInterfaceWrapper) ListDomains(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1260,7 +1260,7 @@ func (siw *ServerInterfaceWrapper) AutomationListDomains(w http.ResponseWriter, 
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationListDomains(w, r, orgId, envId)
+		siw.Handler.ListDomains(w, r, orgId, envId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1270,8 +1270,8 @@ func (siw *ServerInterfaceWrapper) AutomationListDomains(w http.ResponseWriter, 
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationCreateOrUpdateDomain operation middleware
-func (siw *ServerInterfaceWrapper) AutomationCreateOrUpdateDomain(w http.ResponseWriter, r *http.Request) {
+// UpsertDomain operation middleware
+func (siw *ServerInterfaceWrapper) UpsertDomain(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1295,7 +1295,7 @@ func (siw *ServerInterfaceWrapper) AutomationCreateOrUpdateDomain(w http.Respons
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationCreateOrUpdateDomain(w, r, orgId, envId)
+		siw.Handler.UpsertDomain(w, r, orgId, envId)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1305,52 +1305,8 @@ func (siw *ServerInterfaceWrapper) AutomationCreateOrUpdateDomain(w http.Respons
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationDeleteDomain operation middleware
-func (siw *ServerInterfaceWrapper) AutomationDeleteDomain(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-	_ = err
-
-	// ------------- Path parameter "orgId" -------------
-	var orgId string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "orgId", chi.URLParam(r, "orgId"), &orgId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "orgId", Err: err})
-		return
-	}
-
-	// ------------- Path parameter "envId" -------------
-	var envId string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "envId", chi.URLParam(r, "envId"), &envId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "envId", Err: err})
-		return
-	}
-
-	// ------------- Path parameter "domainKey" -------------
-	var domainKey string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "domainKey", chi.URLParam(r, "domainKey"), &domainKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "domainKey", Err: err})
-		return
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationDeleteDomain(w, r, orgId, envId, domainKey)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// AutomationGetDomain operation middleware
-func (siw *ServerInterfaceWrapper) AutomationGetDomain(w http.ResponseWriter, r *http.Request) {
+// DeleteDomain operation middleware
+func (siw *ServerInterfaceWrapper) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1383,7 +1339,7 @@ func (siw *ServerInterfaceWrapper) AutomationGetDomain(w http.ResponseWriter, r 
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationGetDomain(w, r, orgId, envId, domainKey)
+		siw.Handler.DeleteDomain(w, r, orgId, envId, domainKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1393,8 +1349,8 @@ func (siw *ServerInterfaceWrapper) AutomationGetDomain(w http.ResponseWriter, r 
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationListCertificates operation middleware
-func (siw *ServerInterfaceWrapper) AutomationListCertificates(w http.ResponseWriter, r *http.Request) {
+// GetDomain operation middleware
+func (siw *ServerInterfaceWrapper) GetDomain(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1427,7 +1383,7 @@ func (siw *ServerInterfaceWrapper) AutomationListCertificates(w http.ResponseWri
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationListCertificates(w, r, orgId, envId, domainKey)
+		siw.Handler.GetDomain(w, r, orgId, envId, domainKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1437,8 +1393,8 @@ func (siw *ServerInterfaceWrapper) AutomationListCertificates(w http.ResponseWri
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationCreateOrUpdateCertificate operation middleware
-func (siw *ServerInterfaceWrapper) AutomationCreateOrUpdateCertificate(w http.ResponseWriter, r *http.Request) {
+// ListCertificates operation middleware
+func (siw *ServerInterfaceWrapper) ListCertificates(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1471,7 +1427,7 @@ func (siw *ServerInterfaceWrapper) AutomationCreateOrUpdateCertificate(w http.Re
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationCreateOrUpdateCertificate(w, r, orgId, envId, domainKey)
+		siw.Handler.ListCertificates(w, r, orgId, envId, domainKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1481,8 +1437,8 @@ func (siw *ServerInterfaceWrapper) AutomationCreateOrUpdateCertificate(w http.Re
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationDeleteCertificate operation middleware
-func (siw *ServerInterfaceWrapper) AutomationDeleteCertificate(w http.ResponseWriter, r *http.Request) {
+// UpsertCertificate operation middleware
+func (siw *ServerInterfaceWrapper) UpsertCertificate(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1514,17 +1470,8 @@ func (siw *ServerInterfaceWrapper) AutomationDeleteCertificate(w http.ResponseWr
 		return
 	}
 
-	// ------------- Path parameter "certKey" -------------
-	var certKey string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "certKey", chi.URLParam(r, "certKey"), &certKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "certKey", Err: err})
-		return
-	}
-
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationDeleteCertificate(w, r, orgId, envId, domainKey, certKey)
+		siw.Handler.UpsertCertificate(w, r, orgId, envId, domainKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1534,8 +1481,8 @@ func (siw *ServerInterfaceWrapper) AutomationDeleteCertificate(w http.ResponseWr
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationGetCertificate operation middleware
-func (siw *ServerInterfaceWrapper) AutomationGetCertificate(w http.ResponseWriter, r *http.Request) {
+// DeleteCertificate operation middleware
+func (siw *ServerInterfaceWrapper) DeleteCertificate(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1577,7 +1524,7 @@ func (siw *ServerInterfaceWrapper) AutomationGetCertificate(w http.ResponseWrite
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationGetCertificate(w, r, orgId, envId, domainKey, certKey)
+		siw.Handler.DeleteCertificate(w, r, orgId, envId, domainKey, certKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1587,8 +1534,61 @@ func (siw *ServerInterfaceWrapper) AutomationGetCertificate(w http.ResponseWrite
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationListIdentityProviders operation middleware
-func (siw *ServerInterfaceWrapper) AutomationListIdentityProviders(w http.ResponseWriter, r *http.Request) {
+// GetCertificate operation middleware
+func (siw *ServerInterfaceWrapper) GetCertificate(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "orgId" -------------
+	var orgId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "orgId", chi.URLParam(r, "orgId"), &orgId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "orgId", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "envId" -------------
+	var envId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "envId", chi.URLParam(r, "envId"), &envId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "envId", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "domainKey" -------------
+	var domainKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "domainKey", chi.URLParam(r, "domainKey"), &domainKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "domainKey", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "certKey" -------------
+	var certKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "certKey", chi.URLParam(r, "certKey"), &certKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "certKey", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetCertificate(w, r, orgId, envId, domainKey, certKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListIdentityProviders operation middleware
+func (siw *ServerInterfaceWrapper) ListIdentityProviders(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1621,7 +1621,7 @@ func (siw *ServerInterfaceWrapper) AutomationListIdentityProviders(w http.Respon
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationListIdentityProviders(w, r, orgId, envId, domainKey)
+		siw.Handler.ListIdentityProviders(w, r, orgId, envId, domainKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1631,8 +1631,8 @@ func (siw *ServerInterfaceWrapper) AutomationListIdentityProviders(w http.Respon
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationCreateOrUpdateIdentityProvider operation middleware
-func (siw *ServerInterfaceWrapper) AutomationCreateOrUpdateIdentityProvider(w http.ResponseWriter, r *http.Request) {
+// UpsertIdentityProvider operation middleware
+func (siw *ServerInterfaceWrapper) UpsertIdentityProvider(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1665,7 +1665,7 @@ func (siw *ServerInterfaceWrapper) AutomationCreateOrUpdateIdentityProvider(w ht
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationCreateOrUpdateIdentityProvider(w, r, orgId, envId, domainKey)
+		siw.Handler.UpsertIdentityProvider(w, r, orgId, envId, domainKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1675,8 +1675,8 @@ func (siw *ServerInterfaceWrapper) AutomationCreateOrUpdateIdentityProvider(w ht
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationDeleteIdentityProvider operation middleware
-func (siw *ServerInterfaceWrapper) AutomationDeleteIdentityProvider(w http.ResponseWriter, r *http.Request) {
+// DeleteIdentityProvider operation middleware
+func (siw *ServerInterfaceWrapper) DeleteIdentityProvider(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1718,7 +1718,7 @@ func (siw *ServerInterfaceWrapper) AutomationDeleteIdentityProvider(w http.Respo
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationDeleteIdentityProvider(w, r, orgId, envId, domainKey, identityKey)
+		siw.Handler.DeleteIdentityProvider(w, r, orgId, envId, domainKey, identityKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1728,8 +1728,8 @@ func (siw *ServerInterfaceWrapper) AutomationDeleteIdentityProvider(w http.Respo
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationGetIdentityProvider operation middleware
-func (siw *ServerInterfaceWrapper) AutomationGetIdentityProvider(w http.ResponseWriter, r *http.Request) {
+// GetIdentityProvider operation middleware
+func (siw *ServerInterfaceWrapper) GetIdentityProvider(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1771,7 +1771,7 @@ func (siw *ServerInterfaceWrapper) AutomationGetIdentityProvider(w http.Response
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationGetIdentityProvider(w, r, orgId, envId, domainKey, identityKey)
+		siw.Handler.GetIdentityProvider(w, r, orgId, envId, domainKey, identityKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1781,8 +1781,8 @@ func (siw *ServerInterfaceWrapper) AutomationGetIdentityProvider(w http.Response
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationListReporters operation middleware
-func (siw *ServerInterfaceWrapper) AutomationListReporters(w http.ResponseWriter, r *http.Request) {
+// ListReporters operation middleware
+func (siw *ServerInterfaceWrapper) ListReporters(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1815,7 +1815,7 @@ func (siw *ServerInterfaceWrapper) AutomationListReporters(w http.ResponseWriter
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationListReporters(w, r, orgId, envId, domainKey)
+		siw.Handler.ListReporters(w, r, orgId, envId, domainKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1825,8 +1825,8 @@ func (siw *ServerInterfaceWrapper) AutomationListReporters(w http.ResponseWriter
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationCreateOrUpdateReporter operation middleware
-func (siw *ServerInterfaceWrapper) AutomationCreateOrUpdateReporter(w http.ResponseWriter, r *http.Request) {
+// UpsertReporter operation middleware
+func (siw *ServerInterfaceWrapper) UpsertReporter(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1859,7 +1859,7 @@ func (siw *ServerInterfaceWrapper) AutomationCreateOrUpdateReporter(w http.Respo
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationCreateOrUpdateReporter(w, r, orgId, envId, domainKey)
+		siw.Handler.UpsertReporter(w, r, orgId, envId, domainKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1869,61 +1869,8 @@ func (siw *ServerInterfaceWrapper) AutomationCreateOrUpdateReporter(w http.Respo
 	handler.ServeHTTP(w, r)
 }
 
-// AutomationDeleteReporter operation middleware
-func (siw *ServerInterfaceWrapper) AutomationDeleteReporter(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-	_ = err
-
-	// ------------- Path parameter "orgId" -------------
-	var orgId string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "orgId", chi.URLParam(r, "orgId"), &orgId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "orgId", Err: err})
-		return
-	}
-
-	// ------------- Path parameter "envId" -------------
-	var envId string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "envId", chi.URLParam(r, "envId"), &envId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "envId", Err: err})
-		return
-	}
-
-	// ------------- Path parameter "domainKey" -------------
-	var domainKey string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "domainKey", chi.URLParam(r, "domainKey"), &domainKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "domainKey", Err: err})
-		return
-	}
-
-	// ------------- Path parameter "reporterKey" -------------
-	var reporterKey string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "reporterKey", chi.URLParam(r, "reporterKey"), &reporterKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "reporterKey", Err: err})
-		return
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationDeleteReporter(w, r, orgId, envId, domainKey, reporterKey)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// AutomationGetReporter operation middleware
-func (siw *ServerInterfaceWrapper) AutomationGetReporter(w http.ResponseWriter, r *http.Request) {
+// DeleteReporter operation middleware
+func (siw *ServerInterfaceWrapper) DeleteReporter(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1965,7 +1912,60 @@ func (siw *ServerInterfaceWrapper) AutomationGetReporter(w http.ResponseWriter, 
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AutomationGetReporter(w, r, orgId, envId, domainKey, reporterKey)
+		siw.Handler.DeleteReporter(w, r, orgId, envId, domainKey, reporterKey)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetReporter operation middleware
+func (siw *ServerInterfaceWrapper) GetReporter(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "orgId" -------------
+	var orgId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "orgId", chi.URLParam(r, "orgId"), &orgId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "orgId", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "envId" -------------
+	var envId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "envId", chi.URLParam(r, "envId"), &envId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "envId", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "domainKey" -------------
+	var domainKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "domainKey", chi.URLParam(r, "domainKey"), &domainKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "domainKey", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "reporterKey" -------------
+	var reporterKey string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "reporterKey", chi.URLParam(r, "reporterKey"), &reporterKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "reporterKey", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetReporter(w, r, orgId, envId, domainKey, reporterKey)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -2089,69 +2089,69 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains", wrapper.AutomationListDomains)
+		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains", wrapper.ListDomains)
 	})
 	r.Group(func(r chi.Router) {
-		r.Put(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains", wrapper.AutomationCreateOrUpdateDomain)
+		r.Put(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains", wrapper.UpsertDomain)
 	})
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}", wrapper.AutomationDeleteDomain)
+		r.Delete(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}", wrapper.DeleteDomain)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}", wrapper.AutomationGetDomain)
+		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}", wrapper.GetDomain)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates", wrapper.AutomationListCertificates)
+		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates", wrapper.ListCertificates)
 	})
 	r.Group(func(r chi.Router) {
-		r.Put(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates", wrapper.AutomationCreateOrUpdateCertificate)
+		r.Put(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates", wrapper.UpsertCertificate)
 	})
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey}", wrapper.AutomationDeleteCertificate)
+		r.Delete(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey}", wrapper.DeleteCertificate)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey}", wrapper.AutomationGetCertificate)
+		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey}", wrapper.GetCertificate)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities", wrapper.AutomationListIdentityProviders)
+		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities", wrapper.ListIdentityProviders)
 	})
 	r.Group(func(r chi.Router) {
-		r.Put(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities", wrapper.AutomationCreateOrUpdateIdentityProvider)
+		r.Put(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities", wrapper.UpsertIdentityProvider)
 	})
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey}", wrapper.AutomationDeleteIdentityProvider)
+		r.Delete(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey}", wrapper.DeleteIdentityProvider)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey}", wrapper.AutomationGetIdentityProvider)
+		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey}", wrapper.GetIdentityProvider)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters", wrapper.AutomationListReporters)
+		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters", wrapper.ListReporters)
 	})
 	r.Group(func(r chi.Router) {
-		r.Put(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters", wrapper.AutomationCreateOrUpdateReporter)
+		r.Put(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters", wrapper.UpsertReporter)
 	})
 	r.Group(func(r chi.Router) {
-		r.Delete(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey}", wrapper.AutomationDeleteReporter)
+		r.Delete(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey}", wrapper.DeleteReporter)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey}", wrapper.AutomationGetReporter)
+		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey}", wrapper.GetReporter)
 	})
 
 	return r
 }
 
-type AutomationListDomainsRequestObject struct {
+type ListDomainsRequestObject struct {
 	OrgId string `json:"orgId"`
 	EnvId string `json:"envId"`
 }
 
-type AutomationListDomainsResponseObject interface {
-	VisitAutomationListDomainsResponse(w http.ResponseWriter) error
+type ListDomainsResponseObject interface {
+	VisitListDomainsResponse(w http.ResponseWriter) error
 }
 
-type AutomationListDomains200JSONResponse []AutomationDomain
+type ListDomains200JSONResponse []AutomationDomain
 
-func (response AutomationListDomains200JSONResponse) VisitAutomationListDomainsResponse(w http.ResponseWriter) error {
+func (response ListDomains200JSONResponse) VisitListDomainsResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2163,9 +2163,9 @@ func (response AutomationListDomains200JSONResponse) VisitAutomationListDomainsR
 	return err
 }
 
-type AutomationListDomains403JSONResponse Error
+type ListDomains403JSONResponse Error
 
-func (response AutomationListDomains403JSONResponse) VisitAutomationListDomainsResponse(w http.ResponseWriter) error {
+func (response ListDomains403JSONResponse) VisitListDomainsResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2177,12 +2177,12 @@ func (response AutomationListDomains403JSONResponse) VisitAutomationListDomainsR
 	return err
 }
 
-type AutomationListDomainsdefaultJSONResponse struct {
+type ListDomainsdefaultJSONResponse struct {
 	Body       Error
 	StatusCode int
 }
 
-func (response AutomationListDomainsdefaultJSONResponse) VisitAutomationListDomainsResponse(w http.ResponseWriter) error {
+func (response ListDomainsdefaultJSONResponse) VisitListDomainsResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
@@ -2194,19 +2194,19 @@ func (response AutomationListDomainsdefaultJSONResponse) VisitAutomationListDoma
 	return err
 }
 
-type AutomationCreateOrUpdateDomainRequestObject struct {
+type UpsertDomainRequestObject struct {
 	OrgId string `json:"orgId"`
 	EnvId string `json:"envId"`
-	Body  *AutomationCreateOrUpdateDomainJSONRequestBody
+	Body  *UpsertDomainJSONRequestBody
 }
 
-type AutomationCreateOrUpdateDomainResponseObject interface {
-	VisitAutomationCreateOrUpdateDomainResponse(w http.ResponseWriter) error
+type UpsertDomainResponseObject interface {
+	VisitUpsertDomainResponse(w http.ResponseWriter) error
 }
 
-type AutomationCreateOrUpdateDomain200JSONResponse AutomationDomain
+type UpsertDomain200JSONResponse AutomationDomain
 
-func (response AutomationCreateOrUpdateDomain200JSONResponse) VisitAutomationCreateOrUpdateDomainResponse(w http.ResponseWriter) error {
+func (response UpsertDomain200JSONResponse) VisitUpsertDomainResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2218,9 +2218,9 @@ func (response AutomationCreateOrUpdateDomain200JSONResponse) VisitAutomationCre
 	return err
 }
 
-type AutomationCreateOrUpdateDomain400JSONResponse Error
+type UpsertDomain400JSONResponse Error
 
-func (response AutomationCreateOrUpdateDomain400JSONResponse) VisitAutomationCreateOrUpdateDomainResponse(w http.ResponseWriter) error {
+func (response UpsertDomain400JSONResponse) VisitUpsertDomainResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2232,9 +2232,9 @@ func (response AutomationCreateOrUpdateDomain400JSONResponse) VisitAutomationCre
 	return err
 }
 
-type AutomationCreateOrUpdateDomain403JSONResponse Error
+type UpsertDomain403JSONResponse Error
 
-func (response AutomationCreateOrUpdateDomain403JSONResponse) VisitAutomationCreateOrUpdateDomainResponse(w http.ResponseWriter) error {
+func (response UpsertDomain403JSONResponse) VisitUpsertDomainResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2246,27 +2246,27 @@ func (response AutomationCreateOrUpdateDomain403JSONResponse) VisitAutomationCre
 	return err
 }
 
-type AutomationDeleteDomainRequestObject struct {
+type DeleteDomainRequestObject struct {
 	OrgId     string `json:"orgId"`
 	EnvId     string `json:"envId"`
 	DomainKey string `json:"domainKey"`
 }
 
-type AutomationDeleteDomainResponseObject interface {
-	VisitAutomationDeleteDomainResponse(w http.ResponseWriter) error
+type DeleteDomainResponseObject interface {
+	VisitDeleteDomainResponse(w http.ResponseWriter) error
 }
 
-type AutomationDeleteDomain204Response struct {
+type DeleteDomain204Response struct {
 }
 
-func (response AutomationDeleteDomain204Response) VisitAutomationDeleteDomainResponse(w http.ResponseWriter) error {
+func (response DeleteDomain204Response) VisitDeleteDomainResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type AutomationDeleteDomain403JSONResponse Error
+type DeleteDomain403JSONResponse Error
 
-func (response AutomationDeleteDomain403JSONResponse) VisitAutomationDeleteDomainResponse(w http.ResponseWriter) error {
+func (response DeleteDomain403JSONResponse) VisitDeleteDomainResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2278,12 +2278,12 @@ func (response AutomationDeleteDomain403JSONResponse) VisitAutomationDeleteDomai
 	return err
 }
 
-type AutomationDeleteDomaindefaultJSONResponse struct {
+type DeleteDomaindefaultJSONResponse struct {
 	Body       Error
 	StatusCode int
 }
 
-func (response AutomationDeleteDomaindefaultJSONResponse) VisitAutomationDeleteDomainResponse(w http.ResponseWriter) error {
+func (response DeleteDomaindefaultJSONResponse) VisitDeleteDomainResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
@@ -2295,19 +2295,19 @@ func (response AutomationDeleteDomaindefaultJSONResponse) VisitAutomationDeleteD
 	return err
 }
 
-type AutomationGetDomainRequestObject struct {
+type GetDomainRequestObject struct {
 	OrgId     string `json:"orgId"`
 	EnvId     string `json:"envId"`
 	DomainKey string `json:"domainKey"`
 }
 
-type AutomationGetDomainResponseObject interface {
-	VisitAutomationGetDomainResponse(w http.ResponseWriter) error
+type GetDomainResponseObject interface {
+	VisitGetDomainResponse(w http.ResponseWriter) error
 }
 
-type AutomationGetDomain200JSONResponse AutomationDomain
+type GetDomain200JSONResponse AutomationDomain
 
-func (response AutomationGetDomain200JSONResponse) VisitAutomationGetDomainResponse(w http.ResponseWriter) error {
+func (response GetDomain200JSONResponse) VisitGetDomainResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2319,9 +2319,9 @@ func (response AutomationGetDomain200JSONResponse) VisitAutomationGetDomainRespo
 	return err
 }
 
-type AutomationGetDomain403JSONResponse Error
+type GetDomain403JSONResponse Error
 
-func (response AutomationGetDomain403JSONResponse) VisitAutomationGetDomainResponse(w http.ResponseWriter) error {
+func (response GetDomain403JSONResponse) VisitGetDomainResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2333,9 +2333,9 @@ func (response AutomationGetDomain403JSONResponse) VisitAutomationGetDomainRespo
 	return err
 }
 
-type AutomationGetDomain404JSONResponse Error
+type GetDomain404JSONResponse Error
 
-func (response AutomationGetDomain404JSONResponse) VisitAutomationGetDomainResponse(w http.ResponseWriter) error {
+func (response GetDomain404JSONResponse) VisitGetDomainResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2347,19 +2347,19 @@ func (response AutomationGetDomain404JSONResponse) VisitAutomationGetDomainRespo
 	return err
 }
 
-type AutomationListCertificatesRequestObject struct {
+type ListCertificatesRequestObject struct {
 	OrgId     string `json:"orgId"`
 	EnvId     string `json:"envId"`
 	DomainKey string `json:"domainKey"`
 }
 
-type AutomationListCertificatesResponseObject interface {
-	VisitAutomationListCertificatesResponse(w http.ResponseWriter) error
+type ListCertificatesResponseObject interface {
+	VisitListCertificatesResponse(w http.ResponseWriter) error
 }
 
-type AutomationListCertificates200JSONResponse []AutomationCertificate
+type ListCertificates200JSONResponse []AutomationCertificate
 
-func (response AutomationListCertificates200JSONResponse) VisitAutomationListCertificatesResponse(w http.ResponseWriter) error {
+func (response ListCertificates200JSONResponse) VisitListCertificatesResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2371,9 +2371,9 @@ func (response AutomationListCertificates200JSONResponse) VisitAutomationListCer
 	return err
 }
 
-type AutomationListCertificates403JSONResponse Error
+type ListCertificates403JSONResponse Error
 
-func (response AutomationListCertificates403JSONResponse) VisitAutomationListCertificatesResponse(w http.ResponseWriter) error {
+func (response ListCertificates403JSONResponse) VisitListCertificatesResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2385,9 +2385,9 @@ func (response AutomationListCertificates403JSONResponse) VisitAutomationListCer
 	return err
 }
 
-type AutomationListCertificates404JSONResponse Error
+type ListCertificates404JSONResponse Error
 
-func (response AutomationListCertificates404JSONResponse) VisitAutomationListCertificatesResponse(w http.ResponseWriter) error {
+func (response ListCertificates404JSONResponse) VisitListCertificatesResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2399,20 +2399,20 @@ func (response AutomationListCertificates404JSONResponse) VisitAutomationListCer
 	return err
 }
 
-type AutomationCreateOrUpdateCertificateRequestObject struct {
+type UpsertCertificateRequestObject struct {
 	OrgId     string `json:"orgId"`
 	EnvId     string `json:"envId"`
 	DomainKey string `json:"domainKey"`
-	Body      *AutomationCreateOrUpdateCertificateJSONRequestBody
+	Body      *UpsertCertificateJSONRequestBody
 }
 
-type AutomationCreateOrUpdateCertificateResponseObject interface {
-	VisitAutomationCreateOrUpdateCertificateResponse(w http.ResponseWriter) error
+type UpsertCertificateResponseObject interface {
+	VisitUpsertCertificateResponse(w http.ResponseWriter) error
 }
 
-type AutomationCreateOrUpdateCertificate200JSONResponse AutomationCertificate
+type UpsertCertificate200JSONResponse AutomationCertificate
 
-func (response AutomationCreateOrUpdateCertificate200JSONResponse) VisitAutomationCreateOrUpdateCertificateResponse(w http.ResponseWriter) error {
+func (response UpsertCertificate200JSONResponse) VisitUpsertCertificateResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2424,9 +2424,9 @@ func (response AutomationCreateOrUpdateCertificate200JSONResponse) VisitAutomati
 	return err
 }
 
-type AutomationCreateOrUpdateCertificate400JSONResponse Error
+type UpsertCertificate400JSONResponse Error
 
-func (response AutomationCreateOrUpdateCertificate400JSONResponse) VisitAutomationCreateOrUpdateCertificateResponse(w http.ResponseWriter) error {
+func (response UpsertCertificate400JSONResponse) VisitUpsertCertificateResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2438,9 +2438,9 @@ func (response AutomationCreateOrUpdateCertificate400JSONResponse) VisitAutomati
 	return err
 }
 
-type AutomationCreateOrUpdateCertificate403JSONResponse Error
+type UpsertCertificate403JSONResponse Error
 
-func (response AutomationCreateOrUpdateCertificate403JSONResponse) VisitAutomationCreateOrUpdateCertificateResponse(w http.ResponseWriter) error {
+func (response UpsertCertificate403JSONResponse) VisitUpsertCertificateResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2452,9 +2452,9 @@ func (response AutomationCreateOrUpdateCertificate403JSONResponse) VisitAutomati
 	return err
 }
 
-type AutomationCreateOrUpdateCertificate404JSONResponse Error
+type UpsertCertificate404JSONResponse Error
 
-func (response AutomationCreateOrUpdateCertificate404JSONResponse) VisitAutomationCreateOrUpdateCertificateResponse(w http.ResponseWriter) error {
+func (response UpsertCertificate404JSONResponse) VisitUpsertCertificateResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2466,28 +2466,28 @@ func (response AutomationCreateOrUpdateCertificate404JSONResponse) VisitAutomati
 	return err
 }
 
-type AutomationDeleteCertificateRequestObject struct {
+type DeleteCertificateRequestObject struct {
 	OrgId     string `json:"orgId"`
 	EnvId     string `json:"envId"`
 	DomainKey string `json:"domainKey"`
 	CertKey   string `json:"certKey"`
 }
 
-type AutomationDeleteCertificateResponseObject interface {
-	VisitAutomationDeleteCertificateResponse(w http.ResponseWriter) error
+type DeleteCertificateResponseObject interface {
+	VisitDeleteCertificateResponse(w http.ResponseWriter) error
 }
 
-type AutomationDeleteCertificate204Response struct {
+type DeleteCertificate204Response struct {
 }
 
-func (response AutomationDeleteCertificate204Response) VisitAutomationDeleteCertificateResponse(w http.ResponseWriter) error {
+func (response DeleteCertificate204Response) VisitDeleteCertificateResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type AutomationDeleteCertificate403JSONResponse Error
+type DeleteCertificate403JSONResponse Error
 
-func (response AutomationDeleteCertificate403JSONResponse) VisitAutomationDeleteCertificateResponse(w http.ResponseWriter) error {
+func (response DeleteCertificate403JSONResponse) VisitDeleteCertificateResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2499,12 +2499,12 @@ func (response AutomationDeleteCertificate403JSONResponse) VisitAutomationDelete
 	return err
 }
 
-type AutomationDeleteCertificatedefaultJSONResponse struct {
+type DeleteCertificatedefaultJSONResponse struct {
 	Body       Error
 	StatusCode int
 }
 
-func (response AutomationDeleteCertificatedefaultJSONResponse) VisitAutomationDeleteCertificateResponse(w http.ResponseWriter) error {
+func (response DeleteCertificatedefaultJSONResponse) VisitDeleteCertificateResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
@@ -2516,20 +2516,20 @@ func (response AutomationDeleteCertificatedefaultJSONResponse) VisitAutomationDe
 	return err
 }
 
-type AutomationGetCertificateRequestObject struct {
+type GetCertificateRequestObject struct {
 	OrgId     string `json:"orgId"`
 	EnvId     string `json:"envId"`
 	DomainKey string `json:"domainKey"`
 	CertKey   string `json:"certKey"`
 }
 
-type AutomationGetCertificateResponseObject interface {
-	VisitAutomationGetCertificateResponse(w http.ResponseWriter) error
+type GetCertificateResponseObject interface {
+	VisitGetCertificateResponse(w http.ResponseWriter) error
 }
 
-type AutomationGetCertificate200JSONResponse AutomationCertificate
+type GetCertificate200JSONResponse AutomationCertificate
 
-func (response AutomationGetCertificate200JSONResponse) VisitAutomationGetCertificateResponse(w http.ResponseWriter) error {
+func (response GetCertificate200JSONResponse) VisitGetCertificateResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2541,9 +2541,9 @@ func (response AutomationGetCertificate200JSONResponse) VisitAutomationGetCertif
 	return err
 }
 
-type AutomationGetCertificate403JSONResponse Error
+type GetCertificate403JSONResponse Error
 
-func (response AutomationGetCertificate403JSONResponse) VisitAutomationGetCertificateResponse(w http.ResponseWriter) error {
+func (response GetCertificate403JSONResponse) VisitGetCertificateResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2555,9 +2555,9 @@ func (response AutomationGetCertificate403JSONResponse) VisitAutomationGetCertif
 	return err
 }
 
-type AutomationGetCertificate404JSONResponse Error
+type GetCertificate404JSONResponse Error
 
-func (response AutomationGetCertificate404JSONResponse) VisitAutomationGetCertificateResponse(w http.ResponseWriter) error {
+func (response GetCertificate404JSONResponse) VisitGetCertificateResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2569,19 +2569,19 @@ func (response AutomationGetCertificate404JSONResponse) VisitAutomationGetCertif
 	return err
 }
 
-type AutomationListIdentityProvidersRequestObject struct {
+type ListIdentityProvidersRequestObject struct {
 	OrgId     string `json:"orgId"`
 	EnvId     string `json:"envId"`
 	DomainKey string `json:"domainKey"`
 }
 
-type AutomationListIdentityProvidersResponseObject interface {
-	VisitAutomationListIdentityProvidersResponse(w http.ResponseWriter) error
+type ListIdentityProvidersResponseObject interface {
+	VisitListIdentityProvidersResponse(w http.ResponseWriter) error
 }
 
-type AutomationListIdentityProviders200JSONResponse []AutomationIdentityProvider
+type ListIdentityProviders200JSONResponse []AutomationIdentityProvider
 
-func (response AutomationListIdentityProviders200JSONResponse) VisitAutomationListIdentityProvidersResponse(w http.ResponseWriter) error {
+func (response ListIdentityProviders200JSONResponse) VisitListIdentityProvidersResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2593,9 +2593,9 @@ func (response AutomationListIdentityProviders200JSONResponse) VisitAutomationLi
 	return err
 }
 
-type AutomationListIdentityProviders403JSONResponse Error
+type ListIdentityProviders403JSONResponse Error
 
-func (response AutomationListIdentityProviders403JSONResponse) VisitAutomationListIdentityProvidersResponse(w http.ResponseWriter) error {
+func (response ListIdentityProviders403JSONResponse) VisitListIdentityProvidersResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2607,9 +2607,9 @@ func (response AutomationListIdentityProviders403JSONResponse) VisitAutomationLi
 	return err
 }
 
-type AutomationListIdentityProviders404JSONResponse Error
+type ListIdentityProviders404JSONResponse Error
 
-func (response AutomationListIdentityProviders404JSONResponse) VisitAutomationListIdentityProvidersResponse(w http.ResponseWriter) error {
+func (response ListIdentityProviders404JSONResponse) VisitListIdentityProvidersResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2621,20 +2621,20 @@ func (response AutomationListIdentityProviders404JSONResponse) VisitAutomationLi
 	return err
 }
 
-type AutomationCreateOrUpdateIdentityProviderRequestObject struct {
+type UpsertIdentityProviderRequestObject struct {
 	OrgId     string `json:"orgId"`
 	EnvId     string `json:"envId"`
 	DomainKey string `json:"domainKey"`
-	Body      *AutomationCreateOrUpdateIdentityProviderJSONRequestBody
+	Body      *UpsertIdentityProviderJSONRequestBody
 }
 
-type AutomationCreateOrUpdateIdentityProviderResponseObject interface {
-	VisitAutomationCreateOrUpdateIdentityProviderResponse(w http.ResponseWriter) error
+type UpsertIdentityProviderResponseObject interface {
+	VisitUpsertIdentityProviderResponse(w http.ResponseWriter) error
 }
 
-type AutomationCreateOrUpdateIdentityProvider200JSONResponse AutomationIdentityProvider
+type UpsertIdentityProvider200JSONResponse AutomationIdentityProvider
 
-func (response AutomationCreateOrUpdateIdentityProvider200JSONResponse) VisitAutomationCreateOrUpdateIdentityProviderResponse(w http.ResponseWriter) error {
+func (response UpsertIdentityProvider200JSONResponse) VisitUpsertIdentityProviderResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2646,9 +2646,9 @@ func (response AutomationCreateOrUpdateIdentityProvider200JSONResponse) VisitAut
 	return err
 }
 
-type AutomationCreateOrUpdateIdentityProvider400JSONResponse Error
+type UpsertIdentityProvider400JSONResponse Error
 
-func (response AutomationCreateOrUpdateIdentityProvider400JSONResponse) VisitAutomationCreateOrUpdateIdentityProviderResponse(w http.ResponseWriter) error {
+func (response UpsertIdentityProvider400JSONResponse) VisitUpsertIdentityProviderResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2660,9 +2660,9 @@ func (response AutomationCreateOrUpdateIdentityProvider400JSONResponse) VisitAut
 	return err
 }
 
-type AutomationCreateOrUpdateIdentityProvider403JSONResponse Error
+type UpsertIdentityProvider403JSONResponse Error
 
-func (response AutomationCreateOrUpdateIdentityProvider403JSONResponse) VisitAutomationCreateOrUpdateIdentityProviderResponse(w http.ResponseWriter) error {
+func (response UpsertIdentityProvider403JSONResponse) VisitUpsertIdentityProviderResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2674,9 +2674,9 @@ func (response AutomationCreateOrUpdateIdentityProvider403JSONResponse) VisitAut
 	return err
 }
 
-type AutomationCreateOrUpdateIdentityProvider404JSONResponse Error
+type UpsertIdentityProvider404JSONResponse Error
 
-func (response AutomationCreateOrUpdateIdentityProvider404JSONResponse) VisitAutomationCreateOrUpdateIdentityProviderResponse(w http.ResponseWriter) error {
+func (response UpsertIdentityProvider404JSONResponse) VisitUpsertIdentityProviderResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2688,28 +2688,28 @@ func (response AutomationCreateOrUpdateIdentityProvider404JSONResponse) VisitAut
 	return err
 }
 
-type AutomationDeleteIdentityProviderRequestObject struct {
+type DeleteIdentityProviderRequestObject struct {
 	OrgId       string `json:"orgId"`
 	EnvId       string `json:"envId"`
 	DomainKey   string `json:"domainKey"`
 	IdentityKey string `json:"identityKey"`
 }
 
-type AutomationDeleteIdentityProviderResponseObject interface {
-	VisitAutomationDeleteIdentityProviderResponse(w http.ResponseWriter) error
+type DeleteIdentityProviderResponseObject interface {
+	VisitDeleteIdentityProviderResponse(w http.ResponseWriter) error
 }
 
-type AutomationDeleteIdentityProvider204Response struct {
+type DeleteIdentityProvider204Response struct {
 }
 
-func (response AutomationDeleteIdentityProvider204Response) VisitAutomationDeleteIdentityProviderResponse(w http.ResponseWriter) error {
+func (response DeleteIdentityProvider204Response) VisitDeleteIdentityProviderResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type AutomationDeleteIdentityProvider403JSONResponse Error
+type DeleteIdentityProvider403JSONResponse Error
 
-func (response AutomationDeleteIdentityProvider403JSONResponse) VisitAutomationDeleteIdentityProviderResponse(w http.ResponseWriter) error {
+func (response DeleteIdentityProvider403JSONResponse) VisitDeleteIdentityProviderResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2721,12 +2721,12 @@ func (response AutomationDeleteIdentityProvider403JSONResponse) VisitAutomationD
 	return err
 }
 
-type AutomationDeleteIdentityProviderdefaultJSONResponse struct {
+type DeleteIdentityProviderdefaultJSONResponse struct {
 	Body       Error
 	StatusCode int
 }
 
-func (response AutomationDeleteIdentityProviderdefaultJSONResponse) VisitAutomationDeleteIdentityProviderResponse(w http.ResponseWriter) error {
+func (response DeleteIdentityProviderdefaultJSONResponse) VisitDeleteIdentityProviderResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
@@ -2738,20 +2738,20 @@ func (response AutomationDeleteIdentityProviderdefaultJSONResponse) VisitAutomat
 	return err
 }
 
-type AutomationGetIdentityProviderRequestObject struct {
+type GetIdentityProviderRequestObject struct {
 	OrgId       string `json:"orgId"`
 	EnvId       string `json:"envId"`
 	DomainKey   string `json:"domainKey"`
 	IdentityKey string `json:"identityKey"`
 }
 
-type AutomationGetIdentityProviderResponseObject interface {
-	VisitAutomationGetIdentityProviderResponse(w http.ResponseWriter) error
+type GetIdentityProviderResponseObject interface {
+	VisitGetIdentityProviderResponse(w http.ResponseWriter) error
 }
 
-type AutomationGetIdentityProvider200JSONResponse AutomationIdentityProvider
+type GetIdentityProvider200JSONResponse AutomationIdentityProvider
 
-func (response AutomationGetIdentityProvider200JSONResponse) VisitAutomationGetIdentityProviderResponse(w http.ResponseWriter) error {
+func (response GetIdentityProvider200JSONResponse) VisitGetIdentityProviderResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2763,9 +2763,9 @@ func (response AutomationGetIdentityProvider200JSONResponse) VisitAutomationGetI
 	return err
 }
 
-type AutomationGetIdentityProvider403JSONResponse Error
+type GetIdentityProvider403JSONResponse Error
 
-func (response AutomationGetIdentityProvider403JSONResponse) VisitAutomationGetIdentityProviderResponse(w http.ResponseWriter) error {
+func (response GetIdentityProvider403JSONResponse) VisitGetIdentityProviderResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2777,9 +2777,9 @@ func (response AutomationGetIdentityProvider403JSONResponse) VisitAutomationGetI
 	return err
 }
 
-type AutomationGetIdentityProvider404JSONResponse Error
+type GetIdentityProvider404JSONResponse Error
 
-func (response AutomationGetIdentityProvider404JSONResponse) VisitAutomationGetIdentityProviderResponse(w http.ResponseWriter) error {
+func (response GetIdentityProvider404JSONResponse) VisitGetIdentityProviderResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2791,19 +2791,19 @@ func (response AutomationGetIdentityProvider404JSONResponse) VisitAutomationGetI
 	return err
 }
 
-type AutomationListReportersRequestObject struct {
+type ListReportersRequestObject struct {
 	OrgId     string `json:"orgId"`
 	EnvId     string `json:"envId"`
 	DomainKey string `json:"domainKey"`
 }
 
-type AutomationListReportersResponseObject interface {
-	VisitAutomationListReportersResponse(w http.ResponseWriter) error
+type ListReportersResponseObject interface {
+	VisitListReportersResponse(w http.ResponseWriter) error
 }
 
-type AutomationListReporters200JSONResponse []AutomationReporter
+type ListReporters200JSONResponse []AutomationReporter
 
-func (response AutomationListReporters200JSONResponse) VisitAutomationListReportersResponse(w http.ResponseWriter) error {
+func (response ListReporters200JSONResponse) VisitListReportersResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2815,9 +2815,9 @@ func (response AutomationListReporters200JSONResponse) VisitAutomationListReport
 	return err
 }
 
-type AutomationListReporters403JSONResponse Error
+type ListReporters403JSONResponse Error
 
-func (response AutomationListReporters403JSONResponse) VisitAutomationListReportersResponse(w http.ResponseWriter) error {
+func (response ListReporters403JSONResponse) VisitListReportersResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2829,9 +2829,9 @@ func (response AutomationListReporters403JSONResponse) VisitAutomationListReport
 	return err
 }
 
-type AutomationListReporters404JSONResponse Error
+type ListReporters404JSONResponse Error
 
-func (response AutomationListReporters404JSONResponse) VisitAutomationListReportersResponse(w http.ResponseWriter) error {
+func (response ListReporters404JSONResponse) VisitListReportersResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2843,20 +2843,20 @@ func (response AutomationListReporters404JSONResponse) VisitAutomationListReport
 	return err
 }
 
-type AutomationCreateOrUpdateReporterRequestObject struct {
+type UpsertReporterRequestObject struct {
 	OrgId     string `json:"orgId"`
 	EnvId     string `json:"envId"`
 	DomainKey string `json:"domainKey"`
-	Body      *AutomationCreateOrUpdateReporterJSONRequestBody
+	Body      *UpsertReporterJSONRequestBody
 }
 
-type AutomationCreateOrUpdateReporterResponseObject interface {
-	VisitAutomationCreateOrUpdateReporterResponse(w http.ResponseWriter) error
+type UpsertReporterResponseObject interface {
+	VisitUpsertReporterResponse(w http.ResponseWriter) error
 }
 
-type AutomationCreateOrUpdateReporter200JSONResponse AutomationReporter
+type UpsertReporter200JSONResponse AutomationReporter
 
-func (response AutomationCreateOrUpdateReporter200JSONResponse) VisitAutomationCreateOrUpdateReporterResponse(w http.ResponseWriter) error {
+func (response UpsertReporter200JSONResponse) VisitUpsertReporterResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2868,9 +2868,9 @@ func (response AutomationCreateOrUpdateReporter200JSONResponse) VisitAutomationC
 	return err
 }
 
-type AutomationCreateOrUpdateReporter400JSONResponse Error
+type UpsertReporter400JSONResponse Error
 
-func (response AutomationCreateOrUpdateReporter400JSONResponse) VisitAutomationCreateOrUpdateReporterResponse(w http.ResponseWriter) error {
+func (response UpsertReporter400JSONResponse) VisitUpsertReporterResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2882,9 +2882,9 @@ func (response AutomationCreateOrUpdateReporter400JSONResponse) VisitAutomationC
 	return err
 }
 
-type AutomationCreateOrUpdateReporter403JSONResponse Error
+type UpsertReporter403JSONResponse Error
 
-func (response AutomationCreateOrUpdateReporter403JSONResponse) VisitAutomationCreateOrUpdateReporterResponse(w http.ResponseWriter) error {
+func (response UpsertReporter403JSONResponse) VisitUpsertReporterResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2896,9 +2896,9 @@ func (response AutomationCreateOrUpdateReporter403JSONResponse) VisitAutomationC
 	return err
 }
 
-type AutomationCreateOrUpdateReporter404JSONResponse Error
+type UpsertReporter404JSONResponse Error
 
-func (response AutomationCreateOrUpdateReporter404JSONResponse) VisitAutomationCreateOrUpdateReporterResponse(w http.ResponseWriter) error {
+func (response UpsertReporter404JSONResponse) VisitUpsertReporterResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2910,28 +2910,28 @@ func (response AutomationCreateOrUpdateReporter404JSONResponse) VisitAutomationC
 	return err
 }
 
-type AutomationDeleteReporterRequestObject struct {
+type DeleteReporterRequestObject struct {
 	OrgId       string `json:"orgId"`
 	EnvId       string `json:"envId"`
 	DomainKey   string `json:"domainKey"`
 	ReporterKey string `json:"reporterKey"`
 }
 
-type AutomationDeleteReporterResponseObject interface {
-	VisitAutomationDeleteReporterResponse(w http.ResponseWriter) error
+type DeleteReporterResponseObject interface {
+	VisitDeleteReporterResponse(w http.ResponseWriter) error
 }
 
-type AutomationDeleteReporter204Response struct {
+type DeleteReporter204Response struct {
 }
 
-func (response AutomationDeleteReporter204Response) VisitAutomationDeleteReporterResponse(w http.ResponseWriter) error {
+func (response DeleteReporter204Response) VisitDeleteReporterResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type AutomationDeleteReporter403JSONResponse Error
+type DeleteReporter403JSONResponse Error
 
-func (response AutomationDeleteReporter403JSONResponse) VisitAutomationDeleteReporterResponse(w http.ResponseWriter) error {
+func (response DeleteReporter403JSONResponse) VisitDeleteReporterResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2943,12 +2943,12 @@ func (response AutomationDeleteReporter403JSONResponse) VisitAutomationDeleteRep
 	return err
 }
 
-type AutomationDeleteReporterdefaultJSONResponse struct {
+type DeleteReporterdefaultJSONResponse struct {
 	Body       Error
 	StatusCode int
 }
 
-func (response AutomationDeleteReporterdefaultJSONResponse) VisitAutomationDeleteReporterResponse(w http.ResponseWriter) error {
+func (response DeleteReporterdefaultJSONResponse) VisitDeleteReporterResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
@@ -2960,20 +2960,20 @@ func (response AutomationDeleteReporterdefaultJSONResponse) VisitAutomationDelet
 	return err
 }
 
-type AutomationGetReporterRequestObject struct {
+type GetReporterRequestObject struct {
 	OrgId       string `json:"orgId"`
 	EnvId       string `json:"envId"`
 	DomainKey   string `json:"domainKey"`
 	ReporterKey string `json:"reporterKey"`
 }
 
-type AutomationGetReporterResponseObject interface {
-	VisitAutomationGetReporterResponse(w http.ResponseWriter) error
+type GetReporterResponseObject interface {
+	VisitGetReporterResponse(w http.ResponseWriter) error
 }
 
-type AutomationGetReporter200JSONResponse AutomationReporter
+type GetReporter200JSONResponse AutomationReporter
 
-func (response AutomationGetReporter200JSONResponse) VisitAutomationGetReporterResponse(w http.ResponseWriter) error {
+func (response GetReporter200JSONResponse) VisitGetReporterResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2985,9 +2985,9 @@ func (response AutomationGetReporter200JSONResponse) VisitAutomationGetReporterR
 	return err
 }
 
-type AutomationGetReporter403JSONResponse Error
+type GetReporter403JSONResponse Error
 
-func (response AutomationGetReporter403JSONResponse) VisitAutomationGetReporterResponse(w http.ResponseWriter) error {
+func (response GetReporter403JSONResponse) VisitGetReporterResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -2999,9 +2999,9 @@ func (response AutomationGetReporter403JSONResponse) VisitAutomationGetReporterR
 	return err
 }
 
-type AutomationGetReporter404JSONResponse Error
+type GetReporter404JSONResponse Error
 
-func (response AutomationGetReporter404JSONResponse) VisitAutomationGetReporterResponse(w http.ResponseWriter) error {
+func (response GetReporter404JSONResponse) VisitGetReporterResponse(w http.ResponseWriter) error {
 
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(response); err != nil {
@@ -3015,54 +3015,54 @@ func (response AutomationGetReporter404JSONResponse) VisitAutomationGetReporterR
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
-	// AutomationListDomains List all domains
+	// ListDomains List all domains
 	// (GET /organizations/{orgId}/environments/{envId}/domains)
-	AutomationListDomains(ctx context.Context, request AutomationListDomainsRequestObject) (AutomationListDomainsResponseObject, error)
-	// AutomationCreateOrUpdateDomain Create or update a domain
+	ListDomains(ctx context.Context, request ListDomainsRequestObject) (ListDomainsResponseObject, error)
+	// UpsertDomain Create or update a domain
 	// (PUT /organizations/{orgId}/environments/{envId}/domains)
-	AutomationCreateOrUpdateDomain(ctx context.Context, request AutomationCreateOrUpdateDomainRequestObject) (AutomationCreateOrUpdateDomainResponseObject, error)
-	// AutomationDeleteDomain Delete a domain
+	UpsertDomain(ctx context.Context, request UpsertDomainRequestObject) (UpsertDomainResponseObject, error)
+	// DeleteDomain Delete a domain
 	// (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey})
-	AutomationDeleteDomain(ctx context.Context, request AutomationDeleteDomainRequestObject) (AutomationDeleteDomainResponseObject, error)
-	// AutomationGetDomain Get a domain
+	DeleteDomain(ctx context.Context, request DeleteDomainRequestObject) (DeleteDomainResponseObject, error)
+	// GetDomain Get a domain
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey})
-	AutomationGetDomain(ctx context.Context, request AutomationGetDomainRequestObject) (AutomationGetDomainResponseObject, error)
-	// AutomationListCertificates List a domain's certificates
+	GetDomain(ctx context.Context, request GetDomainRequestObject) (GetDomainResponseObject, error)
+	// ListCertificates List a domain's certificates
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates)
-	AutomationListCertificates(ctx context.Context, request AutomationListCertificatesRequestObject) (AutomationListCertificatesResponseObject, error)
-	// AutomationCreateOrUpdateCertificate Create or update a certificate
+	ListCertificates(ctx context.Context, request ListCertificatesRequestObject) (ListCertificatesResponseObject, error)
+	// UpsertCertificate Create or update a certificate
 	// (PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates)
-	AutomationCreateOrUpdateCertificate(ctx context.Context, request AutomationCreateOrUpdateCertificateRequestObject) (AutomationCreateOrUpdateCertificateResponseObject, error)
-	// AutomationDeleteCertificate Delete a certificate
+	UpsertCertificate(ctx context.Context, request UpsertCertificateRequestObject) (UpsertCertificateResponseObject, error)
+	// DeleteCertificate Delete a certificate
 	// (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey})
-	AutomationDeleteCertificate(ctx context.Context, request AutomationDeleteCertificateRequestObject) (AutomationDeleteCertificateResponseObject, error)
-	// AutomationGetCertificate Get a certificate
+	DeleteCertificate(ctx context.Context, request DeleteCertificateRequestObject) (DeleteCertificateResponseObject, error)
+	// GetCertificate Get a certificate
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey})
-	AutomationGetCertificate(ctx context.Context, request AutomationGetCertificateRequestObject) (AutomationGetCertificateResponseObject, error)
-	// AutomationListIdentityProviders List a domain's identity providers
+	GetCertificate(ctx context.Context, request GetCertificateRequestObject) (GetCertificateResponseObject, error)
+	// ListIdentityProviders List a domain's identity providers
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities)
-	AutomationListIdentityProviders(ctx context.Context, request AutomationListIdentityProvidersRequestObject) (AutomationListIdentityProvidersResponseObject, error)
-	// AutomationCreateOrUpdateIdentityProvider Create or update an identity provider
+	ListIdentityProviders(ctx context.Context, request ListIdentityProvidersRequestObject) (ListIdentityProvidersResponseObject, error)
+	// UpsertIdentityProvider Create or update an identity provider
 	// (PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities)
-	AutomationCreateOrUpdateIdentityProvider(ctx context.Context, request AutomationCreateOrUpdateIdentityProviderRequestObject) (AutomationCreateOrUpdateIdentityProviderResponseObject, error)
-	// AutomationDeleteIdentityProvider Delete an identity provider
+	UpsertIdentityProvider(ctx context.Context, request UpsertIdentityProviderRequestObject) (UpsertIdentityProviderResponseObject, error)
+	// DeleteIdentityProvider Delete an identity provider
 	// (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey})
-	AutomationDeleteIdentityProvider(ctx context.Context, request AutomationDeleteIdentityProviderRequestObject) (AutomationDeleteIdentityProviderResponseObject, error)
-	// AutomationGetIdentityProvider Get an identity provider
+	DeleteIdentityProvider(ctx context.Context, request DeleteIdentityProviderRequestObject) (DeleteIdentityProviderResponseObject, error)
+	// GetIdentityProvider Get an identity provider
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/identities/{identityKey})
-	AutomationGetIdentityProvider(ctx context.Context, request AutomationGetIdentityProviderRequestObject) (AutomationGetIdentityProviderResponseObject, error)
-	// AutomationListReporters List a domain's reporters
+	GetIdentityProvider(ctx context.Context, request GetIdentityProviderRequestObject) (GetIdentityProviderResponseObject, error)
+	// ListReporters List a domain's reporters
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters)
-	AutomationListReporters(ctx context.Context, request AutomationListReportersRequestObject) (AutomationListReportersResponseObject, error)
-	// AutomationCreateOrUpdateReporter Create or update a reporter
+	ListReporters(ctx context.Context, request ListReportersRequestObject) (ListReportersResponseObject, error)
+	// UpsertReporter Create or update a reporter
 	// (PUT /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters)
-	AutomationCreateOrUpdateReporter(ctx context.Context, request AutomationCreateOrUpdateReporterRequestObject) (AutomationCreateOrUpdateReporterResponseObject, error)
-	// AutomationDeleteReporter Delete a reporter
+	UpsertReporter(ctx context.Context, request UpsertReporterRequestObject) (UpsertReporterResponseObject, error)
+	// DeleteReporter Delete a reporter
 	// (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey})
-	AutomationDeleteReporter(ctx context.Context, request AutomationDeleteReporterRequestObject) (AutomationDeleteReporterResponseObject, error)
-	// AutomationGetReporter Get a reporter
+	DeleteReporter(ctx context.Context, request DeleteReporterRequestObject) (DeleteReporterResponseObject, error)
+	// GetReporter Get a reporter
 	// (GET /organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey})
-	AutomationGetReporter(ctx context.Context, request AutomationGetReporterRequestObject) (AutomationGetReporterResponseObject, error)
+	GetReporter(ctx context.Context, request GetReporterRequestObject) (GetReporterResponseObject, error)
 }
 
 type StrictHandlerFunc func(ctx context.Context, w http.ResponseWriter, r *http.Request, request any) (any, error)
@@ -3104,26 +3104,26 @@ type strictHandler struct {
 	options     StrictHTTPServerOptions
 }
 
-// AutomationListDomains operation middleware
-func (sh *strictHandler) AutomationListDomains(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
-	var request AutomationListDomainsRequestObject
+// ListDomains operation middleware
+func (sh *strictHandler) ListDomains(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
+	var request ListDomainsRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationListDomains(ctx, request.(AutomationListDomainsRequestObject))
+		return sh.ssi.ListDomains(ctx, request.(ListDomainsRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationListDomains")
+		handler = middleware(handler, "ListDomains")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationListDomainsResponseObject); ok {
-		if err := validResponse.VisitAutomationListDomainsResponse(w); err != nil {
+	} else if validResponse, ok := response.(ListDomainsResponseObject); ok {
+		if err := validResponse.VisitListDomainsResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3131,14 +3131,14 @@ func (sh *strictHandler) AutomationListDomains(w http.ResponseWriter, r *http.Re
 	}
 }
 
-// AutomationCreateOrUpdateDomain operation middleware
-func (sh *strictHandler) AutomationCreateOrUpdateDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
-	var request AutomationCreateOrUpdateDomainRequestObject
+// UpsertDomain operation middleware
+func (sh *strictHandler) UpsertDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
+	var request UpsertDomainRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
 
-	var body AutomationCreateOrUpdateDomainJSONRequestBody
+	var body UpsertDomainJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -3146,18 +3146,18 @@ func (sh *strictHandler) AutomationCreateOrUpdateDomain(w http.ResponseWriter, r
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationCreateOrUpdateDomain(ctx, request.(AutomationCreateOrUpdateDomainRequestObject))
+		return sh.ssi.UpsertDomain(ctx, request.(UpsertDomainRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationCreateOrUpdateDomain")
+		handler = middleware(handler, "UpsertDomain")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationCreateOrUpdateDomainResponseObject); ok {
-		if err := validResponse.VisitAutomationCreateOrUpdateDomainResponse(w); err != nil {
+	} else if validResponse, ok := response.(UpsertDomainResponseObject); ok {
+		if err := validResponse.VisitUpsertDomainResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3165,27 +3165,27 @@ func (sh *strictHandler) AutomationCreateOrUpdateDomain(w http.ResponseWriter, r
 	}
 }
 
-// AutomationDeleteDomain operation middleware
-func (sh *strictHandler) AutomationDeleteDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
-	var request AutomationDeleteDomainRequestObject
+// DeleteDomain operation middleware
+func (sh *strictHandler) DeleteDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+	var request DeleteDomainRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
 	request.DomainKey = domainKey
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationDeleteDomain(ctx, request.(AutomationDeleteDomainRequestObject))
+		return sh.ssi.DeleteDomain(ctx, request.(DeleteDomainRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationDeleteDomain")
+		handler = middleware(handler, "DeleteDomain")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationDeleteDomainResponseObject); ok {
-		if err := validResponse.VisitAutomationDeleteDomainResponse(w); err != nil {
+	} else if validResponse, ok := response.(DeleteDomainResponseObject); ok {
+		if err := validResponse.VisitDeleteDomainResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3193,27 +3193,27 @@ func (sh *strictHandler) AutomationDeleteDomain(w http.ResponseWriter, r *http.R
 	}
 }
 
-// AutomationGetDomain operation middleware
-func (sh *strictHandler) AutomationGetDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
-	var request AutomationGetDomainRequestObject
+// GetDomain operation middleware
+func (sh *strictHandler) GetDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+	var request GetDomainRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
 	request.DomainKey = domainKey
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationGetDomain(ctx, request.(AutomationGetDomainRequestObject))
+		return sh.ssi.GetDomain(ctx, request.(GetDomainRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationGetDomain")
+		handler = middleware(handler, "GetDomain")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationGetDomainResponseObject); ok {
-		if err := validResponse.VisitAutomationGetDomainResponse(w); err != nil {
+	} else if validResponse, ok := response.(GetDomainResponseObject); ok {
+		if err := validResponse.VisitGetDomainResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3221,27 +3221,27 @@ func (sh *strictHandler) AutomationGetDomain(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-// AutomationListCertificates operation middleware
-func (sh *strictHandler) AutomationListCertificates(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
-	var request AutomationListCertificatesRequestObject
+// ListCertificates operation middleware
+func (sh *strictHandler) ListCertificates(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+	var request ListCertificatesRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
 	request.DomainKey = domainKey
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationListCertificates(ctx, request.(AutomationListCertificatesRequestObject))
+		return sh.ssi.ListCertificates(ctx, request.(ListCertificatesRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationListCertificates")
+		handler = middleware(handler, "ListCertificates")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationListCertificatesResponseObject); ok {
-		if err := validResponse.VisitAutomationListCertificatesResponse(w); err != nil {
+	} else if validResponse, ok := response.(ListCertificatesResponseObject); ok {
+		if err := validResponse.VisitListCertificatesResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3249,15 +3249,15 @@ func (sh *strictHandler) AutomationListCertificates(w http.ResponseWriter, r *ht
 	}
 }
 
-// AutomationCreateOrUpdateCertificate operation middleware
-func (sh *strictHandler) AutomationCreateOrUpdateCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
-	var request AutomationCreateOrUpdateCertificateRequestObject
+// UpsertCertificate operation middleware
+func (sh *strictHandler) UpsertCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+	var request UpsertCertificateRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
 	request.DomainKey = domainKey
 
-	var body AutomationCreateOrUpdateCertificateJSONRequestBody
+	var body UpsertCertificateJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -3265,18 +3265,18 @@ func (sh *strictHandler) AutomationCreateOrUpdateCertificate(w http.ResponseWrit
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationCreateOrUpdateCertificate(ctx, request.(AutomationCreateOrUpdateCertificateRequestObject))
+		return sh.ssi.UpsertCertificate(ctx, request.(UpsertCertificateRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationCreateOrUpdateCertificate")
+		handler = middleware(handler, "UpsertCertificate")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationCreateOrUpdateCertificateResponseObject); ok {
-		if err := validResponse.VisitAutomationCreateOrUpdateCertificateResponse(w); err != nil {
+	} else if validResponse, ok := response.(UpsertCertificateResponseObject); ok {
+		if err := validResponse.VisitUpsertCertificateResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3284,9 +3284,9 @@ func (sh *strictHandler) AutomationCreateOrUpdateCertificate(w http.ResponseWrit
 	}
 }
 
-// AutomationDeleteCertificate operation middleware
-func (sh *strictHandler) AutomationDeleteCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, certKey string) {
-	var request AutomationDeleteCertificateRequestObject
+// DeleteCertificate operation middleware
+func (sh *strictHandler) DeleteCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, certKey string) {
+	var request DeleteCertificateRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
@@ -3294,18 +3294,18 @@ func (sh *strictHandler) AutomationDeleteCertificate(w http.ResponseWriter, r *h
 	request.CertKey = certKey
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationDeleteCertificate(ctx, request.(AutomationDeleteCertificateRequestObject))
+		return sh.ssi.DeleteCertificate(ctx, request.(DeleteCertificateRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationDeleteCertificate")
+		handler = middleware(handler, "DeleteCertificate")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationDeleteCertificateResponseObject); ok {
-		if err := validResponse.VisitAutomationDeleteCertificateResponse(w); err != nil {
+	} else if validResponse, ok := response.(DeleteCertificateResponseObject); ok {
+		if err := validResponse.VisitDeleteCertificateResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3313,9 +3313,9 @@ func (sh *strictHandler) AutomationDeleteCertificate(w http.ResponseWriter, r *h
 	}
 }
 
-// AutomationGetCertificate operation middleware
-func (sh *strictHandler) AutomationGetCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, certKey string) {
-	var request AutomationGetCertificateRequestObject
+// GetCertificate operation middleware
+func (sh *strictHandler) GetCertificate(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, certKey string) {
+	var request GetCertificateRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
@@ -3323,18 +3323,18 @@ func (sh *strictHandler) AutomationGetCertificate(w http.ResponseWriter, r *http
 	request.CertKey = certKey
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationGetCertificate(ctx, request.(AutomationGetCertificateRequestObject))
+		return sh.ssi.GetCertificate(ctx, request.(GetCertificateRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationGetCertificate")
+		handler = middleware(handler, "GetCertificate")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationGetCertificateResponseObject); ok {
-		if err := validResponse.VisitAutomationGetCertificateResponse(w); err != nil {
+	} else if validResponse, ok := response.(GetCertificateResponseObject); ok {
+		if err := validResponse.VisitGetCertificateResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3342,27 +3342,27 @@ func (sh *strictHandler) AutomationGetCertificate(w http.ResponseWriter, r *http
 	}
 }
 
-// AutomationListIdentityProviders operation middleware
-func (sh *strictHandler) AutomationListIdentityProviders(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
-	var request AutomationListIdentityProvidersRequestObject
+// ListIdentityProviders operation middleware
+func (sh *strictHandler) ListIdentityProviders(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+	var request ListIdentityProvidersRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
 	request.DomainKey = domainKey
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationListIdentityProviders(ctx, request.(AutomationListIdentityProvidersRequestObject))
+		return sh.ssi.ListIdentityProviders(ctx, request.(ListIdentityProvidersRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationListIdentityProviders")
+		handler = middleware(handler, "ListIdentityProviders")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationListIdentityProvidersResponseObject); ok {
-		if err := validResponse.VisitAutomationListIdentityProvidersResponse(w); err != nil {
+	} else if validResponse, ok := response.(ListIdentityProvidersResponseObject); ok {
+		if err := validResponse.VisitListIdentityProvidersResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3370,15 +3370,15 @@ func (sh *strictHandler) AutomationListIdentityProviders(w http.ResponseWriter, 
 	}
 }
 
-// AutomationCreateOrUpdateIdentityProvider operation middleware
-func (sh *strictHandler) AutomationCreateOrUpdateIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
-	var request AutomationCreateOrUpdateIdentityProviderRequestObject
+// UpsertIdentityProvider operation middleware
+func (sh *strictHandler) UpsertIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+	var request UpsertIdentityProviderRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
 	request.DomainKey = domainKey
 
-	var body AutomationCreateOrUpdateIdentityProviderJSONRequestBody
+	var body UpsertIdentityProviderJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -3386,18 +3386,18 @@ func (sh *strictHandler) AutomationCreateOrUpdateIdentityProvider(w http.Respons
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationCreateOrUpdateIdentityProvider(ctx, request.(AutomationCreateOrUpdateIdentityProviderRequestObject))
+		return sh.ssi.UpsertIdentityProvider(ctx, request.(UpsertIdentityProviderRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationCreateOrUpdateIdentityProvider")
+		handler = middleware(handler, "UpsertIdentityProvider")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationCreateOrUpdateIdentityProviderResponseObject); ok {
-		if err := validResponse.VisitAutomationCreateOrUpdateIdentityProviderResponse(w); err != nil {
+	} else if validResponse, ok := response.(UpsertIdentityProviderResponseObject); ok {
+		if err := validResponse.VisitUpsertIdentityProviderResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3405,9 +3405,9 @@ func (sh *strictHandler) AutomationCreateOrUpdateIdentityProvider(w http.Respons
 	}
 }
 
-// AutomationDeleteIdentityProvider operation middleware
-func (sh *strictHandler) AutomationDeleteIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, identityKey string) {
-	var request AutomationDeleteIdentityProviderRequestObject
+// DeleteIdentityProvider operation middleware
+func (sh *strictHandler) DeleteIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, identityKey string) {
+	var request DeleteIdentityProviderRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
@@ -3415,18 +3415,18 @@ func (sh *strictHandler) AutomationDeleteIdentityProvider(w http.ResponseWriter,
 	request.IdentityKey = identityKey
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationDeleteIdentityProvider(ctx, request.(AutomationDeleteIdentityProviderRequestObject))
+		return sh.ssi.DeleteIdentityProvider(ctx, request.(DeleteIdentityProviderRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationDeleteIdentityProvider")
+		handler = middleware(handler, "DeleteIdentityProvider")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationDeleteIdentityProviderResponseObject); ok {
-		if err := validResponse.VisitAutomationDeleteIdentityProviderResponse(w); err != nil {
+	} else if validResponse, ok := response.(DeleteIdentityProviderResponseObject); ok {
+		if err := validResponse.VisitDeleteIdentityProviderResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3434,9 +3434,9 @@ func (sh *strictHandler) AutomationDeleteIdentityProvider(w http.ResponseWriter,
 	}
 }
 
-// AutomationGetIdentityProvider operation middleware
-func (sh *strictHandler) AutomationGetIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, identityKey string) {
-	var request AutomationGetIdentityProviderRequestObject
+// GetIdentityProvider operation middleware
+func (sh *strictHandler) GetIdentityProvider(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, identityKey string) {
+	var request GetIdentityProviderRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
@@ -3444,18 +3444,18 @@ func (sh *strictHandler) AutomationGetIdentityProvider(w http.ResponseWriter, r 
 	request.IdentityKey = identityKey
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationGetIdentityProvider(ctx, request.(AutomationGetIdentityProviderRequestObject))
+		return sh.ssi.GetIdentityProvider(ctx, request.(GetIdentityProviderRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationGetIdentityProvider")
+		handler = middleware(handler, "GetIdentityProvider")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationGetIdentityProviderResponseObject); ok {
-		if err := validResponse.VisitAutomationGetIdentityProviderResponse(w); err != nil {
+	} else if validResponse, ok := response.(GetIdentityProviderResponseObject); ok {
+		if err := validResponse.VisitGetIdentityProviderResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3463,27 +3463,27 @@ func (sh *strictHandler) AutomationGetIdentityProvider(w http.ResponseWriter, r 
 	}
 }
 
-// AutomationListReporters operation middleware
-func (sh *strictHandler) AutomationListReporters(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
-	var request AutomationListReportersRequestObject
+// ListReporters operation middleware
+func (sh *strictHandler) ListReporters(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+	var request ListReportersRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
 	request.DomainKey = domainKey
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationListReporters(ctx, request.(AutomationListReportersRequestObject))
+		return sh.ssi.ListReporters(ctx, request.(ListReportersRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationListReporters")
+		handler = middleware(handler, "ListReporters")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationListReportersResponseObject); ok {
-		if err := validResponse.VisitAutomationListReportersResponse(w); err != nil {
+	} else if validResponse, ok := response.(ListReportersResponseObject); ok {
+		if err := validResponse.VisitListReportersResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3491,15 +3491,15 @@ func (sh *strictHandler) AutomationListReporters(w http.ResponseWriter, r *http.
 	}
 }
 
-// AutomationCreateOrUpdateReporter operation middleware
-func (sh *strictHandler) AutomationCreateOrUpdateReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
-	var request AutomationCreateOrUpdateReporterRequestObject
+// UpsertReporter operation middleware
+func (sh *strictHandler) UpsertReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string) {
+	var request UpsertReporterRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
 	request.DomainKey = domainKey
 
-	var body AutomationCreateOrUpdateReporterJSONRequestBody
+	var body UpsertReporterJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -3507,18 +3507,18 @@ func (sh *strictHandler) AutomationCreateOrUpdateReporter(w http.ResponseWriter,
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationCreateOrUpdateReporter(ctx, request.(AutomationCreateOrUpdateReporterRequestObject))
+		return sh.ssi.UpsertReporter(ctx, request.(UpsertReporterRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationCreateOrUpdateReporter")
+		handler = middleware(handler, "UpsertReporter")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationCreateOrUpdateReporterResponseObject); ok {
-		if err := validResponse.VisitAutomationCreateOrUpdateReporterResponse(w); err != nil {
+	} else if validResponse, ok := response.(UpsertReporterResponseObject); ok {
+		if err := validResponse.VisitUpsertReporterResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3526,9 +3526,9 @@ func (sh *strictHandler) AutomationCreateOrUpdateReporter(w http.ResponseWriter,
 	}
 }
 
-// AutomationDeleteReporter operation middleware
-func (sh *strictHandler) AutomationDeleteReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, reporterKey string) {
-	var request AutomationDeleteReporterRequestObject
+// DeleteReporter operation middleware
+func (sh *strictHandler) DeleteReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, reporterKey string) {
+	var request DeleteReporterRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
@@ -3536,18 +3536,18 @@ func (sh *strictHandler) AutomationDeleteReporter(w http.ResponseWriter, r *http
 	request.ReporterKey = reporterKey
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationDeleteReporter(ctx, request.(AutomationDeleteReporterRequestObject))
+		return sh.ssi.DeleteReporter(ctx, request.(DeleteReporterRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationDeleteReporter")
+		handler = middleware(handler, "DeleteReporter")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationDeleteReporterResponseObject); ok {
-		if err := validResponse.VisitAutomationDeleteReporterResponse(w); err != nil {
+	} else if validResponse, ok := response.(DeleteReporterResponseObject); ok {
+		if err := validResponse.VisitDeleteReporterResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -3555,9 +3555,9 @@ func (sh *strictHandler) AutomationDeleteReporter(w http.ResponseWriter, r *http
 	}
 }
 
-// AutomationGetReporter operation middleware
-func (sh *strictHandler) AutomationGetReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, reporterKey string) {
-	var request AutomationGetReporterRequestObject
+// GetReporter operation middleware
+func (sh *strictHandler) GetReporter(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string, reporterKey string) {
+	var request GetReporterRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
@@ -3565,18 +3565,18 @@ func (sh *strictHandler) AutomationGetReporter(w http.ResponseWriter, r *http.Re
 	request.ReporterKey = reporterKey
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.AutomationGetReporter(ctx, request.(AutomationGetReporterRequestObject))
+		return sh.ssi.GetReporter(ctx, request.(GetReporterRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "AutomationGetReporter")
+		handler = middleware(handler, "GetReporter")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(AutomationGetReporterResponseObject); ok {
-		if err := validResponse.VisitAutomationGetReporterResponse(w); err != nil {
+	} else if validResponse, ok := response.(GetReporterResponseObject); ok {
+		if err := validResponse.VisitGetReporterResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

@@ -113,8 +113,8 @@ type Error struct {
 	Message *string `json:"message,omitempty"`
 }
 
-// AutomationCreateOrUpdateIdentityProviderJSONRequestBody defines body for AutomationCreateOrUpdateIdentityProvider for application/json ContentType.
-type AutomationCreateOrUpdateIdentityProviderJSONRequestBody = AutomationIdentityProvider
+// UpsertIdentityProviderJSONRequestBody defines body for UpsertIdentityProvider for application/json ContentType.
+type UpsertIdentityProviderJSONRequestBody = AutomationIdentityProvider
 
 // RequestEditorFn is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -190,53 +190,53 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 // The interface specification for the client above.
 type ClientInterface interface {
 
-	// AutomationListIdentityProviders List a domain's identity providers
+	// ListIdentityProviders List a domain's identity providers
 	//
 	// Returns all identity providers managed by the Automation API under the domain. Identity providers created outside the Automation API are not returned.
 	//
-	// Corresponds with GET /domains/{domainKey}/identities (the `AutomationListIdentityProviders` operationId).
-	AutomationListIdentityProviders(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey}/identities (the `ListIdentityProviders` operationId).
+	ListIdentityProviders(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationCreateOrUpdateIdentityProviderWithBody Create or update an identity provider
+	// UpsertIdentityProviderWithBody Create or update an identity provider
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
 	//
 	// Takes any type of body and a specified content type.
 	//
-	// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-	AutomationCreateOrUpdateIdentityProviderWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
+	UpsertIdentityProviderWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationCreateOrUpdateIdentityProvider Create or update an identity provider
+	// UpsertIdentityProvider Create or update an identity provider
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
 	//
 	// Takes a body of the `application/json` content type.
 	//
-	// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-	AutomationCreateOrUpdateIdentityProvider(ctx context.Context, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
+	UpsertIdentityProvider(ctx context.Context, domainKey string, body UpsertIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationDeleteIdentityProvider Delete an identity provider
+	// DeleteIdentityProvider Delete an identity provider
 	//
 	// Deletes an Automation-managed identity provider by its key. Deleting an identity provider that does not exist also returns 204.
 	//
-	// Corresponds with DELETE /domains/{domainKey}/identities/{identityKey} (the `AutomationDeleteIdentityProvider` operationId).
-	AutomationDeleteIdentityProvider(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with DELETE /domains/{domainKey}/identities/{identityKey} (the `DeleteIdentityProvider` operationId).
+	DeleteIdentityProvider(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationGetIdentityProvider Get an identity provider
+	// GetIdentityProvider Get an identity provider
 	//
 	// Retrieves a single Automation-managed identity provider by its key.
 	//
-	// Corresponds with GET /domains/{domainKey}/identities/{identityKey} (the `AutomationGetIdentityProvider` operationId).
-	AutomationGetIdentityProvider(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey}/identities/{identityKey} (the `GetIdentityProvider` operationId).
+	GetIdentityProvider(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-// AutomationListIdentityProviders List a domain's identity providers
+// ListIdentityProviders List a domain's identity providers
 //
 // Returns all identity providers managed by the Automation API under the domain. Identity providers created outside the Automation API are not returned.
 //
-// Corresponds with GET /domains/{domainKey}/identities (the `AutomationListIdentityProviders` operationId).
-func (c *Client) AutomationListIdentityProviders(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationListIdentityProvidersRequest(c.Server, domainKey)
+// Corresponds with GET /domains/{domainKey}/identities (the `ListIdentityProviders` operationId).
+func (c *Client) ListIdentityProviders(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListIdentityProvidersRequest(c.Server, domainKey)
 	if err != nil {
 		return nil, err
 	}
@@ -247,15 +247,15 @@ func (c *Client) AutomationListIdentityProviders(ctx context.Context, domainKey 
 	return c.Client.Do(req)
 }
 
-// AutomationCreateOrUpdateIdentityProviderWithBody Create or update an identity provider
+// UpsertIdentityProviderWithBody Create or update an identity provider
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
 //
 // Takes any type of body and a specified content type.
 //
-// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-func (c *Client) AutomationCreateOrUpdateIdentityProviderWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateIdentityProviderRequestWithBody(c.Server, domainKey, contentType, body)
+// Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
+func (c *Client) UpsertIdentityProviderWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertIdentityProviderRequestWithBody(c.Server, domainKey, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -266,15 +266,15 @@ func (c *Client) AutomationCreateOrUpdateIdentityProviderWithBody(ctx context.Co
 	return c.Client.Do(req)
 }
 
-// AutomationCreateOrUpdateIdentityProvider Create or update an identity provider
+// UpsertIdentityProvider Create or update an identity provider
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
 //
 // Takes a body of the `application/json` content type.
 //
-// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-func (c *Client) AutomationCreateOrUpdateIdentityProvider(ctx context.Context, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateIdentityProviderRequest(c.Server, domainKey, body)
+// Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
+func (c *Client) UpsertIdentityProvider(ctx context.Context, domainKey string, body UpsertIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertIdentityProviderRequest(c.Server, domainKey, body)
 	if err != nil {
 		return nil, err
 	}
@@ -285,13 +285,13 @@ func (c *Client) AutomationCreateOrUpdateIdentityProvider(ctx context.Context, d
 	return c.Client.Do(req)
 }
 
-// AutomationDeleteIdentityProvider Delete an identity provider
+// DeleteIdentityProvider Delete an identity provider
 //
 // Deletes an Automation-managed identity provider by its key. Deleting an identity provider that does not exist also returns 204.
 //
-// Corresponds with DELETE /domains/{domainKey}/identities/{identityKey} (the `AutomationDeleteIdentityProvider` operationId).
-func (c *Client) AutomationDeleteIdentityProvider(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationDeleteIdentityProviderRequest(c.Server, domainKey, identityKey)
+// Corresponds with DELETE /domains/{domainKey}/identities/{identityKey} (the `DeleteIdentityProvider` operationId).
+func (c *Client) DeleteIdentityProvider(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteIdentityProviderRequest(c.Server, domainKey, identityKey)
 	if err != nil {
 		return nil, err
 	}
@@ -302,13 +302,13 @@ func (c *Client) AutomationDeleteIdentityProvider(ctx context.Context, domainKey
 	return c.Client.Do(req)
 }
 
-// AutomationGetIdentityProvider Get an identity provider
+// GetIdentityProvider Get an identity provider
 //
 // Retrieves a single Automation-managed identity provider by its key.
 //
-// Corresponds with GET /domains/{domainKey}/identities/{identityKey} (the `AutomationGetIdentityProvider` operationId).
-func (c *Client) AutomationGetIdentityProvider(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationGetIdentityProviderRequest(c.Server, domainKey, identityKey)
+// Corresponds with GET /domains/{domainKey}/identities/{identityKey} (the `GetIdentityProvider` operationId).
+func (c *Client) GetIdentityProvider(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetIdentityProviderRequest(c.Server, domainKey, identityKey)
 	if err != nil {
 		return nil, err
 	}
@@ -319,8 +319,8 @@ func (c *Client) AutomationGetIdentityProvider(ctx context.Context, domainKey st
 	return c.Client.Do(req)
 }
 
-// NewAutomationListIdentityProvidersRequest constructs an http.Request for the AutomationListIdentityProviders method
-func NewAutomationListIdentityProvidersRequest(server string, domainKey string) (*http.Request, error) {
+// NewListIdentityProvidersRequest constructs an http.Request for the ListIdentityProviders method
+func NewListIdentityProvidersRequest(server string, domainKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -353,19 +353,19 @@ func NewAutomationListIdentityProvidersRequest(server string, domainKey string) 
 	return req, nil
 }
 
-// NewAutomationCreateOrUpdateIdentityProviderRequest calls the generic AutomationCreateOrUpdateIdentityProvider builder with application/json body
-func NewAutomationCreateOrUpdateIdentityProviderRequest(server string, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody) (*http.Request, error) {
+// NewUpsertIdentityProviderRequest calls the generic UpsertIdentityProvider builder with application/json body
+func NewUpsertIdentityProviderRequest(server string, domainKey string, body UpsertIdentityProviderJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAutomationCreateOrUpdateIdentityProviderRequestWithBody(server, domainKey, "application/json", bodyReader)
+	return NewUpsertIdentityProviderRequestWithBody(server, domainKey, "application/json", bodyReader)
 }
 
-// NewAutomationCreateOrUpdateIdentityProviderRequestWithBody constructs an http.Request for the AutomationCreateOrUpdateIdentityProvider method, with any body, and a specified content type
-func NewAutomationCreateOrUpdateIdentityProviderRequestWithBody(server string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUpsertIdentityProviderRequestWithBody constructs an http.Request for the UpsertIdentityProvider method, with any body, and a specified content type
+func NewUpsertIdentityProviderRequestWithBody(server string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -400,8 +400,8 @@ func NewAutomationCreateOrUpdateIdentityProviderRequestWithBody(server string, d
 	return req, nil
 }
 
-// NewAutomationDeleteIdentityProviderRequest constructs an http.Request for the AutomationDeleteIdentityProvider method
-func NewAutomationDeleteIdentityProviderRequest(server string, domainKey string, identityKey string) (*http.Request, error) {
+// NewDeleteIdentityProviderRequest constructs an http.Request for the DeleteIdentityProvider method
+func NewDeleteIdentityProviderRequest(server string, domainKey string, identityKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -441,8 +441,8 @@ func NewAutomationDeleteIdentityProviderRequest(server string, domainKey string,
 	return req, nil
 }
 
-// NewAutomationGetIdentityProviderRequest constructs an http.Request for the AutomationGetIdentityProvider method
-func NewAutomationGetIdentityProviderRequest(server string, domainKey string, identityKey string) (*http.Request, error) {
+// NewGetIdentityProviderRequest constructs an http.Request for the GetIdentityProvider method
+func NewGetIdentityProviderRequest(server string, domainKey string, identityKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -526,53 +526,53 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 
-	// AutomationListIdentityProvidersWithResponse List a domain's identity providers
+	// ListIdentityProvidersWithResponse List a domain's identity providers
 	//
 	// Returns all identity providers managed by the Automation API under the domain. Identity providers created outside the Automation API are not returned.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /domains/{domainKey}/identities (the `AutomationListIdentityProviders` operationId).
-	AutomationListIdentityProvidersWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListIdentityProvidersResponse, error)
+	// Corresponds with GET /domains/{domainKey}/identities (the `ListIdentityProviders` operationId).
+	ListIdentityProvidersWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*ListIdentityProvidersResponse, error)
 
-	// AutomationCreateOrUpdateIdentityProviderWithBodyWithResponse Create or update an identity provider
+	// UpsertIdentityProviderWithBodyWithResponse Create or update an identity provider
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-	AutomationCreateOrUpdateIdentityProviderWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateIdentityProviderResponse, error)
+	// Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
+	UpsertIdentityProviderWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertIdentityProviderResponse, error)
 
-	// AutomationCreateOrUpdateIdentityProviderWithResponse Create or update an identity provider
+	// UpsertIdentityProviderWithResponse Create or update an identity provider
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-	AutomationCreateOrUpdateIdentityProviderWithResponse(ctx context.Context, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateIdentityProviderResponse, error)
+	// Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
+	UpsertIdentityProviderWithResponse(ctx context.Context, domainKey string, body UpsertIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertIdentityProviderResponse, error)
 
-	// AutomationDeleteIdentityProviderWithResponse Delete an identity provider
+	// DeleteIdentityProviderWithResponse Delete an identity provider
 	//
 	// Deletes an Automation-managed identity provider by its key. Deleting an identity provider that does not exist also returns 204.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with DELETE /domains/{domainKey}/identities/{identityKey} (the `AutomationDeleteIdentityProvider` operationId).
-	AutomationDeleteIdentityProviderWithResponse(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteIdentityProviderResponse, error)
+	// Corresponds with DELETE /domains/{domainKey}/identities/{identityKey} (the `DeleteIdentityProvider` operationId).
+	DeleteIdentityProviderWithResponse(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*DeleteIdentityProviderResponse, error)
 
-	// AutomationGetIdentityProviderWithResponse Get an identity provider
+	// GetIdentityProviderWithResponse Get an identity provider
 	//
 	// Retrieves a single Automation-managed identity provider by its key.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /domains/{domainKey}/identities/{identityKey} (the `AutomationGetIdentityProvider` operationId).
-	AutomationGetIdentityProviderWithResponse(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*AutomationGetIdentityProviderResponse, error)
+	// Corresponds with GET /domains/{domainKey}/identities/{identityKey} (the `GetIdentityProvider` operationId).
+	GetIdentityProviderWithResponse(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*GetIdentityProviderResponse, error)
 }
 
-type AutomationListIdentityProvidersResponse struct {
+type ListIdentityProvidersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -584,27 +584,27 @@ type AutomationListIdentityProvidersResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r AutomationListIdentityProvidersResponse) GetJSON200() *[]AutomationIdentityProvider {
+func (r ListIdentityProvidersResponse) GetJSON200() *[]AutomationIdentityProvider {
 	return r.JSON200
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationListIdentityProvidersResponse) GetJSON403() *Error {
+func (r ListIdentityProvidersResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r AutomationListIdentityProvidersResponse) GetJSON404() *Error {
+func (r ListIdentityProvidersResponse) GetJSON404() *Error {
 	return r.JSON404
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationListIdentityProvidersResponse) GetBody() []byte {
+func (r ListIdentityProvidersResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationListIdentityProvidersResponse) Status() string {
+func (r ListIdentityProvidersResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -612,7 +612,7 @@ func (r AutomationListIdentityProvidersResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationListIdentityProvidersResponse) StatusCode() int {
+func (r ListIdentityProvidersResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -620,14 +620,14 @@ func (r AutomationListIdentityProvidersResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationListIdentityProvidersResponse) ContentType() string {
+func (r ListIdentityProvidersResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-type AutomationCreateOrUpdateIdentityProviderResponse struct {
+type UpsertIdentityProviderResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -641,32 +641,32 @@ type AutomationCreateOrUpdateIdentityProviderResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r AutomationCreateOrUpdateIdentityProviderResponse) GetJSON200() *AutomationIdentityProvider {
+func (r UpsertIdentityProviderResponse) GetJSON200() *AutomationIdentityProvider {
 	return r.JSON200
 }
 
 // GetJSON400 returns the response for an HTTP 400 `application/json` response
-func (r AutomationCreateOrUpdateIdentityProviderResponse) GetJSON400() *Error {
+func (r UpsertIdentityProviderResponse) GetJSON400() *Error {
 	return r.JSON400
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationCreateOrUpdateIdentityProviderResponse) GetJSON403() *Error {
+func (r UpsertIdentityProviderResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r AutomationCreateOrUpdateIdentityProviderResponse) GetJSON404() *Error {
+func (r UpsertIdentityProviderResponse) GetJSON404() *Error {
 	return r.JSON404
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationCreateOrUpdateIdentityProviderResponse) GetBody() []byte {
+func (r UpsertIdentityProviderResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationCreateOrUpdateIdentityProviderResponse) Status() string {
+func (r UpsertIdentityProviderResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -674,7 +674,7 @@ func (r AutomationCreateOrUpdateIdentityProviderResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationCreateOrUpdateIdentityProviderResponse) StatusCode() int {
+func (r UpsertIdentityProviderResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -682,14 +682,14 @@ func (r AutomationCreateOrUpdateIdentityProviderResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationCreateOrUpdateIdentityProviderResponse) ContentType() string {
+func (r UpsertIdentityProviderResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-type AutomationDeleteIdentityProviderResponse struct {
+type DeleteIdentityProviderResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON403 the response for an HTTP 403 `application/json` response
@@ -699,22 +699,22 @@ type AutomationDeleteIdentityProviderResponse struct {
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationDeleteIdentityProviderResponse) GetJSON403() *Error {
+func (r DeleteIdentityProviderResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSONDefault returns the response for an HTTP default `application/json` response
-func (r AutomationDeleteIdentityProviderResponse) GetJSONDefault() *Error {
+func (r DeleteIdentityProviderResponse) GetJSONDefault() *Error {
 	return r.JSONDefault
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationDeleteIdentityProviderResponse) GetBody() []byte {
+func (r DeleteIdentityProviderResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationDeleteIdentityProviderResponse) Status() string {
+func (r DeleteIdentityProviderResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -722,7 +722,7 @@ func (r AutomationDeleteIdentityProviderResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationDeleteIdentityProviderResponse) StatusCode() int {
+func (r DeleteIdentityProviderResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -730,14 +730,14 @@ func (r AutomationDeleteIdentityProviderResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationDeleteIdentityProviderResponse) ContentType() string {
+func (r DeleteIdentityProviderResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-type AutomationGetIdentityProviderResponse struct {
+type GetIdentityProviderResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -749,27 +749,27 @@ type AutomationGetIdentityProviderResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r AutomationGetIdentityProviderResponse) GetJSON200() *AutomationIdentityProvider {
+func (r GetIdentityProviderResponse) GetJSON200() *AutomationIdentityProvider {
 	return r.JSON200
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationGetIdentityProviderResponse) GetJSON403() *Error {
+func (r GetIdentityProviderResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r AutomationGetIdentityProviderResponse) GetJSON404() *Error {
+func (r GetIdentityProviderResponse) GetJSON404() *Error {
 	return r.JSON404
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationGetIdentityProviderResponse) GetBody() []byte {
+func (r GetIdentityProviderResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationGetIdentityProviderResponse) Status() string {
+func (r GetIdentityProviderResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -777,7 +777,7 @@ func (r AutomationGetIdentityProviderResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationGetIdentityProviderResponse) StatusCode() int {
+func (r GetIdentityProviderResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -785,97 +785,97 @@ func (r AutomationGetIdentityProviderResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationGetIdentityProviderResponse) ContentType() string {
+func (r GetIdentityProviderResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-// AutomationListIdentityProvidersWithResponse List a domain's identity providers
+// ListIdentityProvidersWithResponse List a domain's identity providers
 //
 // Returns all identity providers managed by the Automation API under the domain. Identity providers created outside the Automation API are not returned.
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /domains/{domainKey}/identities (the `AutomationListIdentityProviders` operationId).
-func (c *ClientWithResponses) AutomationListIdentityProvidersWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListIdentityProvidersResponse, error) {
-	rsp, err := c.AutomationListIdentityProviders(ctx, domainKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey}/identities (the `ListIdentityProviders` operationId).
+func (c *ClientWithResponses) ListIdentityProvidersWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*ListIdentityProvidersResponse, error) {
+	rsp, err := c.ListIdentityProviders(ctx, domainKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationListIdentityProvidersResponse(rsp)
+	return ParseListIdentityProvidersResponse(rsp)
 }
 
-// AutomationCreateOrUpdateIdentityProviderWithBodyWithResponse Create or update an identity provider
+// UpsertIdentityProviderWithBodyWithResponse Create or update an identity provider
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateIdentityProviderWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateIdentityProviderResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateIdentityProviderWithBody(ctx, domainKey, contentType, body, reqEditors...)
+// Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
+func (c *ClientWithResponses) UpsertIdentityProviderWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertIdentityProviderResponse, error) {
+	rsp, err := c.UpsertIdentityProviderWithBody(ctx, domainKey, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationCreateOrUpdateIdentityProviderResponse(rsp)
+	return ParseUpsertIdentityProviderResponse(rsp)
 }
 
-// AutomationCreateOrUpdateIdentityProviderWithResponse Create or update an identity provider
+// UpsertIdentityProviderWithResponse Create or update an identity provider
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /domains/{domainKey}/identities (the `AutomationCreateOrUpdateIdentityProvider` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateIdentityProviderWithResponse(ctx context.Context, domainKey string, body AutomationCreateOrUpdateIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateIdentityProviderResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateIdentityProvider(ctx, domainKey, body, reqEditors...)
+// Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
+func (c *ClientWithResponses) UpsertIdentityProviderWithResponse(ctx context.Context, domainKey string, body UpsertIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertIdentityProviderResponse, error) {
+	rsp, err := c.UpsertIdentityProvider(ctx, domainKey, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationCreateOrUpdateIdentityProviderResponse(rsp)
+	return ParseUpsertIdentityProviderResponse(rsp)
 }
 
-// AutomationDeleteIdentityProviderWithResponse Delete an identity provider
+// DeleteIdentityProviderWithResponse Delete an identity provider
 //
 // Deletes an Automation-managed identity provider by its key. Deleting an identity provider that does not exist also returns 204.
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with DELETE /domains/{domainKey}/identities/{identityKey} (the `AutomationDeleteIdentityProvider` operationId).
-func (c *ClientWithResponses) AutomationDeleteIdentityProviderWithResponse(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteIdentityProviderResponse, error) {
-	rsp, err := c.AutomationDeleteIdentityProvider(ctx, domainKey, identityKey, reqEditors...)
+// Corresponds with DELETE /domains/{domainKey}/identities/{identityKey} (the `DeleteIdentityProvider` operationId).
+func (c *ClientWithResponses) DeleteIdentityProviderWithResponse(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*DeleteIdentityProviderResponse, error) {
+	rsp, err := c.DeleteIdentityProvider(ctx, domainKey, identityKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationDeleteIdentityProviderResponse(rsp)
+	return ParseDeleteIdentityProviderResponse(rsp)
 }
 
-// AutomationGetIdentityProviderWithResponse Get an identity provider
+// GetIdentityProviderWithResponse Get an identity provider
 //
 // Retrieves a single Automation-managed identity provider by its key.
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /domains/{domainKey}/identities/{identityKey} (the `AutomationGetIdentityProvider` operationId).
-func (c *ClientWithResponses) AutomationGetIdentityProviderWithResponse(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*AutomationGetIdentityProviderResponse, error) {
-	rsp, err := c.AutomationGetIdentityProvider(ctx, domainKey, identityKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey}/identities/{identityKey} (the `GetIdentityProvider` operationId).
+func (c *ClientWithResponses) GetIdentityProviderWithResponse(ctx context.Context, domainKey string, identityKey string, reqEditors ...RequestEditorFn) (*GetIdentityProviderResponse, error) {
+	rsp, err := c.GetIdentityProvider(ctx, domainKey, identityKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationGetIdentityProviderResponse(rsp)
+	return ParseGetIdentityProviderResponse(rsp)
 }
 
-// ParseAutomationListIdentityProvidersResponse parses an HTTP response from a AutomationListIdentityProvidersWithResponse call
-func ParseAutomationListIdentityProvidersResponse(rsp *http.Response) (*AutomationListIdentityProvidersResponse, error) {
+// ParseListIdentityProvidersResponse parses an HTTP response from a ListIdentityProvidersWithResponse call
+func ParseListIdentityProvidersResponse(rsp *http.Response) (*ListIdentityProvidersResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationListIdentityProvidersResponse{
+	response := &ListIdentityProvidersResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -907,15 +907,15 @@ func ParseAutomationListIdentityProvidersResponse(rsp *http.Response) (*Automati
 	return response, nil
 }
 
-// ParseAutomationCreateOrUpdateIdentityProviderResponse parses an HTTP response from a AutomationCreateOrUpdateIdentityProviderWithResponse call
-func ParseAutomationCreateOrUpdateIdentityProviderResponse(rsp *http.Response) (*AutomationCreateOrUpdateIdentityProviderResponse, error) {
+// ParseUpsertIdentityProviderResponse parses an HTTP response from a UpsertIdentityProviderWithResponse call
+func ParseUpsertIdentityProviderResponse(rsp *http.Response) (*UpsertIdentityProviderResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationCreateOrUpdateIdentityProviderResponse{
+	response := &UpsertIdentityProviderResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -954,15 +954,15 @@ func ParseAutomationCreateOrUpdateIdentityProviderResponse(rsp *http.Response) (
 	return response, nil
 }
 
-// ParseAutomationDeleteIdentityProviderResponse parses an HTTP response from a AutomationDeleteIdentityProviderWithResponse call
-func ParseAutomationDeleteIdentityProviderResponse(rsp *http.Response) (*AutomationDeleteIdentityProviderResponse, error) {
+// ParseDeleteIdentityProviderResponse parses an HTTP response from a DeleteIdentityProviderWithResponse call
+func ParseDeleteIdentityProviderResponse(rsp *http.Response) (*DeleteIdentityProviderResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationDeleteIdentityProviderResponse{
+	response := &DeleteIdentityProviderResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -990,15 +990,15 @@ func ParseAutomationDeleteIdentityProviderResponse(rsp *http.Response) (*Automat
 	return response, nil
 }
 
-// ParseAutomationGetIdentityProviderResponse parses an HTTP response from a AutomationGetIdentityProviderWithResponse call
-func ParseAutomationGetIdentityProviderResponse(rsp *http.Response) (*AutomationGetIdentityProviderResponse, error) {
+// ParseGetIdentityProviderResponse parses an HTTP response from a GetIdentityProviderWithResponse call
+func ParseGetIdentityProviderResponse(rsp *http.Response) (*GetIdentityProviderResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationGetIdentityProviderResponse{
+	response := &GetIdentityProviderResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

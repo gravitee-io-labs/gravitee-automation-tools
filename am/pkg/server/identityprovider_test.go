@@ -54,7 +54,7 @@ func TestListIdentityProvidersSDK(t *testing.T) {
 	am.IdentityProviders.Put(testIdentityProvider())
 	client := newAMClient(t, srv)
 
-	res, err := client.IdentityProviders.AutomationListIdentityProvidersWithResponse(t.Context(), defaultDomainKey)
+	res, err := client.IdentityProviders.ListIdentityProvidersWithResponse(t.Context(), defaultDomainKey)
 	assertSDKOK(t, res, err, []identityprovider.IdentityProvider{testIdentityProviderSDK()})
 }
 
@@ -63,7 +63,7 @@ func TestGetIdentityProviderSDK(t *testing.T) {
 	am.IdentityProviders.Put(testIdentityProvider())
 	client := newAMClient(t, srv)
 
-	res, err := client.IdentityProviders.AutomationGetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
+	res, err := client.IdentityProviders.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKOK(t, res, err, testIdentityProviderSDK())
 }
 
@@ -71,7 +71,7 @@ func TestGetIdentityProvider404SDK(t *testing.T) {
 	_, srv := createAMServer(t)
 	client := newAMClient(t, srv)
 
-	res, err := client.IdentityProviders.AutomationGetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
+	res, err := client.IdentityProviders.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDK404(t, res, err)
 }
 
@@ -80,10 +80,10 @@ func TestPutGetIdentityProviderSDK(t *testing.T) {
 	client := newAMClient(t, srv)
 	body := testIdentityProviderSDK()
 
-	put, err := client.IdentityProviders.AutomationCreateOrUpdateIdentityProviderWithResponse(t.Context(), defaultDomainKey, body)
+	put, err := client.IdentityProviders.UpsertIdentityProviderWithResponse(t.Context(), defaultDomainKey, body)
 	assertSDKOK(t, put, err, body)
 
-	get, err := client.IdentityProviders.AutomationGetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
+	get, err := client.IdentityProviders.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKOK(t, get, err, body)
 }
 
@@ -92,9 +92,9 @@ func TestDeleteIdentityProviderSDK(t *testing.T) {
 	am.IdentityProviders.Put(testIdentityProvider())
 	client := newAMClient(t, srv)
 
-	del, err := client.IdentityProviders.AutomationDeleteIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
+	del, err := client.IdentityProviders.DeleteIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKNoContent(t, del, err)
 
-	get, err := client.IdentityProviders.AutomationGetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
+	get, err := client.IdentityProviders.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDK404(t, get, err)
 }

@@ -7,4 +7,4 @@ generate:
   strict-server: true
 output-options:
   overlay:
-    path: ../../overlays/models.yaml
+    path: overlay.yaml

@@ -1059,14 +1059,14 @@ type XssProtectionSettings struct {
 	Inherited *bool `json:"inherited,omitempty"`
 }
 
-// AutomationCreateOrUpdateDomainJSONRequestBody defines body for AutomationCreateOrUpdateDomain for application/json ContentType.
-type AutomationCreateOrUpdateDomainJSONRequestBody = AutomationDomain
+// UpsertDomainJSONRequestBody defines body for UpsertDomain for application/json ContentType.
+type UpsertDomainJSONRequestBody = AutomationDomain
 
-// AutomationCreateOrUpdateCertificateJSONRequestBody defines body for AutomationCreateOrUpdateCertificate for application/json ContentType.
-type AutomationCreateOrUpdateCertificateJSONRequestBody = AutomationCertificate
+// UpsertCertificateJSONRequestBody defines body for UpsertCertificate for application/json ContentType.
+type UpsertCertificateJSONRequestBody = AutomationCertificate
 
-// AutomationCreateOrUpdateIdentityProviderJSONRequestBody defines body for AutomationCreateOrUpdateIdentityProvider for application/json ContentType.
-type AutomationCreateOrUpdateIdentityProviderJSONRequestBody = AutomationIdentityProvider
+// UpsertIdentityProviderJSONRequestBody defines body for UpsertIdentityProvider for application/json ContentType.
+type UpsertIdentityProviderJSONRequestBody = AutomationIdentityProvider
 
-// AutomationCreateOrUpdateReporterJSONRequestBody defines body for AutomationCreateOrUpdateReporter for application/json ContentType.
-type AutomationCreateOrUpdateReporterJSONRequestBody = AutomationReporter
+// UpsertReporterJSONRequestBody defines body for UpsertReporter for application/json ContentType.
+type UpsertReporterJSONRequestBody = AutomationReporter

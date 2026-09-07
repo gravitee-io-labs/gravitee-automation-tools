@@ -100,8 +100,8 @@ type Error struct {
 	Message *string `json:"message,omitempty"`
 }
 
-// AutomationCreateOrUpdateCertificateJSONRequestBody defines body for AutomationCreateOrUpdateCertificate for application/json ContentType.
-type AutomationCreateOrUpdateCertificateJSONRequestBody = AutomationCertificate
+// UpsertCertificateJSONRequestBody defines body for UpsertCertificate for application/json ContentType.
+type UpsertCertificateJSONRequestBody = AutomationCertificate
 
 // RequestEditorFn is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -177,53 +177,53 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 // The interface specification for the client above.
 type ClientInterface interface {
 
-	// AutomationListCertificates List a domain's certificates
+	// ListCertificates List a domain's certificates
 	//
 	// Returns all certificates managed by the Automation API under the domain. Certificates created outside the Automation API are not returned.
 	//
-	// Corresponds with GET /domains/{domainKey}/certificates (the `AutomationListCertificates` operationId).
-	AutomationListCertificates(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey}/certificates (the `ListCertificates` operationId).
+	ListCertificates(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationCreateOrUpdateCertificateWithBody Create or update a certificate
+	// UpsertCertificateWithBody Create or update a certificate
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
 	//
 	// Takes any type of body and a specified content type.
 	//
-	// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-	AutomationCreateOrUpdateCertificateWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
+	UpsertCertificateWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationCreateOrUpdateCertificate Create or update a certificate
+	// UpsertCertificate Create or update a certificate
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
 	//
 	// Takes a body of the `application/json` content type.
 	//
-	// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-	AutomationCreateOrUpdateCertificate(ctx context.Context, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
+	UpsertCertificate(ctx context.Context, domainKey string, body UpsertCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationDeleteCertificate Delete a certificate
+	// DeleteCertificate Delete a certificate
 	//
 	// Deletes an Automation-managed certificate by its key. Deleting a certificate that does not exist also returns 204.
 	//
-	// Corresponds with DELETE /domains/{domainKey}/certificates/{certKey} (the `AutomationDeleteCertificate` operationId).
-	AutomationDeleteCertificate(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with DELETE /domains/{domainKey}/certificates/{certKey} (the `DeleteCertificate` operationId).
+	DeleteCertificate(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationGetCertificate Get a certificate
+	// GetCertificate Get a certificate
 	//
 	// Retrieves a single Automation-managed certificate by its key.
 	//
-	// Corresponds with GET /domains/{domainKey}/certificates/{certKey} (the `AutomationGetCertificate` operationId).
-	AutomationGetCertificate(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey}/certificates/{certKey} (the `GetCertificate` operationId).
+	GetCertificate(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-// AutomationListCertificates List a domain's certificates
+// ListCertificates List a domain's certificates
 //
 // Returns all certificates managed by the Automation API under the domain. Certificates created outside the Automation API are not returned.
 //
-// Corresponds with GET /domains/{domainKey}/certificates (the `AutomationListCertificates` operationId).
-func (c *Client) AutomationListCertificates(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationListCertificatesRequest(c.Server, domainKey)
+// Corresponds with GET /domains/{domainKey}/certificates (the `ListCertificates` operationId).
+func (c *Client) ListCertificates(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListCertificatesRequest(c.Server, domainKey)
 	if err != nil {
 		return nil, err
 	}
@@ -234,15 +234,15 @@ func (c *Client) AutomationListCertificates(ctx context.Context, domainKey strin
 	return c.Client.Do(req)
 }
 
-// AutomationCreateOrUpdateCertificateWithBody Create or update a certificate
+// UpsertCertificateWithBody Create or update a certificate
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
 //
 // Takes any type of body and a specified content type.
 //
-// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-func (c *Client) AutomationCreateOrUpdateCertificateWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateCertificateRequestWithBody(c.Server, domainKey, contentType, body)
+// Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
+func (c *Client) UpsertCertificateWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertCertificateRequestWithBody(c.Server, domainKey, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -253,15 +253,15 @@ func (c *Client) AutomationCreateOrUpdateCertificateWithBody(ctx context.Context
 	return c.Client.Do(req)
 }
 
-// AutomationCreateOrUpdateCertificate Create or update a certificate
+// UpsertCertificate Create or update a certificate
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
 //
 // Takes a body of the `application/json` content type.
 //
-// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-func (c *Client) AutomationCreateOrUpdateCertificate(ctx context.Context, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateCertificateRequest(c.Server, domainKey, body)
+// Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
+func (c *Client) UpsertCertificate(ctx context.Context, domainKey string, body UpsertCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertCertificateRequest(c.Server, domainKey, body)
 	if err != nil {
 		return nil, err
 	}
@@ -272,13 +272,13 @@ func (c *Client) AutomationCreateOrUpdateCertificate(ctx context.Context, domain
 	return c.Client.Do(req)
 }
 
-// AutomationDeleteCertificate Delete a certificate
+// DeleteCertificate Delete a certificate
 //
 // Deletes an Automation-managed certificate by its key. Deleting a certificate that does not exist also returns 204.
 //
-// Corresponds with DELETE /domains/{domainKey}/certificates/{certKey} (the `AutomationDeleteCertificate` operationId).
-func (c *Client) AutomationDeleteCertificate(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationDeleteCertificateRequest(c.Server, domainKey, certKey)
+// Corresponds with DELETE /domains/{domainKey}/certificates/{certKey} (the `DeleteCertificate` operationId).
+func (c *Client) DeleteCertificate(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteCertificateRequest(c.Server, domainKey, certKey)
 	if err != nil {
 		return nil, err
 	}
@@ -289,13 +289,13 @@ func (c *Client) AutomationDeleteCertificate(ctx context.Context, domainKey stri
 	return c.Client.Do(req)
 }
 
-// AutomationGetCertificate Get a certificate
+// GetCertificate Get a certificate
 //
 // Retrieves a single Automation-managed certificate by its key.
 //
-// Corresponds with GET /domains/{domainKey}/certificates/{certKey} (the `AutomationGetCertificate` operationId).
-func (c *Client) AutomationGetCertificate(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationGetCertificateRequest(c.Server, domainKey, certKey)
+// Corresponds with GET /domains/{domainKey}/certificates/{certKey} (the `GetCertificate` operationId).
+func (c *Client) GetCertificate(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetCertificateRequest(c.Server, domainKey, certKey)
 	if err != nil {
 		return nil, err
 	}
@@ -306,8 +306,8 @@ func (c *Client) AutomationGetCertificate(ctx context.Context, domainKey string,
 	return c.Client.Do(req)
 }
 
-// NewAutomationListCertificatesRequest constructs an http.Request for the AutomationListCertificates method
-func NewAutomationListCertificatesRequest(server string, domainKey string) (*http.Request, error) {
+// NewListCertificatesRequest constructs an http.Request for the ListCertificates method
+func NewListCertificatesRequest(server string, domainKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -340,19 +340,19 @@ func NewAutomationListCertificatesRequest(server string, domainKey string) (*htt
 	return req, nil
 }
 
-// NewAutomationCreateOrUpdateCertificateRequest calls the generic AutomationCreateOrUpdateCertificate builder with application/json body
-func NewAutomationCreateOrUpdateCertificateRequest(server string, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody) (*http.Request, error) {
+// NewUpsertCertificateRequest calls the generic UpsertCertificate builder with application/json body
+func NewUpsertCertificateRequest(server string, domainKey string, body UpsertCertificateJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAutomationCreateOrUpdateCertificateRequestWithBody(server, domainKey, "application/json", bodyReader)
+	return NewUpsertCertificateRequestWithBody(server, domainKey, "application/json", bodyReader)
 }
 
-// NewAutomationCreateOrUpdateCertificateRequestWithBody constructs an http.Request for the AutomationCreateOrUpdateCertificate method, with any body, and a specified content type
-func NewAutomationCreateOrUpdateCertificateRequestWithBody(server string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUpsertCertificateRequestWithBody constructs an http.Request for the UpsertCertificate method, with any body, and a specified content type
+func NewUpsertCertificateRequestWithBody(server string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -387,8 +387,8 @@ func NewAutomationCreateOrUpdateCertificateRequestWithBody(server string, domain
 	return req, nil
 }
 
-// NewAutomationDeleteCertificateRequest constructs an http.Request for the AutomationDeleteCertificate method
-func NewAutomationDeleteCertificateRequest(server string, domainKey string, certKey string) (*http.Request, error) {
+// NewDeleteCertificateRequest constructs an http.Request for the DeleteCertificate method
+func NewDeleteCertificateRequest(server string, domainKey string, certKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -428,8 +428,8 @@ func NewAutomationDeleteCertificateRequest(server string, domainKey string, cert
 	return req, nil
 }
 
-// NewAutomationGetCertificateRequest constructs an http.Request for the AutomationGetCertificate method
-func NewAutomationGetCertificateRequest(server string, domainKey string, certKey string) (*http.Request, error) {
+// NewGetCertificateRequest constructs an http.Request for the GetCertificate method
+func NewGetCertificateRequest(server string, domainKey string, certKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -513,53 +513,53 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 
-	// AutomationListCertificatesWithResponse List a domain's certificates
+	// ListCertificatesWithResponse List a domain's certificates
 	//
 	// Returns all certificates managed by the Automation API under the domain. Certificates created outside the Automation API are not returned.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /domains/{domainKey}/certificates (the `AutomationListCertificates` operationId).
-	AutomationListCertificatesWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListCertificatesResponse, error)
+	// Corresponds with GET /domains/{domainKey}/certificates (the `ListCertificates` operationId).
+	ListCertificatesWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*ListCertificatesResponse, error)
 
-	// AutomationCreateOrUpdateCertificateWithBodyWithResponse Create or update a certificate
+	// UpsertCertificateWithBodyWithResponse Create or update a certificate
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-	AutomationCreateOrUpdateCertificateWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateCertificateResponse, error)
+	// Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
+	UpsertCertificateWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertCertificateResponse, error)
 
-	// AutomationCreateOrUpdateCertificateWithResponse Create or update a certificate
+	// UpsertCertificateWithResponse Create or update a certificate
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-	AutomationCreateOrUpdateCertificateWithResponse(ctx context.Context, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateCertificateResponse, error)
+	// Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
+	UpsertCertificateWithResponse(ctx context.Context, domainKey string, body UpsertCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertCertificateResponse, error)
 
-	// AutomationDeleteCertificateWithResponse Delete a certificate
+	// DeleteCertificateWithResponse Delete a certificate
 	//
 	// Deletes an Automation-managed certificate by its key. Deleting a certificate that does not exist also returns 204.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with DELETE /domains/{domainKey}/certificates/{certKey} (the `AutomationDeleteCertificate` operationId).
-	AutomationDeleteCertificateWithResponse(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteCertificateResponse, error)
+	// Corresponds with DELETE /domains/{domainKey}/certificates/{certKey} (the `DeleteCertificate` operationId).
+	DeleteCertificateWithResponse(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*DeleteCertificateResponse, error)
 
-	// AutomationGetCertificateWithResponse Get a certificate
+	// GetCertificateWithResponse Get a certificate
 	//
 	// Retrieves a single Automation-managed certificate by its key.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /domains/{domainKey}/certificates/{certKey} (the `AutomationGetCertificate` operationId).
-	AutomationGetCertificateWithResponse(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*AutomationGetCertificateResponse, error)
+	// Corresponds with GET /domains/{domainKey}/certificates/{certKey} (the `GetCertificate` operationId).
+	GetCertificateWithResponse(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*GetCertificateResponse, error)
 }
 
-type AutomationListCertificatesResponse struct {
+type ListCertificatesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -571,27 +571,27 @@ type AutomationListCertificatesResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r AutomationListCertificatesResponse) GetJSON200() *[]AutomationCertificate {
+func (r ListCertificatesResponse) GetJSON200() *[]AutomationCertificate {
 	return r.JSON200
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationListCertificatesResponse) GetJSON403() *Error {
+func (r ListCertificatesResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r AutomationListCertificatesResponse) GetJSON404() *Error {
+func (r ListCertificatesResponse) GetJSON404() *Error {
 	return r.JSON404
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationListCertificatesResponse) GetBody() []byte {
+func (r ListCertificatesResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationListCertificatesResponse) Status() string {
+func (r ListCertificatesResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -599,7 +599,7 @@ func (r AutomationListCertificatesResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationListCertificatesResponse) StatusCode() int {
+func (r ListCertificatesResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -607,14 +607,14 @@ func (r AutomationListCertificatesResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationListCertificatesResponse) ContentType() string {
+func (r ListCertificatesResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-type AutomationCreateOrUpdateCertificateResponse struct {
+type UpsertCertificateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -628,32 +628,32 @@ type AutomationCreateOrUpdateCertificateResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r AutomationCreateOrUpdateCertificateResponse) GetJSON200() *AutomationCertificate {
+func (r UpsertCertificateResponse) GetJSON200() *AutomationCertificate {
 	return r.JSON200
 }
 
 // GetJSON400 returns the response for an HTTP 400 `application/json` response
-func (r AutomationCreateOrUpdateCertificateResponse) GetJSON400() *Error {
+func (r UpsertCertificateResponse) GetJSON400() *Error {
 	return r.JSON400
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationCreateOrUpdateCertificateResponse) GetJSON403() *Error {
+func (r UpsertCertificateResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r AutomationCreateOrUpdateCertificateResponse) GetJSON404() *Error {
+func (r UpsertCertificateResponse) GetJSON404() *Error {
 	return r.JSON404
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationCreateOrUpdateCertificateResponse) GetBody() []byte {
+func (r UpsertCertificateResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationCreateOrUpdateCertificateResponse) Status() string {
+func (r UpsertCertificateResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -661,7 +661,7 @@ func (r AutomationCreateOrUpdateCertificateResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationCreateOrUpdateCertificateResponse) StatusCode() int {
+func (r UpsertCertificateResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -669,14 +669,14 @@ func (r AutomationCreateOrUpdateCertificateResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationCreateOrUpdateCertificateResponse) ContentType() string {
+func (r UpsertCertificateResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-type AutomationDeleteCertificateResponse struct {
+type DeleteCertificateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON403 the response for an HTTP 403 `application/json` response
@@ -686,22 +686,22 @@ type AutomationDeleteCertificateResponse struct {
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationDeleteCertificateResponse) GetJSON403() *Error {
+func (r DeleteCertificateResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSONDefault returns the response for an HTTP default `application/json` response
-func (r AutomationDeleteCertificateResponse) GetJSONDefault() *Error {
+func (r DeleteCertificateResponse) GetJSONDefault() *Error {
 	return r.JSONDefault
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationDeleteCertificateResponse) GetBody() []byte {
+func (r DeleteCertificateResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationDeleteCertificateResponse) Status() string {
+func (r DeleteCertificateResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -709,7 +709,7 @@ func (r AutomationDeleteCertificateResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationDeleteCertificateResponse) StatusCode() int {
+func (r DeleteCertificateResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -717,14 +717,14 @@ func (r AutomationDeleteCertificateResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationDeleteCertificateResponse) ContentType() string {
+func (r DeleteCertificateResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-type AutomationGetCertificateResponse struct {
+type GetCertificateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -736,27 +736,27 @@ type AutomationGetCertificateResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r AutomationGetCertificateResponse) GetJSON200() *AutomationCertificate {
+func (r GetCertificateResponse) GetJSON200() *AutomationCertificate {
 	return r.JSON200
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationGetCertificateResponse) GetJSON403() *Error {
+func (r GetCertificateResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r AutomationGetCertificateResponse) GetJSON404() *Error {
+func (r GetCertificateResponse) GetJSON404() *Error {
 	return r.JSON404
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationGetCertificateResponse) GetBody() []byte {
+func (r GetCertificateResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationGetCertificateResponse) Status() string {
+func (r GetCertificateResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -764,7 +764,7 @@ func (r AutomationGetCertificateResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationGetCertificateResponse) StatusCode() int {
+func (r GetCertificateResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -772,97 +772,97 @@ func (r AutomationGetCertificateResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationGetCertificateResponse) ContentType() string {
+func (r GetCertificateResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-// AutomationListCertificatesWithResponse List a domain's certificates
+// ListCertificatesWithResponse List a domain's certificates
 //
 // Returns all certificates managed by the Automation API under the domain. Certificates created outside the Automation API are not returned.
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /domains/{domainKey}/certificates (the `AutomationListCertificates` operationId).
-func (c *ClientWithResponses) AutomationListCertificatesWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListCertificatesResponse, error) {
-	rsp, err := c.AutomationListCertificates(ctx, domainKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey}/certificates (the `ListCertificates` operationId).
+func (c *ClientWithResponses) ListCertificatesWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*ListCertificatesResponse, error) {
+	rsp, err := c.ListCertificates(ctx, domainKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationListCertificatesResponse(rsp)
+	return ParseListCertificatesResponse(rsp)
 }
 
-// AutomationCreateOrUpdateCertificateWithBodyWithResponse Create or update a certificate
+// UpsertCertificateWithBodyWithResponse Create or update a certificate
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateCertificateWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateCertificateResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateCertificateWithBody(ctx, domainKey, contentType, body, reqEditors...)
+// Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
+func (c *ClientWithResponses) UpsertCertificateWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertCertificateResponse, error) {
+	rsp, err := c.UpsertCertificateWithBody(ctx, domainKey, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationCreateOrUpdateCertificateResponse(rsp)
+	return ParseUpsertCertificateResponse(rsp)
 }
 
-// AutomationCreateOrUpdateCertificateWithResponse Create or update a certificate
+// UpsertCertificateWithResponse Create or update a certificate
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /domains/{domainKey}/certificates (the `AutomationCreateOrUpdateCertificate` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateCertificateWithResponse(ctx context.Context, domainKey string, body AutomationCreateOrUpdateCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateCertificateResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateCertificate(ctx, domainKey, body, reqEditors...)
+// Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
+func (c *ClientWithResponses) UpsertCertificateWithResponse(ctx context.Context, domainKey string, body UpsertCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertCertificateResponse, error) {
+	rsp, err := c.UpsertCertificate(ctx, domainKey, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationCreateOrUpdateCertificateResponse(rsp)
+	return ParseUpsertCertificateResponse(rsp)
 }
 
-// AutomationDeleteCertificateWithResponse Delete a certificate
+// DeleteCertificateWithResponse Delete a certificate
 //
 // Deletes an Automation-managed certificate by its key. Deleting a certificate that does not exist also returns 204.
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with DELETE /domains/{domainKey}/certificates/{certKey} (the `AutomationDeleteCertificate` operationId).
-func (c *ClientWithResponses) AutomationDeleteCertificateWithResponse(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteCertificateResponse, error) {
-	rsp, err := c.AutomationDeleteCertificate(ctx, domainKey, certKey, reqEditors...)
+// Corresponds with DELETE /domains/{domainKey}/certificates/{certKey} (the `DeleteCertificate` operationId).
+func (c *ClientWithResponses) DeleteCertificateWithResponse(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*DeleteCertificateResponse, error) {
+	rsp, err := c.DeleteCertificate(ctx, domainKey, certKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationDeleteCertificateResponse(rsp)
+	return ParseDeleteCertificateResponse(rsp)
 }
 
-// AutomationGetCertificateWithResponse Get a certificate
+// GetCertificateWithResponse Get a certificate
 //
 // Retrieves a single Automation-managed certificate by its key.
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /domains/{domainKey}/certificates/{certKey} (the `AutomationGetCertificate` operationId).
-func (c *ClientWithResponses) AutomationGetCertificateWithResponse(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*AutomationGetCertificateResponse, error) {
-	rsp, err := c.AutomationGetCertificate(ctx, domainKey, certKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey}/certificates/{certKey} (the `GetCertificate` operationId).
+func (c *ClientWithResponses) GetCertificateWithResponse(ctx context.Context, domainKey string, certKey string, reqEditors ...RequestEditorFn) (*GetCertificateResponse, error) {
+	rsp, err := c.GetCertificate(ctx, domainKey, certKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationGetCertificateResponse(rsp)
+	return ParseGetCertificateResponse(rsp)
 }
 
-// ParseAutomationListCertificatesResponse parses an HTTP response from a AutomationListCertificatesWithResponse call
-func ParseAutomationListCertificatesResponse(rsp *http.Response) (*AutomationListCertificatesResponse, error) {
+// ParseListCertificatesResponse parses an HTTP response from a ListCertificatesWithResponse call
+func ParseListCertificatesResponse(rsp *http.Response) (*ListCertificatesResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationListCertificatesResponse{
+	response := &ListCertificatesResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -894,15 +894,15 @@ func ParseAutomationListCertificatesResponse(rsp *http.Response) (*AutomationLis
 	return response, nil
 }
 
-// ParseAutomationCreateOrUpdateCertificateResponse parses an HTTP response from a AutomationCreateOrUpdateCertificateWithResponse call
-func ParseAutomationCreateOrUpdateCertificateResponse(rsp *http.Response) (*AutomationCreateOrUpdateCertificateResponse, error) {
+// ParseUpsertCertificateResponse parses an HTTP response from a UpsertCertificateWithResponse call
+func ParseUpsertCertificateResponse(rsp *http.Response) (*UpsertCertificateResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationCreateOrUpdateCertificateResponse{
+	response := &UpsertCertificateResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -941,15 +941,15 @@ func ParseAutomationCreateOrUpdateCertificateResponse(rsp *http.Response) (*Auto
 	return response, nil
 }
 
-// ParseAutomationDeleteCertificateResponse parses an HTTP response from a AutomationDeleteCertificateWithResponse call
-func ParseAutomationDeleteCertificateResponse(rsp *http.Response) (*AutomationDeleteCertificateResponse, error) {
+// ParseDeleteCertificateResponse parses an HTTP response from a DeleteCertificateWithResponse call
+func ParseDeleteCertificateResponse(rsp *http.Response) (*DeleteCertificateResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationDeleteCertificateResponse{
+	response := &DeleteCertificateResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -977,15 +977,15 @@ func ParseAutomationDeleteCertificateResponse(rsp *http.Response) (*AutomationDe
 	return response, nil
 }
 
-// ParseAutomationGetCertificateResponse parses an HTTP response from a AutomationGetCertificateWithResponse call
-func ParseAutomationGetCertificateResponse(rsp *http.Response) (*AutomationGetCertificateResponse, error) {
+// ParseGetCertificateResponse parses an HTTP response from a GetCertificateWithResponse call
+func ParseGetCertificateResponse(rsp *http.Response) (*GetCertificateResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationGetCertificateResponse{
+	response := &GetCertificateResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

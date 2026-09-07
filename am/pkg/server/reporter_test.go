@@ -54,7 +54,7 @@ func TestListReportersSDK(t *testing.T) {
 	am.Reporters.Put(testReporter())
 	client := newAMClient(t, srv)
 
-	res, err := client.Reporters.AutomationListReportersWithResponse(t.Context(), defaultDomainKey)
+	res, err := client.Reporters.ListReportersWithResponse(t.Context(), defaultDomainKey)
 	assertSDKOK(t, res, err, []reporter.Reporter{testReporterSDK()})
 }
 
@@ -63,7 +63,7 @@ func TestGetReporterSDK(t *testing.T) {
 	am.Reporters.Put(testReporter())
 	client := newAMClient(t, srv)
 
-	res, err := client.Reporters.AutomationGetReporterWithResponse(t.Context(), defaultDomainKey, "test")
+	res, err := client.Reporters.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKOK(t, res, err, testReporterSDK())
 }
 
@@ -71,7 +71,7 @@ func TestGetReporter404SDK(t *testing.T) {
 	_, srv := createAMServer(t)
 	client := newAMClient(t, srv)
 
-	res, err := client.Reporters.AutomationGetReporterWithResponse(t.Context(), defaultDomainKey, "test")
+	res, err := client.Reporters.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDK404(t, res, err)
 }
 
@@ -80,10 +80,10 @@ func TestPutGetReporterSDK(t *testing.T) {
 	client := newAMClient(t, srv)
 	body := testReporterSDK()
 
-	put, err := client.Reporters.AutomationCreateOrUpdateReporterWithResponse(t.Context(), defaultDomainKey, body)
+	put, err := client.Reporters.UpsertReporterWithResponse(t.Context(), defaultDomainKey, body)
 	assertSDKOK(t, put, err, body)
 
-	get, err := client.Reporters.AutomationGetReporterWithResponse(t.Context(), defaultDomainKey, "test")
+	get, err := client.Reporters.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKOK(t, get, err, body)
 }
 
@@ -92,9 +92,9 @@ func TestDeleteReporterSDK(t *testing.T) {
 	am.Reporters.Put(testReporter())
 	client := newAMClient(t, srv)
 
-	del, err := client.Reporters.AutomationDeleteReporterWithResponse(t.Context(), defaultDomainKey, "test")
+	del, err := client.Reporters.DeleteReporterWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKNoContent(t, del, err)
 
-	get, err := client.Reporters.AutomationGetReporterWithResponse(t.Context(), defaultDomainKey, "test")
+	get, err := client.Reporters.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDK404(t, get, err)
 }

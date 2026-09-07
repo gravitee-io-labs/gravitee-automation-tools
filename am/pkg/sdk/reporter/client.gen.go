@@ -119,8 +119,8 @@ type ReporterAttributeMapping struct {
 	Expression *string `json:"expression,omitempty"`
 }
 
-// AutomationCreateOrUpdateReporterJSONRequestBody defines body for AutomationCreateOrUpdateReporter for application/json ContentType.
-type AutomationCreateOrUpdateReporterJSONRequestBody = AutomationReporter
+// UpsertReporterJSONRequestBody defines body for UpsertReporter for application/json ContentType.
+type UpsertReporterJSONRequestBody = AutomationReporter
 
 // RequestEditorFn is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -196,53 +196,53 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 // The interface specification for the client above.
 type ClientInterface interface {
 
-	// AutomationListReporters List a domain's reporters
+	// ListReporters List a domain's reporters
 	//
 	// Returns all reporters managed by the Automation API under the domain. Reporters created outside the Automation API are not returned.
 	//
-	// Corresponds with GET /domains/{domainKey}/reporters (the `AutomationListReporters` operationId).
-	AutomationListReporters(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey}/reporters (the `ListReporters` operationId).
+	ListReporters(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationCreateOrUpdateReporterWithBody Create or update a reporter
+	// UpsertReporterWithBody Create or update a reporter
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
 	//
 	// Takes any type of body and a specified content type.
 	//
-	// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-	AutomationCreateOrUpdateReporterWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
+	UpsertReporterWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationCreateOrUpdateReporter Create or update a reporter
+	// UpsertReporter Create or update a reporter
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
 	//
 	// Takes a body of the `application/json` content type.
 	//
-	// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-	AutomationCreateOrUpdateReporter(ctx context.Context, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
+	UpsertReporter(ctx context.Context, domainKey string, body UpsertReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationDeleteReporter Delete a reporter
+	// DeleteReporter Delete a reporter
 	//
 	// Deletes an Automation-managed reporter by its key. Deleting a reporter that does not exist also returns 204.
 	//
-	// Corresponds with DELETE /domains/{domainKey}/reporters/{reporterKey} (the `AutomationDeleteReporter` operationId).
-	AutomationDeleteReporter(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with DELETE /domains/{domainKey}/reporters/{reporterKey} (the `DeleteReporter` operationId).
+	DeleteReporter(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AutomationGetReporter Get a reporter
+	// GetReporter Get a reporter
 	//
 	// Retrieves a single Automation-managed reporter by its key.
 	//
-	// Corresponds with GET /domains/{domainKey}/reporters/{reporterKey} (the `AutomationGetReporter` operationId).
-	AutomationGetReporter(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// Corresponds with GET /domains/{domainKey}/reporters/{reporterKey} (the `GetReporter` operationId).
+	GetReporter(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-// AutomationListReporters List a domain's reporters
+// ListReporters List a domain's reporters
 //
 // Returns all reporters managed by the Automation API under the domain. Reporters created outside the Automation API are not returned.
 //
-// Corresponds with GET /domains/{domainKey}/reporters (the `AutomationListReporters` operationId).
-func (c *Client) AutomationListReporters(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationListReportersRequest(c.Server, domainKey)
+// Corresponds with GET /domains/{domainKey}/reporters (the `ListReporters` operationId).
+func (c *Client) ListReporters(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListReportersRequest(c.Server, domainKey)
 	if err != nil {
 		return nil, err
 	}
@@ -253,15 +253,15 @@ func (c *Client) AutomationListReporters(ctx context.Context, domainKey string, 
 	return c.Client.Do(req)
 }
 
-// AutomationCreateOrUpdateReporterWithBody Create or update a reporter
+// UpsertReporterWithBody Create or update a reporter
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
 //
 // Takes any type of body and a specified content type.
 //
-// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-func (c *Client) AutomationCreateOrUpdateReporterWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateReporterRequestWithBody(c.Server, domainKey, contentType, body)
+// Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
+func (c *Client) UpsertReporterWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertReporterRequestWithBody(c.Server, domainKey, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -272,15 +272,15 @@ func (c *Client) AutomationCreateOrUpdateReporterWithBody(ctx context.Context, d
 	return c.Client.Do(req)
 }
 
-// AutomationCreateOrUpdateReporter Create or update a reporter
+// UpsertReporter Create or update a reporter
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
 //
 // Takes a body of the `application/json` content type.
 //
-// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-func (c *Client) AutomationCreateOrUpdateReporter(ctx context.Context, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationCreateOrUpdateReporterRequest(c.Server, domainKey, body)
+// Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
+func (c *Client) UpsertReporter(ctx context.Context, domainKey string, body UpsertReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertReporterRequest(c.Server, domainKey, body)
 	if err != nil {
 		return nil, err
 	}
@@ -291,13 +291,13 @@ func (c *Client) AutomationCreateOrUpdateReporter(ctx context.Context, domainKey
 	return c.Client.Do(req)
 }
 
-// AutomationDeleteReporter Delete a reporter
+// DeleteReporter Delete a reporter
 //
 // Deletes an Automation-managed reporter by its key. Deleting a reporter that does not exist also returns 204.
 //
-// Corresponds with DELETE /domains/{domainKey}/reporters/{reporterKey} (the `AutomationDeleteReporter` operationId).
-func (c *Client) AutomationDeleteReporter(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationDeleteReporterRequest(c.Server, domainKey, reporterKey)
+// Corresponds with DELETE /domains/{domainKey}/reporters/{reporterKey} (the `DeleteReporter` operationId).
+func (c *Client) DeleteReporter(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteReporterRequest(c.Server, domainKey, reporterKey)
 	if err != nil {
 		return nil, err
 	}
@@ -308,13 +308,13 @@ func (c *Client) AutomationDeleteReporter(ctx context.Context, domainKey string,
 	return c.Client.Do(req)
 }
 
-// AutomationGetReporter Get a reporter
+// GetReporter Get a reporter
 //
 // Retrieves a single Automation-managed reporter by its key.
 //
-// Corresponds with GET /domains/{domainKey}/reporters/{reporterKey} (the `AutomationGetReporter` operationId).
-func (c *Client) AutomationGetReporter(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAutomationGetReporterRequest(c.Server, domainKey, reporterKey)
+// Corresponds with GET /domains/{domainKey}/reporters/{reporterKey} (the `GetReporter` operationId).
+func (c *Client) GetReporter(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetReporterRequest(c.Server, domainKey, reporterKey)
 	if err != nil {
 		return nil, err
 	}
@@ -325,8 +325,8 @@ func (c *Client) AutomationGetReporter(ctx context.Context, domainKey string, re
 	return c.Client.Do(req)
 }
 
-// NewAutomationListReportersRequest constructs an http.Request for the AutomationListReporters method
-func NewAutomationListReportersRequest(server string, domainKey string) (*http.Request, error) {
+// NewListReportersRequest constructs an http.Request for the ListReporters method
+func NewListReportersRequest(server string, domainKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -359,19 +359,19 @@ func NewAutomationListReportersRequest(server string, domainKey string) (*http.R
 	return req, nil
 }
 
-// NewAutomationCreateOrUpdateReporterRequest calls the generic AutomationCreateOrUpdateReporter builder with application/json body
-func NewAutomationCreateOrUpdateReporterRequest(server string, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody) (*http.Request, error) {
+// NewUpsertReporterRequest calls the generic UpsertReporter builder with application/json body
+func NewUpsertReporterRequest(server string, domainKey string, body UpsertReporterJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewAutomationCreateOrUpdateReporterRequestWithBody(server, domainKey, "application/json", bodyReader)
+	return NewUpsertReporterRequestWithBody(server, domainKey, "application/json", bodyReader)
 }
 
-// NewAutomationCreateOrUpdateReporterRequestWithBody constructs an http.Request for the AutomationCreateOrUpdateReporter method, with any body, and a specified content type
-func NewAutomationCreateOrUpdateReporterRequestWithBody(server string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
+// NewUpsertReporterRequestWithBody constructs an http.Request for the UpsertReporter method, with any body, and a specified content type
+func NewUpsertReporterRequestWithBody(server string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -406,8 +406,8 @@ func NewAutomationCreateOrUpdateReporterRequestWithBody(server string, domainKey
 	return req, nil
 }
 
-// NewAutomationDeleteReporterRequest constructs an http.Request for the AutomationDeleteReporter method
-func NewAutomationDeleteReporterRequest(server string, domainKey string, reporterKey string) (*http.Request, error) {
+// NewDeleteReporterRequest constructs an http.Request for the DeleteReporter method
+func NewDeleteReporterRequest(server string, domainKey string, reporterKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -447,8 +447,8 @@ func NewAutomationDeleteReporterRequest(server string, domainKey string, reporte
 	return req, nil
 }
 
-// NewAutomationGetReporterRequest constructs an http.Request for the AutomationGetReporter method
-func NewAutomationGetReporterRequest(server string, domainKey string, reporterKey string) (*http.Request, error) {
+// NewGetReporterRequest constructs an http.Request for the GetReporter method
+func NewGetReporterRequest(server string, domainKey string, reporterKey string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -532,53 +532,53 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
 
-	// AutomationListReportersWithResponse List a domain's reporters
+	// ListReportersWithResponse List a domain's reporters
 	//
 	// Returns all reporters managed by the Automation API under the domain. Reporters created outside the Automation API are not returned.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /domains/{domainKey}/reporters (the `AutomationListReporters` operationId).
-	AutomationListReportersWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListReportersResponse, error)
+	// Corresponds with GET /domains/{domainKey}/reporters (the `ListReporters` operationId).
+	ListReportersWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*ListReportersResponse, error)
 
-	// AutomationCreateOrUpdateReporterWithBodyWithResponse Create or update a reporter
+	// UpsertReporterWithBodyWithResponse Create or update a reporter
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-	AutomationCreateOrUpdateReporterWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateReporterResponse, error)
+	// Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
+	UpsertReporterWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertReporterResponse, error)
 
-	// AutomationCreateOrUpdateReporterWithResponse Create or update a reporter
+	// UpsertReporterWithResponse Create or update a reporter
 	//
 	// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-	AutomationCreateOrUpdateReporterWithResponse(ctx context.Context, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateReporterResponse, error)
+	// Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
+	UpsertReporterWithResponse(ctx context.Context, domainKey string, body UpsertReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertReporterResponse, error)
 
-	// AutomationDeleteReporterWithResponse Delete a reporter
+	// DeleteReporterWithResponse Delete a reporter
 	//
 	// Deletes an Automation-managed reporter by its key. Deleting a reporter that does not exist also returns 204.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with DELETE /domains/{domainKey}/reporters/{reporterKey} (the `AutomationDeleteReporter` operationId).
-	AutomationDeleteReporterWithResponse(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteReporterResponse, error)
+	// Corresponds with DELETE /domains/{domainKey}/reporters/{reporterKey} (the `DeleteReporter` operationId).
+	DeleteReporterWithResponse(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*DeleteReporterResponse, error)
 
-	// AutomationGetReporterWithResponse Get a reporter
+	// GetReporterWithResponse Get a reporter
 	//
 	// Retrieves a single Automation-managed reporter by its key.
 	//
 	// Returns a wrapper object for the known response body format(s).
 	//
-	// Corresponds with GET /domains/{domainKey}/reporters/{reporterKey} (the `AutomationGetReporter` operationId).
-	AutomationGetReporterWithResponse(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*AutomationGetReporterResponse, error)
+	// Corresponds with GET /domains/{domainKey}/reporters/{reporterKey} (the `GetReporter` operationId).
+	GetReporterWithResponse(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*GetReporterResponse, error)
 }
 
-type AutomationListReportersResponse struct {
+type ListReportersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -590,27 +590,27 @@ type AutomationListReportersResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r AutomationListReportersResponse) GetJSON200() *[]AutomationReporter {
+func (r ListReportersResponse) GetJSON200() *[]AutomationReporter {
 	return r.JSON200
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationListReportersResponse) GetJSON403() *Error {
+func (r ListReportersResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r AutomationListReportersResponse) GetJSON404() *Error {
+func (r ListReportersResponse) GetJSON404() *Error {
 	return r.JSON404
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationListReportersResponse) GetBody() []byte {
+func (r ListReportersResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationListReportersResponse) Status() string {
+func (r ListReportersResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -618,7 +618,7 @@ func (r AutomationListReportersResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationListReportersResponse) StatusCode() int {
+func (r ListReportersResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -626,14 +626,14 @@ func (r AutomationListReportersResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationListReportersResponse) ContentType() string {
+func (r ListReportersResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-type AutomationCreateOrUpdateReporterResponse struct {
+type UpsertReporterResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -647,32 +647,32 @@ type AutomationCreateOrUpdateReporterResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r AutomationCreateOrUpdateReporterResponse) GetJSON200() *AutomationReporter {
+func (r UpsertReporterResponse) GetJSON200() *AutomationReporter {
 	return r.JSON200
 }
 
 // GetJSON400 returns the response for an HTTP 400 `application/json` response
-func (r AutomationCreateOrUpdateReporterResponse) GetJSON400() *Error {
+func (r UpsertReporterResponse) GetJSON400() *Error {
 	return r.JSON400
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationCreateOrUpdateReporterResponse) GetJSON403() *Error {
+func (r UpsertReporterResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r AutomationCreateOrUpdateReporterResponse) GetJSON404() *Error {
+func (r UpsertReporterResponse) GetJSON404() *Error {
 	return r.JSON404
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationCreateOrUpdateReporterResponse) GetBody() []byte {
+func (r UpsertReporterResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationCreateOrUpdateReporterResponse) Status() string {
+func (r UpsertReporterResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -680,7 +680,7 @@ func (r AutomationCreateOrUpdateReporterResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationCreateOrUpdateReporterResponse) StatusCode() int {
+func (r UpsertReporterResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -688,14 +688,14 @@ func (r AutomationCreateOrUpdateReporterResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationCreateOrUpdateReporterResponse) ContentType() string {
+func (r UpsertReporterResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-type AutomationDeleteReporterResponse struct {
+type DeleteReporterResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON403 the response for an HTTP 403 `application/json` response
@@ -705,22 +705,22 @@ type AutomationDeleteReporterResponse struct {
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationDeleteReporterResponse) GetJSON403() *Error {
+func (r DeleteReporterResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSONDefault returns the response for an HTTP default `application/json` response
-func (r AutomationDeleteReporterResponse) GetJSONDefault() *Error {
+func (r DeleteReporterResponse) GetJSONDefault() *Error {
 	return r.JSONDefault
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationDeleteReporterResponse) GetBody() []byte {
+func (r DeleteReporterResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationDeleteReporterResponse) Status() string {
+func (r DeleteReporterResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -728,7 +728,7 @@ func (r AutomationDeleteReporterResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationDeleteReporterResponse) StatusCode() int {
+func (r DeleteReporterResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -736,14 +736,14 @@ func (r AutomationDeleteReporterResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationDeleteReporterResponse) ContentType() string {
+func (r DeleteReporterResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-type AutomationGetReporterResponse struct {
+type GetReporterResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	// JSON200 the response for an HTTP 200 `application/json` response
@@ -755,27 +755,27 @@ type AutomationGetReporterResponse struct {
 }
 
 // GetJSON200 returns the response for an HTTP 200 `application/json` response
-func (r AutomationGetReporterResponse) GetJSON200() *AutomationReporter {
+func (r GetReporterResponse) GetJSON200() *AutomationReporter {
 	return r.JSON200
 }
 
 // GetJSON403 returns the response for an HTTP 403 `application/json` response
-func (r AutomationGetReporterResponse) GetJSON403() *Error {
+func (r GetReporterResponse) GetJSON403() *Error {
 	return r.JSON403
 }
 
 // GetJSON404 returns the response for an HTTP 404 `application/json` response
-func (r AutomationGetReporterResponse) GetJSON404() *Error {
+func (r GetReporterResponse) GetJSON404() *Error {
 	return r.JSON404
 }
 
 // GetBody returns the raw response body bytes
-func (r AutomationGetReporterResponse) GetBody() []byte {
+func (r GetReporterResponse) GetBody() []byte {
 	return r.Body
 }
 
 // Status returns HTTPResponse.Status
-func (r AutomationGetReporterResponse) Status() string {
+func (r GetReporterResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -783,7 +783,7 @@ func (r AutomationGetReporterResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AutomationGetReporterResponse) StatusCode() int {
+func (r GetReporterResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -791,97 +791,97 @@ func (r AutomationGetReporterResponse) StatusCode() int {
 }
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
-func (r AutomationGetReporterResponse) ContentType() string {
+func (r GetReporterResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
 	return ""
 }
 
-// AutomationListReportersWithResponse List a domain's reporters
+// ListReportersWithResponse List a domain's reporters
 //
 // Returns all reporters managed by the Automation API under the domain. Reporters created outside the Automation API are not returned.
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /domains/{domainKey}/reporters (the `AutomationListReporters` operationId).
-func (c *ClientWithResponses) AutomationListReportersWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*AutomationListReportersResponse, error) {
-	rsp, err := c.AutomationListReporters(ctx, domainKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey}/reporters (the `ListReporters` operationId).
+func (c *ClientWithResponses) ListReportersWithResponse(ctx context.Context, domainKey string, reqEditors ...RequestEditorFn) (*ListReportersResponse, error) {
+	rsp, err := c.ListReporters(ctx, domainKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationListReportersResponse(rsp)
+	return ParseListReportersResponse(rsp)
 }
 
-// AutomationCreateOrUpdateReporterWithBodyWithResponse Create or update a reporter
+// UpsertReporterWithBodyWithResponse Create or update a reporter
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateReporterWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateReporterResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateReporterWithBody(ctx, domainKey, contentType, body, reqEditors...)
+// Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
+func (c *ClientWithResponses) UpsertReporterWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertReporterResponse, error) {
+	rsp, err := c.UpsertReporterWithBody(ctx, domainKey, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationCreateOrUpdateReporterResponse(rsp)
+	return ParseUpsertReporterResponse(rsp)
 }
 
-// AutomationCreateOrUpdateReporterWithResponse Create or update a reporter
+// UpsertReporterWithResponse Create or update a reporter
 //
 // Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
-// Corresponds with PUT /domains/{domainKey}/reporters (the `AutomationCreateOrUpdateReporter` operationId).
-func (c *ClientWithResponses) AutomationCreateOrUpdateReporterWithResponse(ctx context.Context, domainKey string, body AutomationCreateOrUpdateReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*AutomationCreateOrUpdateReporterResponse, error) {
-	rsp, err := c.AutomationCreateOrUpdateReporter(ctx, domainKey, body, reqEditors...)
+// Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
+func (c *ClientWithResponses) UpsertReporterWithResponse(ctx context.Context, domainKey string, body UpsertReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertReporterResponse, error) {
+	rsp, err := c.UpsertReporter(ctx, domainKey, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationCreateOrUpdateReporterResponse(rsp)
+	return ParseUpsertReporterResponse(rsp)
 }
 
-// AutomationDeleteReporterWithResponse Delete a reporter
+// DeleteReporterWithResponse Delete a reporter
 //
 // Deletes an Automation-managed reporter by its key. Deleting a reporter that does not exist also returns 204.
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with DELETE /domains/{domainKey}/reporters/{reporterKey} (the `AutomationDeleteReporter` operationId).
-func (c *ClientWithResponses) AutomationDeleteReporterWithResponse(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*AutomationDeleteReporterResponse, error) {
-	rsp, err := c.AutomationDeleteReporter(ctx, domainKey, reporterKey, reqEditors...)
+// Corresponds with DELETE /domains/{domainKey}/reporters/{reporterKey} (the `DeleteReporter` operationId).
+func (c *ClientWithResponses) DeleteReporterWithResponse(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*DeleteReporterResponse, error) {
+	rsp, err := c.DeleteReporter(ctx, domainKey, reporterKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationDeleteReporterResponse(rsp)
+	return ParseDeleteReporterResponse(rsp)
 }
 
-// AutomationGetReporterWithResponse Get a reporter
+// GetReporterWithResponse Get a reporter
 //
 // Retrieves a single Automation-managed reporter by its key.
 //
 // Returns a wrapper object for the known response body format(s).
 //
-// Corresponds with GET /domains/{domainKey}/reporters/{reporterKey} (the `AutomationGetReporter` operationId).
-func (c *ClientWithResponses) AutomationGetReporterWithResponse(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*AutomationGetReporterResponse, error) {
-	rsp, err := c.AutomationGetReporter(ctx, domainKey, reporterKey, reqEditors...)
+// Corresponds with GET /domains/{domainKey}/reporters/{reporterKey} (the `GetReporter` operationId).
+func (c *ClientWithResponses) GetReporterWithResponse(ctx context.Context, domainKey string, reporterKey string, reqEditors ...RequestEditorFn) (*GetReporterResponse, error) {
+	rsp, err := c.GetReporter(ctx, domainKey, reporterKey, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAutomationGetReporterResponse(rsp)
+	return ParseGetReporterResponse(rsp)
 }
 
-// ParseAutomationListReportersResponse parses an HTTP response from a AutomationListReportersWithResponse call
-func ParseAutomationListReportersResponse(rsp *http.Response) (*AutomationListReportersResponse, error) {
+// ParseListReportersResponse parses an HTTP response from a ListReportersWithResponse call
+func ParseListReportersResponse(rsp *http.Response) (*ListReportersResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationListReportersResponse{
+	response := &ListReportersResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -913,15 +913,15 @@ func ParseAutomationListReportersResponse(rsp *http.Response) (*AutomationListRe
 	return response, nil
 }
 
-// ParseAutomationCreateOrUpdateReporterResponse parses an HTTP response from a AutomationCreateOrUpdateReporterWithResponse call
-func ParseAutomationCreateOrUpdateReporterResponse(rsp *http.Response) (*AutomationCreateOrUpdateReporterResponse, error) {
+// ParseUpsertReporterResponse parses an HTTP response from a UpsertReporterWithResponse call
+func ParseUpsertReporterResponse(rsp *http.Response) (*UpsertReporterResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationCreateOrUpdateReporterResponse{
+	response := &UpsertReporterResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -960,15 +960,15 @@ func ParseAutomationCreateOrUpdateReporterResponse(rsp *http.Response) (*Automat
 	return response, nil
 }
 
-// ParseAutomationDeleteReporterResponse parses an HTTP response from a AutomationDeleteReporterWithResponse call
-func ParseAutomationDeleteReporterResponse(rsp *http.Response) (*AutomationDeleteReporterResponse, error) {
+// ParseDeleteReporterResponse parses an HTTP response from a DeleteReporterWithResponse call
+func ParseDeleteReporterResponse(rsp *http.Response) (*DeleteReporterResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationDeleteReporterResponse{
+	response := &DeleteReporterResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -996,15 +996,15 @@ func ParseAutomationDeleteReporterResponse(rsp *http.Response) (*AutomationDelet
 	return response, nil
 }
 
-// ParseAutomationGetReporterResponse parses an HTTP response from a AutomationGetReporterWithResponse call
-func ParseAutomationGetReporterResponse(rsp *http.Response) (*AutomationGetReporterResponse, error) {
+// ParseGetReporterResponse parses an HTTP response from a GetReporterWithResponse call
+func ParseGetReporterResponse(rsp *http.Response) (*GetReporterResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AutomationGetReporterResponse{
+	response := &GetReporterResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

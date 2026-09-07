@@ -119,7 +119,7 @@ func TestNewClient_Call(t *testing.T) {
 			defer s.Close()
 			client, err := NewClient(tt.apiContextSupplier(s.URL), 0)
 			assert.NoError(t, err)
-			r, err := client.Domains.AutomationListDomainsWithResponse(context.Background())
+			r, err := client.Domains.ListDomainsWithResponse(context.Background())
 			assert.NoError(t, err)
 			assert.NotNil(t, r)
 			assert.Equal(t, r.StatusCode(), http.StatusOK)
