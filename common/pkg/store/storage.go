@@ -9,6 +9,11 @@ type Identifiable interface {
 	Identity() string
 }
 
+type OrgEnvAware interface {
+	GetOrgId() string
+	GetEnvId() string
+}
+
 type opType byte
 
 const (

@@ -17,6 +17,10 @@ import (
 
 const defaultDomainKey = "test"
 
+func defaultTenant(am *MockAM) *tenant {
+	return am.Tenant("DEFAULT", "DEFAULT")
+}
+
 func createAMServer(t *testing.T) (*MockAM, *httptest.Server) {
 	t.Helper()
 	am := NewMockAM(t.Context())

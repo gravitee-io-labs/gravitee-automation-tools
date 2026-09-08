@@ -15,3 +15,4 @@ func (i IdentityProvider) Identity() string {
 func (r Reporter) Identity() string {
 	return r.Key
 }
+

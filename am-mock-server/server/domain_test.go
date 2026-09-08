@@ -8,14 +8,14 @@ import (
 
 func TestListDomains(t *testing.T) {
 	am, srv := createAMServer(t)
-	am.Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
 
 	assertListEqual(t, domainsURL(srv), []Domain{{Key: "test", Name: "Test domain"}})
 }
 
 func TestGetDomain(t *testing.T) {
 	am, srv := createAMServer(t)
-	am.Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
 
 	assertGetEqual(t, domainsURL(srv), "test", Domain{Key: "test", Name: "Test domain"})
 }
@@ -36,14 +36,14 @@ func TestPutGetDomain(t *testing.T) {
 
 func TestDeleteDomain(t *testing.T) {
 	am, srv := createAMServer(t)
-	am.Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
 
 	assertDeleteGone(t, domainsURL(srv), "test", "Domain")
 }
 
 func TestListDomainsSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	am.Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
 	client := newAMClient(t, srv)
 
 	res, err := client.Domains.ListDomainsWithResponse(t.Context())
@@ -52,7 +52,7 @@ func TestListDomainsSDK(t *testing.T) {
 
 func TestGetDomainSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	am.Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
 	client := newAMClient(t, srv)
 
 	res, err := client.Domains.GetDomainWithResponse(t.Context(), "test")
@@ -81,7 +81,7 @@ func TestPutGetDomainSDK(t *testing.T) {
 
 func TestDeleteDomainSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	am.Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
 	client := newAMClient(t, srv)
 
 	del, err := client.Domains.DeleteDomainWithResponse(t.Context(), "test")
