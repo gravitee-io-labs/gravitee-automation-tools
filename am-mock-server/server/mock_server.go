@@ -21,6 +21,7 @@ import (
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/store"
 )
 
+// MockAM is an in-memory StrictServer. Tenants are created on first request, keyed by org+env. Data is process-local.
 type MockAM struct {
 	tenants map[string]*tenant
 }
@@ -62,6 +63,7 @@ type orgEnv struct {
 func (o orgEnv) GetOrgId() string { return o.org }
 func (o orgEnv) GetEnvId() string { return o.env }
 
+// NewMockAM returns an empty mock.
 func NewMockAM() *MockAM {
 	return &MockAM{
 		tenants: make(map[string]*tenant),

@@ -14,9 +14,13 @@
 
 package errors
 
+// NoAuthProvided is returned when APIContext has neither bearer nor basic credentials.
 const NoAuthProvided = ClientAuthError("no auth configured: provide basic auth or bearer auth credentials")
+
+// ManyAuthProvided is returned when APIContext has both bearer and basic credentials.
 const ManyAuthProvided = ClientAuthError("only one auth can be configured: provide basic auth or bearer auth credentials")
 
+// ClientAuthError is a sentinel auth-config error. Compare with errors.Is.
 type ClientAuthError string
 
 func (e ClientAuthError) Error() string {

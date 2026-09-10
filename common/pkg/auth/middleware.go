@@ -24,6 +24,7 @@ import (
 
 type contextKey struct{}
 
+// UserFromContext returns the User stored by AuthnMiddleware, or nil if the request is unauthenticated.
 func UserFromContext(ctx context.Context) *User {
 	u, _ := ctx.Value(contextKey{}).(*User)
 	return u
@@ -33,13 +34,17 @@ func withUser(ctx context.Context, u *User) context.Context {
 	return context.WithValue(ctx, contextKey{}, u)
 }
 
+// RouteInfo is the method and chi route pattern used to look up a required permission.
+// RoutePattern must match how permissions were registered (basePath + YAML path).
 type RouteInfo struct {
 	Method       string
 	RoutePattern string
 }
 
+// RouteInfoExtractor reads RouteInfo from the current request (typically chi.RouteContext).
 type RouteInfoExtractor func(r *http.Request) RouteInfo
 
+// AuthnMiddleware rejects missing/invalid Authorization with 401. On success it stores *User in the request context.
 func AuthnMiddleware(reg *Registry) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -76,6 +81,8 @@ func AuthnMiddleware(reg *Registry) func(http.Handler) http.Handler {
 	}
 }
 
+// AuthzMiddleware requires a User in context. Missing user is 401. Missing permission is 403.
+// Unconfigured routes and AllPermissions users are allowed through.
 func AuthzMiddleware(reg *Registry, extract RouteInfoExtractor) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
