@@ -32,7 +32,7 @@ import (
 const defaultDomainKey = "test"
 
 func defaultTenant(am *MockAM) *tenant {
-	return am.Tenant("DEFAULT", "DEFAULT")
+	return am.getTenant(orgEnv{"DEFAULT", "DEFAULT"})
 }
 
 func createAMServer(t *testing.T) (*MockAM, *httptest.Server) {
