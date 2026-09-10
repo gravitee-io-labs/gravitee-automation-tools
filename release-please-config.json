@@ -1,0 +1,27 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "separate-pull-requests": true,
+  "tag-separator": "/",
+  "packages": {
+    "am": {
+      "release-type": "go",
+      "component": "am",
+      "bump-minor-pre-major": true
+    },
+    "apim": {
+      "release-type": "go",
+      "component": "apim",
+      "bump-minor-pre-major": true
+    },
+    "common": {
+      "release-type": "go",
+      "component": "common",
+      "bump-minor-pre-major": true
+    },
+    "am-mock-server": {
+      "release-type": "go",
+      "component": "am-mock-server",
+      "bump-minor-pre-major": true
+    }
+  }
+}

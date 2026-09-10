@@ -12,15 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# yaml-language-server: $schema=../../../configuration-schema.json
-package: identityprovider
-output: client.gen.go
-generate:
-  models: true
-  client: true
-  server-urls: true
-output-options:
-  overlay:
-    path: ../overlay.yaml
-  include-tags:
-    - Identity Providers
+version: 2
+
+monorepo:
+  tag_prefix: am-mock-server/
+
+builds:
+  - main: .
+    binary: am-mock-server
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+
+archives:
+  - format: tar.gz
+
+changelog:
+  disable: true
