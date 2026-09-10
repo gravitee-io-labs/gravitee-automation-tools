@@ -29,27 +29,27 @@ func testIdentityProviderSDK() identityprovider.IdentityProvider {
 }
 
 func TestListIdentityProviders(t *testing.T) {
-	am, srv := createAMServer(t)
+	am, srv := createAMServerWithDomain(t)
 	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 
 	assertListEqual(t, identitiesURL(srv), []IdentityProvider{testIdentityProvider()})
 }
 
 func TestGetIdentityProvider(t *testing.T) {
-	am, srv := createAMServer(t)
+	am, srv := createAMServerWithDomain(t)
 	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 
 	assertGetEqual(t, identitiesURL(srv), "test", testIdentityProvider())
 }
 
 func TestGetIdentityProvider404(t *testing.T) {
-	_, srv := createAMServer(t)
+	_, srv := createAMServerWithDomain(t)
 
 	assertGet404(t, identitiesURL(srv), "test", "IdentityProvider")
 }
 
 func TestPutGetIdentityProvider(t *testing.T) {
-	_, srv := createAMServer(t)
+	_, srv := createAMServerWithDomain(t)
 	body := testIdentityProvider()
 
 	assertPutEqual(t, identitiesURL(srv), body)
@@ -57,14 +57,14 @@ func TestPutGetIdentityProvider(t *testing.T) {
 }
 
 func TestDeleteIdentityProvider(t *testing.T) {
-	am, srv := createAMServer(t)
+	am, srv := createAMServerWithDomain(t)
 	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 
 	assertDeleteGone(t, identitiesURL(srv), "test", "IdentityProvider")
 }
 
 func TestListIdentityProvidersSDK(t *testing.T) {
-	am, srv := createAMServer(t)
+	am, srv := createAMServerWithDomain(t)
 	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
@@ -73,7 +73,7 @@ func TestListIdentityProvidersSDK(t *testing.T) {
 }
 
 func TestGetIdentityProviderSDK(t *testing.T) {
-	am, srv := createAMServer(t)
+	am, srv := createAMServerWithDomain(t)
 	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
@@ -82,7 +82,7 @@ func TestGetIdentityProviderSDK(t *testing.T) {
 }
 
 func TestGetIdentityProvider404SDK(t *testing.T) {
-	_, srv := createAMServer(t)
+	_, srv := createAMServerWithDomain(t)
 	client := newAMClient(t, srv)
 
 	res, err := client.IdentityProviders.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
@@ -90,7 +90,7 @@ func TestGetIdentityProvider404SDK(t *testing.T) {
 }
 
 func TestPutGetIdentityProviderSDK(t *testing.T) {
-	_, srv := createAMServer(t)
+	_, srv := createAMServerWithDomain(t)
 	client := newAMClient(t, srv)
 	body := testIdentityProviderSDK()
 
@@ -102,7 +102,7 @@ func TestPutGetIdentityProviderSDK(t *testing.T) {
 }
 
 func TestDeleteIdentityProviderSDK(t *testing.T) {
-	am, srv := createAMServer(t)
+	am, srv := createAMServerWithDomain(t)
 	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 	client := newAMClient(t, srv)
 

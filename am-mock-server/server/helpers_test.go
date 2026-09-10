@@ -43,14 +43,28 @@ func createAMServer(t *testing.T) (*MockAM, *httptest.Server) {
 	return am, srv
 }
 
-func newAMClient(t *testing.T, srv *httptest.Server) *am.AMClient {
+func createAMServerWithDomain(t *testing.T) (*MockAM, *httptest.Server) {
+	t.Helper()
+	am, srv := createAMServer(t)
+	defaultTenant(am).Domains.Put(Domain{Key: defaultDomainKey, Name: "Test"})
+	return am, srv
+}
+
+func newTestClient(t *testing.T, srv *httptest.Server, orgID, envID, token string) *am.AMClient {
 	t.Helper()
 	client, err := am.NewClient(apicontext.APIContext{
 		BaseURL: srv.URL + BasePath,
-		Auth:    apicontext.Auth{BearerToken: new("test")},
+		OrgID:   orgID,
+		EnvID:   envID,
+		Auth:    apicontext.Auth{BearerToken: new(token)},
 	}, 0)
 	require.NoError(t, err)
 	return client
+}
+
+func newAMClient(t *testing.T, srv *httptest.Server) *am.AMClient {
+	t.Helper()
+	return newTestClient(t, srv, "", "", "test")
 }
 
 func collectionURL(srv *httptest.Server, resourcePath string) string {

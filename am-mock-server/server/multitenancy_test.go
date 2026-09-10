@@ -15,33 +15,17 @@
 package server
 
 import (
-	"net/http/httptest"
 	"testing"
 
-	am "github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg"
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/domain"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/apicontext"
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/response"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
-
-func newTenantClient(t *testing.T, srv *httptest.Server, orgID, envID string) *am.AMClient {
-	t.Helper()
-	client, err := am.NewClient(apicontext.APIContext{
-		BaseURL: srv.URL + BasePath,
-		OrgID:   orgID,
-		EnvID:   envID,
-		Auth:    apicontext.Auth{BearerToken: new("test")},
-	}, 0)
-	require.NoError(t, err)
-	return client
-}
 
 func TestMultiTenancy_DomainIsolation(t *testing.T) {
 	_, srv := createAMServer(t)
-	t1 := newTenantClient(t, srv, "org-alpha", "env-alpha")
-	t2 := newTenantClient(t, srv, "org-beta", "env-beta")
+	t1 := newTestClient(t, srv, "org-alpha", "env-alpha", "test")
+	t2 := newTestClient(t, srv, "org-beta", "env-beta", "test")
 
 	domainT1 := domain.Domain{Key: "shared-key", Name: "Tenant 1 Domain"}
 	domainT2 := domain.Domain{Key: "shared-key", Name: "Tenant 2 Domain"}

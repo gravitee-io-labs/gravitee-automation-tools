@@ -34,7 +34,7 @@ type Child[T store.Identifiable] struct {
 }
 
 func (m Child[T]) Identity() string {
-	return m.Self.Identity()
+	return m.ParentIdentity + "/" + m.Self.Identity()
 }
 
 type tenant struct {
@@ -109,11 +109,8 @@ func (m *MockAM) DeleteDomain(_ context.Context, req DeleteDomainRequestObject) 
 }
 
 func deleteChildren[T store.Identifiable](s *store.Store[Child[T]], parentIdentity string) {
-	all := s.GetAll()
-	for _, child := range all {
-		if child.ParentIdentity == parentIdentity {
-			s.DeleteByKey(child.Self.Identity())
-		}
+	for _, child := range ofParent(s.GetAll(), parentIdentity) {
+		s.DeleteByKey(child.Identity())
 	}
 }
 
@@ -236,17 +233,11 @@ func ofParent[T store.Identifiable](children []Child[T], parentIdentity string) 
 }
 
 func isChildOf[T store.Identifiable](s *store.Store[Child[T]], parentIdentity, id string) (Child[T], bool) {
-	child, ok := s.Get(id)
-	if !ok || child.ParentIdentity != parentIdentity {
-		return Child[T]{}, false
-	}
-	return child, true
+	return s.Get(parentIdentity + "/" + id)
 }
 
 func deleteChild[T store.Identifiable](s *store.Store[Child[T]], parentIdentity, id string) {
-	if _, ok := isChildOf(s, parentIdentity, id); ok {
-		s.DeleteByKey(id)
-	}
+	s.DeleteByKey(parentIdentity + "/" + id)
 }
 
 func newChild[T store.Identifiable](identifiable T, parentIdentity string) Child[T] {

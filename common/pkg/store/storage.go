@@ -80,9 +80,12 @@ func NewStore[T Identifiable]() *Store[T] {
 // GetAll returns a snapshot of all values in insertion order. The slice is independent of later mutations.
 func (s *Store[T]) GetAll() []T {
 	s.mutex.Lock()
-	n := len(s.identifiers)
-	s.mutex.Unlock()
-	return s.GetPage(1, n)
+	defer s.mutex.Unlock()
+	result := make([]T, 0, len(s.identifiers))
+	for _, id := range s.identifiers {
+		result = append(result, s.data[id])
+	}
+	return result
 }
 
 // GetPage returns a snapshot of one page in insertion order. page < 1 is treated as the first page.
@@ -98,7 +101,7 @@ func (s *Store[T]) GetPage(page int, size int) []T {
 	to := pr.toIndex(len(s.identifiers))
 
 	if from >= len(s.identifiers) {
-		return nil
+		return r
 	}
 
 	for _, k := range s.identifiers[from:to] {
@@ -107,15 +110,15 @@ func (s *Store[T]) GetPage(page int, size int) []T {
 	return r
 }
 
-// Get returns the value for key. ok is false when the key is missing or Identity() is empty.
+// Get returns the value for key. ok is false when the key is absent.
 func (s *Store[T]) Get(key string) (T, bool) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	identifiable, ok := s.data[key]
 	if !ok {
-		identifiable = *new(T)
+		return *new(T), false
 	}
-	return identifiable, identifiable.Identity() != ""
+	return identifiable, true
 }
 
 // Put inserts or replaces by Identity(). A new key is appended; an existing key keeps its position.
