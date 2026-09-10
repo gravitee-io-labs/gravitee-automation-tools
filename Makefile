@@ -45,7 +45,7 @@ lint-licenses: ## Check license headers
 .PHONY: lint-fix
 lint-fix: ## Auto-fix linting issues and add license headers
 	@for mod in $(MODULES); do \
-		find $$mod -name '*.go' -not -name '*.gen.go' | xargs goimports -w; \
+		find $$mod -name '*.go' -not -name '*.gen.go' -exec goimports -w {} +; \
 	done
 	@addlicense -f LICENSE_TEMPLATE.txt \
 		-ignore "**/*.gen.go" \
@@ -67,7 +67,7 @@ test: ## Run tests
 
 .PHONY: tools
 tools: ## Install development tools
-	go install honnef.co/go/tools/cmd/staticcheck@latest
-	go install github.com/mgechev/revive@latest
-	go install github.com/google/addlicense@latest
-	go install golang.org/x/tools/cmd/goimports@latest
+	go install honnef.co/go/tools/cmd/staticcheck@v0.8.1
+	go install github.com/mgechev/revive@v1.16.0
+	go install github.com/google/addlicense@v1.2.0
+	go install golang.org/x/tools/cmd/goimports@v0.50.0

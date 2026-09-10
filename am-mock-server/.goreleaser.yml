@@ -14,9 +14,6 @@
 
 version: 2
 
-monorepo:
-  tag_prefix: am-mock-server/
-
 builds:
   - main: .
     binary: am-mock-server
@@ -33,6 +30,9 @@ builds:
 
 archives:
   - format: tar.gz
+
+release:
+  disable: true
 
 changelog:
   disable: true
