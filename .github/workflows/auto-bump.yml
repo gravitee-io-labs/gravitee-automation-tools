@@ -1,9 +1,10 @@
-name: Auto-bump common dependents
+name: Auto-bump dependents
 
 on:
   push:
     tags:
       - "common/v*"
+      - "am/v*"
 
 permissions:
   contents: write
@@ -20,24 +21,28 @@ jobs:
 
       - name: Update dependents
         run: |
-          VERSION="${GITHUB_REF_NAME#common/}"
-          MODULE="github.com/gravitee-io-labs/gravitee-automation-sdks/common"
+          TAG="${GITHUB_REF_NAME}"
+          COMPONENT="${TAG%%/*}"
+          VERSION="${TAG#*/}"
+          MODULE="github.com/gravitee-io-labs/gravitee-automation-sdks/${COMPONENT}"
           UPDATED=""
-          for mod in am apim am-mock-server; do
+          for mod in am apim common am-mock-server; do
+            [ "$mod" = "$COMPONENT" ] && continue
             if grep -q "$MODULE" "$mod/go.mod"; then
-              (cd "$mod" && go mod edit -require "${MODULE}@${VERSION}")
+              (cd "$mod" && go mod edit -require "${MODULE}@${VERSION}" && go mod tidy)
               UPDATED="${UPDATED} ${mod}"
             fi
           done
           echo "UPDATED=${UPDATED}" >> "$GITHUB_ENV"
           echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+          echo "COMPONENT=${COMPONENT}" >> "$GITHUB_ENV"
 
       - name: Create pull request
         if: env.UPDATED != ''
         uses: peter-evans/create-pull-request@v7
         with:
-          branch: auto-bump/common-${{ env.VERSION }}
-          commit-message: "fix(deps): update common to ${{ env.VERSION }}"
-          title: "fix(deps): update common to ${{ env.VERSION }}"
+          branch: auto-bump/${{ env.COMPONENT }}-${{ env.VERSION }}
+          commit-message: "fix(deps): update ${{ env.COMPONENT }} to ${{ env.VERSION }}"
+          title: "fix(deps): update ${{ env.COMPONENT }} to ${{ env.VERSION }}"
           body: |
-            Auto-generated bump of `common` to `${{ env.VERSION }}` in:${{ env.UPDATED }}
+            Auto-generated bump of `${{ env.COMPONENT }}` to `${{ env.VERSION }}` in:${{ env.UPDATED }}
