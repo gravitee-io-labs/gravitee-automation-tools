@@ -21,8 +21,20 @@ If you are an AI agent operating in this repository:
 ### Build & Test
 
 ```bash
-# Run all tests across the workspace
-go test ./am/... ./am-mock-server/... ./common/...
+# Install lint/dev tools (staticcheck, revive, addlicense, goimports)
+make tools
+
+# Regenerate all code (overlays + oapi-codegen)
+make generate
+
+# Run all linters (vet, staticcheck, revive, license headers)
+make lint
+
+# Auto-fix lint issues and add license headers
+make lint-fix
+
+# Run all tests across all modules
+make test
 
 # Run tests for a single module
 go test ./am-mock-server/server/...
@@ -30,14 +42,9 @@ go test ./am-mock-server/server/...
 # Run a single test
 go test ./am-mock-server/server/... -run TestGetDomain404SDK
 
-# Regenerate all code (overlays + oapi-codegen)
-go generate ./am/... ./am-mock-server/...
-
 # Run the mock server
 go run ./am-mock-server --port 8080
 ```
-
-**Note:** `go test ./...` does not work from the workspace root — you must specify module paths explicitly.
 
 ---
 
