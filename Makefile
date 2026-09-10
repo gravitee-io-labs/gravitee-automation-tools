@@ -39,7 +39,11 @@ lint-licenses: ## Check license headers
 	@echo "Checking license headers ..."
 	@addlicense -check -f LICENSE_TEMPLATE.txt \
 		-ignore "**/*.gen.go" \
+		-ignore "**/overlay.merged.yaml" \
+		-ignore "am/pkg/sdk/overlay.yaml" \
+		-ignore "am-mock-server/server/overlay.yaml" \
 		-ignore ".github/**" \
+		-ignore ".idea/**" \
 		.
 
 .PHONY: lint-fix
@@ -49,8 +53,23 @@ lint-fix: ## Auto-fix linting issues and add license headers
 	done
 	@addlicense -f LICENSE_TEMPLATE.txt \
 		-ignore "**/*.gen.go" \
+		-ignore "**/overlay.merged.yaml" \
+		-ignore "am/pkg/sdk/overlay.yaml" \
+		-ignore "am-mock-server/server/overlay.yaml" \
 		-ignore ".github/**" \
+		-ignore ".idea/**" \
 		.
+
+##@ 🔄 Generate
+
+.PHONY: generate
+generate: ## Run go generate across all modules
+	@for mod in $(MODULES); do \
+		if $(HAS_GO); then \
+			echo "==> generate $$mod ..."; \
+			(cd $$mod && go generate ./...) || exit 1; \
+		fi; \
+	done
 
 ##@ 🧪 Test
 

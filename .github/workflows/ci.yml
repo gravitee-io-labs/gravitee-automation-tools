@@ -8,6 +8,22 @@ permissions:
   contents: read
 
 jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.work
+      - run: make generate
+      - name: Check for uncommitted changes
+        run: |
+          if [ -n "$(git diff --name-only)" ]; then
+            echo "::error::Generated files are out of date. Run 'make generate' and commit the result."
+            git diff --stat
+            exit 1
+          fi
+
   lint:
     runs-on: ubuntu-latest
     steps:
