@@ -15,7 +15,8 @@
 package store_test
 
 import (
-	"context"
+	"fmt"
+	"sync"
 	"testing"
 
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/store"
@@ -34,7 +35,7 @@ func (k testObject) Identity() string {
 var underTest *store.Store[testObject]
 
 func before() {
-	underTest = store.NewStoreWithData[testObject](context.Background(),
+	underTest = store.NewStoreWithData[testObject](
 		testObject{
 			key:  "foo",
 			data: "bar",
@@ -62,6 +63,9 @@ func TestPut(t *testing.T) {
 	assert.Equal(t, "bar updated", x.data)
 	x, _ = underTest.Get("new")
 	assert.Equal(t, "hey!", x.data)
+
+	all := underTest.GetAll()
+	assert.Len(t, all, 2)
 }
 
 func TestDelete(t *testing.T) {
@@ -145,10 +149,15 @@ func TestGetPage(t *testing.T) {
 	assert.Equal(t, page[0], testObject{"seventh", "7"})
 	assert.Equal(t, page[1], testObject{"eighth", "8"})
 	assert.Equal(t, page[2], testObject{"ninth", "9"})
+
+	assert.NotPanics(t, func() {
+		page = underTest.GetPage(100, 10)
+	})
+	assert.Empty(t, page)
 }
 
 func TestEmptyStore(t *testing.T) {
-	underLocalTest := store.NewStore[testObject](context.Background())
+	underLocalTest := store.NewStore[testObject]()
 	_, ok := underLocalTest.Get("foo")
 	assert.False(t, ok)
 
@@ -160,5 +169,32 @@ func TestEmptyStore(t *testing.T) {
 	})
 	assert.Len(t, underLocalTest.GetAll(), 0)
 	assert.Len(t, underLocalTest.GetPage(1, 10), 0)
+}
 
+func TestConcurrentGetPutDelete(t *testing.T) {
+	s := store.NewStore[testObject]()
+	const n = 50
+	var wg sync.WaitGroup
+	wg.Add(n * 4)
+	for i := range n {
+		key := fmt.Sprintf("k-%d", i%10)
+		go func(i int) {
+			defer wg.Done()
+			s.Put(testObject{key: key, data: fmt.Sprintf("v-%d", i)})
+		}(i)
+		go func() {
+			defer wg.Done()
+			s.Get(key)
+		}()
+		go func() {
+			defer wg.Done()
+			_ = s.GetAll()
+			_ = s.GetPage(1, 5)
+		}()
+		go func() {
+			defer wg.Done()
+			s.DeleteByKey(key)
+		}()
+	}
+	wg.Wait()
 }

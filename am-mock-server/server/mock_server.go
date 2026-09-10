@@ -22,7 +22,6 @@ import (
 )
 
 type MockAM struct {
-	ctx     context.Context
 	tenants map[string]*tenant
 }
 
@@ -33,12 +32,12 @@ type tenant struct {
 	Reporters         *store.Store[Reporter]
 }
 
-func newTenant(ctx context.Context) *tenant {
+func newTenant() *tenant {
 	return &tenant{
-		Domains:           store.NewStore[Domain](ctx),
-		Certificates:      store.NewStore[Certificate](ctx),
-		IdentityProviders: store.NewStore[IdentityProvider](ctx),
-		Reporters:         store.NewStore[Reporter](ctx),
+		Domains:           store.NewStore[Domain](),
+		Certificates:      store.NewStore[Certificate](),
+		IdentityProviders: store.NewStore[IdentityProvider](),
+		Reporters:         store.NewStore[Reporter](),
 	}
 }
 
@@ -46,7 +45,7 @@ func (m *MockAM) getTenant(aware store.OrgEnvAware) *tenant {
 	tenantKey := aware.GetOrgId() + "-" + aware.GetEnvId()
 	et, ok := m.tenants[tenantKey]
 	if !ok {
-		nt := newTenant(m.ctx)
+		nt := newTenant()
 		m.tenants[tenantKey] = nt
 		return nt
 	}
@@ -63,9 +62,8 @@ type orgEnv struct {
 func (o orgEnv) GetOrgId() string { return o.org }
 func (o orgEnv) GetEnvId() string { return o.env }
 
-func NewMockAM(ctx context.Context) *MockAM {
+func NewMockAM() *MockAM {
 	return &MockAM{
-		ctx:     ctx,
 		tenants: make(map[string]*tenant),
 	}
 }

@@ -78,7 +78,11 @@ test: ## Run tests
 	@for mod in $(MODULES); do \
 		if $(HAS_GO); then \
 			echo "==> testing $$mod ..."; \
-			(cd $$mod && go test ./...) || exit 1; \
+			if [ "$$mod" = "common" ]; then \
+				(cd $$mod && go test -race ./...) || exit 1; \
+			else \
+				(cd $$mod && go test ./...) || exit 1; \
+			fi; \
 		fi; \
 	done
 
