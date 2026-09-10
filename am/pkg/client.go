@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package pkg is the AM Automation SDK facade. Import it as am.
 package pkg
 
 import (
@@ -29,6 +30,8 @@ import (
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/errors"
 )
 
+// AMClient groups generated resource clients that share one base URL, org/env, auth, and HTTP timeout.
+// Fields are set by NewClient and are safe to read; do not replace them after construction.
 type AMClient struct {
 	Domains           domain.ClientWithResponsesInterface
 	Certificates      certificate.ClientWithResponsesInterface
@@ -38,6 +41,10 @@ type AMClient struct {
 
 type requestEditor = func(context.Context, *http.Request) error
 
+// NewClient builds an AMClient from ac. Trailing slashes are stripped from BaseURL.
+// OrgID and EnvID are baked into the server URL (empty becomes "DEFAULT").
+// timeoutMs is the HTTP client timeout in milliseconds; 0 means no timeout.
+// Auth must be exactly one of bearer or basic.
 func NewClient(ac apicontext.APIContext, timeoutMs int) (*AMClient, error) {
 
 	baseUrl, err := url.Parse(strings.TrimRight(ac.BaseURL, "/"))

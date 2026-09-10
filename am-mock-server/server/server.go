@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package server is the AM Automation mock HTTP server and in-memory StrictServer implementation.
 package server
 
 import (
@@ -22,12 +23,15 @@ import (
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/auth"
 )
 
+// BasePath is the default API prefix ("/automation").
 const BasePath = "/automation"
 
+// New mounts the API at BasePath with no auth.
 func New(impl StrictServerInterface) http.Handler {
 	return NewWithPath(impl, BasePath, nil)
 }
 
+// NewWithPath mounts the API at basePath. nil Registry leaves the API open. nil impl serves Unimplemented.
 func NewWithPath(impl StrictServerInterface, basePath string, reg *auth.Registry) http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)

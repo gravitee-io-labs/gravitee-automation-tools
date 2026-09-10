@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package refs holds shared identity types used in generated CRD models.
 package refs
 
+// NamespaceName is a Kubernetes object reference. Both fields are set together from CRD spec; neither is defaulted here.
 type NamespaceName struct {
 	Namespace string
 	Name      string

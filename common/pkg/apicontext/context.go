@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Package apicontext holds connection settings for an Automation API client: URL, org/env, and auth.
 package apicontext
 
 import (
@@ -24,6 +25,8 @@ import (
 
 const defaultOrgEnv = "DEFAULT"
 
+// APIContext is the input to NewClient. Empty OrgID and EnvID become "DEFAULT" at request time.
+// Auth must be exactly one of bearer or basic; that is enforced by AuthInterceptor, not here.
 type APIContext struct {
 	BaseURL string
 	OrgID   string
@@ -31,10 +34,11 @@ type APIContext struct {
 	Auth    Auth
 }
 
+// Auth is the credentials for one APIContext. Set BearerToken or BasicAuth, not both. Pointers are optional slots.
 type Auth struct {
-	// The bearer token used to authenticate against the API instance
+	// BearerToken, when non-nil, selects bearer auth. The pointed string is the token value.
 	BearerToken *string
-	// The Basic credentials used to authenticate against the API instance.
+	// BasicAuth, when non-nil, selects HTTP Basic. Username and Password are sent as-is.
 	BasicAuth *BasicAuth
 }
 
@@ -46,11 +50,13 @@ func (c APIContext) isBasicAuth() bool {
 	return c.Auth.BasicAuth != nil
 }
 
+// BasicAuth is a username/password pair. Both fields are required when this struct is used.
 type BasicAuth struct {
 	Username string
 	Password string
 }
 
+// AuthInterceptor returns a request editor that sets Authorization. It errors if both or neither auth mode is set.
 func (c APIContext) AuthInterceptor() (func(ctx context.Context, req *http.Request) error, error) {
 	if c.isBearerAuth() && c.isBasicAuth() {
 		return nil, errors.NewClientError(errors.ManyAuthProvided)
@@ -72,6 +78,7 @@ func (c APIContext) AuthInterceptor() (func(ctx context.Context, req *http.Reque
 	return nil, errors.NewClientError(errors.NoAuthProvided)
 }
 
+// GetOrgIDOrDefault returns OrgID, or "DEFAULT" when OrgID is empty.
 func (c APIContext) GetOrgIDOrDefault() string {
 	if c.OrgID != "" {
 		return c.OrgID
@@ -79,6 +86,7 @@ func (c APIContext) GetOrgIDOrDefault() string {
 	return defaultOrgEnv
 }
 
+// GetEnvIDOrDefault returns EnvID, or "DEFAULT" when EnvID is empty.
 func (c APIContext) GetEnvIDOrDefault() string {
 	if c.EnvID != "" {
 		return c.EnvID
