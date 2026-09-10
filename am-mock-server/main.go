@@ -69,7 +69,7 @@ func newCommand() *cobra.Command {
 }
 
 func serve(ctx context.Context, port int, basePath string, reg *auth.Registry) error {
-	handler := server.NewWithPath(server.NewMockAM(context.Background()), basePath, reg)
+	handler := server.NewWithPath(server.NewMockAM(), basePath, reg)
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
 		Handler: handler,

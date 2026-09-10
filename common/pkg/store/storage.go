@@ -15,8 +15,8 @@
 package store
 
 import (
-	"context"
 	"slices"
+	"sync"
 )
 
 type Identifiable interface {
@@ -27,17 +27,6 @@ type OrgEnvAware interface {
 	GetOrgId() string
 	GetEnvId() string
 }
-
-type opType byte
-
-const (
-	noop = iota
-	opRead
-	opList
-	opListAll
-	opWrite
-	opDelete
-)
 
 type pageRange struct {
 	page int
@@ -59,131 +48,88 @@ func (s pageRange) toIndex(sliceSize int) int {
 	return min(from+s.size, sliceSize)
 }
 
-type operation[T Identifiable] struct {
-	identifier string
-	page       pageRange
-	opType     opType
-	identified T
-}
-
 type Store[T Identifiable] struct {
-	data           map[string]T
-	identifiers    []string
-	semaphore      chan operation[T]
-	singleSupplier chan T
-	manySupplier   chan []T
+	data        map[string]T
+	identifiers []string
+	mutex       sync.Mutex
 }
 
-func NewStoreWithData[T Identifiable](ctx context.Context, keyed ...T) *Store[T] {
-	s := NewStore[T](ctx)
-	for _, keyed := range keyed {
+func NewStoreWithData[T Identifiable](identifiables ...T) *Store[T] {
+	s := NewStore[T]()
+	for _, keyed := range identifiables {
 		s.Put(keyed)
 	}
 	return s
 }
 
-func NewStore[T Identifiable](ctx context.Context) *Store[T] {
+func NewStore[T Identifiable]() *Store[T] {
 	s := &Store[T]{
-		data:           make(map[string]T),
-		identifiers:    make([]string, 0),
-		semaphore:      make(chan operation[T]),
-		singleSupplier: make(chan T),
-		manySupplier:   make(chan []T),
+		data:        make(map[string]T),
+		identifiers: make([]string, 0),
+		mutex:       sync.Mutex{},
 	}
-
-	go s.start(ctx)
-
 	return s
 }
 
-func (s *Store[T]) start(ctx context.Context) {
-	for {
-		select {
-		case action := <-s.semaphore:
-			switch action.opType {
-			case opRead:
-				keyed, ok := s.data[action.identifier]
-				if !ok {
-					keyed = *new(T)
-				}
-				go func() {
-					s.singleSupplier <- keyed
-				}()
-			case opList:
-				go func() {
-					r := make([]T, 0)
-					from := action.page.fromIndex()
-					to := action.page.toIndex(len(s.identifiers))
-					for _, k := range s.identifiers[from:to] {
-						r = append(r, s.data[k])
-					}
-					s.manySupplier <- r
-				}()
-			case opListAll:
-				go func() {
-					r := make([]T, 0, len(s.identifiers))
-					for _, k := range s.identifiers {
-						r = append(r, s.data[k])
-					}
-					s.manySupplier <- r
-				}()
-			case opWrite:
-				s.identifiers = append(s.identifiers, action.identified.Identity())
-				s.data[action.identified.Identity()] = action.identified
-			case opDelete:
-				if _, ok := s.data[action.identifier]; ok {
-					index := slices.Index(s.identifiers, action.identifier)
-					s.identifiers = slices.Delete(s.identifiers, index, index+1)
-				}
-				delete(s.data, action.identifier)
-			case noop:
-				// no op!
-			}
-
-		case <-ctx.Done():
-			return
-		}
-	}
-}
-
 func (s *Store[T]) GetAll() []T {
-	s.do(operation[T]{opType: opListAll})
-	return <-s.manySupplier
+	s.mutex.Lock()
+	n := len(s.identifiers)
+	s.mutex.Unlock()
+	return s.GetPage(1, n)
 }
 
 func (s *Store[T]) GetPage(page int, size int) []T {
-	s.do(operation[T]{
-		opType: opList,
-		page:   pageRange{page: page, size: size},
-	})
-	return <-s.manySupplier
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	r := make([]T, 0)
+
+	pr := pageRange{page: page, size: size}
+	from := pr.fromIndex()
+	to := pr.toIndex(len(s.identifiers))
+
+	if from >= len(s.identifiers) {
+		return nil
+	}
+
+	for _, k := range s.identifiers[from:to] {
+		r = append(r, s.data[k])
+	}
+	return r
 }
 
 func (s *Store[T]) Get(key string) (T, bool) {
-	s.do(operation[T]{
-		opType:     opRead,
-		identifier: key})
-	data := <-s.singleSupplier
-	return data, data.Identity() != ""
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	identifiable, ok := s.data[key]
+	if !ok {
+		identifiable = *new(T)
+	}
+	return identifiable, identifiable.Identity() != ""
 }
 
 func (s *Store[T]) Put(identified T) {
-	s.do(operation[T]{
-		opType:     opWrite,
-		identified: identified,
-	})
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	id := identified.Identity()
+	if _, ok := s.data[id]; !ok {
+		s.identifiers = append(s.identifiers, id)
+	}
+	s.data[id] = identified
 }
 
 func (s *Store[T]) DeleteByKey(identifier string) {
-	s.do(operation[T]{
-		opType:     opDelete,
-		identifier: identifier})
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	if _, ok := s.data[identifier]; ok {
+		index := slices.Index(s.identifiers, identifier)
+		if index >= 0 {
+			s.identifiers = slices.Delete(s.identifiers, index, index+1)
+		}
+	}
+	delete(s.data, identifier)
 }
 
-func (s *Store[T]) Delete(identied T) {
-	s.DeleteByKey(identied.Identity())
-}
-
-func (s *Store[T]) do(op operation[T]) {
-	s.semaphore <- op
+func (s *Store[T]) Delete(identified T) {
+	s.DeleteByKey(identified.Identity())
 }

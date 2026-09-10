@@ -37,7 +37,7 @@ func defaultTenant(am *MockAM) *tenant {
 
 func createAMServer(t *testing.T) (*MockAM, *httptest.Server) {
 	t.Helper()
-	am := NewMockAM(t.Context())
+	am := NewMockAM()
 	srv := httptest.NewServer(New(am))
 	t.Cleanup(srv.Close)
 	return am, srv
