@@ -44,20 +44,16 @@ func newTenant(ctx context.Context) *tenant {
 
 func (m *MockAM) getTenant(aware store.OrgEnvAware) *tenant {
 	tenantKey := aware.GetOrgId() + "-" + aware.GetEnvId()
-	if t, ok := m.tenants[tenantKey]; !ok {
+	et, ok := m.tenants[tenantKey]
+	if !ok {
 		nt := newTenant(m.ctx)
 		m.tenants[tenantKey] = nt
 		return nt
-	} else {
-		return t
 	}
+	return et
 }
 
 var _ StrictServerInterface = &MockAM{}
-
-func (m *MockAM) Tenant(orgId, envId string) *tenant {
-	return m.getTenant(orgEnv{orgId, envId})
-}
 
 type orgEnv struct {
 	org string
