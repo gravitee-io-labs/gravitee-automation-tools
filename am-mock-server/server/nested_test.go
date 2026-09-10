@@ -15,27 +15,13 @@
 package server
 
 import (
-	"net/http/httptest"
 	"testing"
 
-	am "github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg"
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/certificate"
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/domain"
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/identityprovider"
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/reporter"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/apicontext"
-	"github.com/stretchr/testify/require"
 )
-
-func newTokenClient(t *testing.T, srv *httptest.Server, token string) *am.AMClient {
-	t.Helper()
-	client, err := am.NewClient(apicontext.APIContext{
-		BaseURL: srv.URL + BasePath,
-		Auth:    apicontext.Auth{BearerToken: new(token)},
-	}, 0)
-	require.NoError(t, err)
-	return client
-}
 
 func TestNested_IsolatedByDomain(t *testing.T) {
 	_, srv := createAMServer(t)
@@ -48,8 +34,8 @@ func TestNested_IsolatedByDomain(t *testing.T) {
 	put, err = client.Domains.UpsertDomainWithResponse(t.Context(), d2)
 	assertSDKOK(t, put, err, d2)
 
-	certA := certificate.Certificate{Key: "cert-a", Name: new("A cert")}
-	certB := certificate.Certificate{Key: "cert-b", Name: new("B cert")}
+	certA := certificate.Certificate{Key: "cert", Name: new("A cert")}
+	certB := certificate.Certificate{Key: "cert", Name: new("B cert")}
 	up, err := client.Certificates.UpsertCertificateWithResponse(t.Context(), "dom-a", certA)
 	assertSDKOK(t, up, err, certA)
 	up, err = client.Certificates.UpsertCertificateWithResponse(t.Context(), "dom-b", certB)
@@ -60,8 +46,10 @@ func TestNested_IsolatedByDomain(t *testing.T) {
 	listB, err := client.Certificates.ListCertificatesWithResponse(t.Context(), "dom-b")
 	assertSDKOK(t, listB, err, []certificate.Certificate{certB})
 
-	getCross, err := client.Certificates.GetCertificateWithResponse(t.Context(), "dom-b", "cert-a")
-	assertSDK404(t, getCross, err)
+	getA, err := client.Certificates.GetCertificateWithResponse(t.Context(), "dom-a", "cert")
+	assertSDKOK(t, getA, err, certA)
+	getB, err := client.Certificates.GetCertificateWithResponse(t.Context(), "dom-b", "cert")
+	assertSDKOK(t, getB, err, certB)
 }
 
 func TestNested_DeleteDomainCascades(t *testing.T) {
@@ -105,7 +93,7 @@ func TestNested_DeleteDomainCascades(t *testing.T) {
 
 func TestNested_MissingDomain404_WithAuth(t *testing.T) {
 	_, srv := createAMServerWithAuth(t)
-	client := newTokenClient(t, srv, "admin-token")
+	client := newTestClient(t, srv, "", "", "admin-token")
 
 	list, err := client.Certificates.ListCertificatesWithResponse(t.Context(), "missing")
 	assertSDK404(t, list, err)
@@ -120,5 +108,5 @@ func TestNested_DeleteMissing_204(t *testing.T) {
 	del, err := client.Domains.DeleteDomainWithResponse(t.Context(), "no-such")
 	assertSDKNoContent(t, del, err)
 	delCert, err := client.Certificates.DeleteCertificateWithResponse(t.Context(), "no-such", "no-such")
-	assertSDKNoContent(t, delCert, err)
+	assertSDK404(t, delCert, err)
 }

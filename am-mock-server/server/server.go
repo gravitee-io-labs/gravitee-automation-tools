@@ -40,11 +40,11 @@ func NewWithPath(mockAM *MockAM, basePath string, reg *auth.Registry) http.Handl
 	if reg != nil {
 		r.Use(auth.AuthnMiddleware(reg))
 		middlewares = append(middlewares, auth.AuthzMiddleware(reg, chiRouteInfoExtractor()))
-		middlewares = append(middlewares, DomainParentCheck(chiRouteInfoExtractor(), func(org, env, key string) bool {
-			_, exists := mockAM.getTenant(orgEnv{org: org, env: env}).Domains.Get(key)
-			return exists
-		}))
 	}
+	middlewares = append(middlewares, DomainParentCheck(chiRouteInfoExtractor(), func(org, env, key string) bool {
+		_, exists := mockAM.getTenant(orgEnv{org: org, env: env}).Domains.Get(key)
+		return exists
+	}))
 
 	var si ServerInterface = Unimplemented{}
 	if mockAM != nil {

@@ -17,6 +17,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/auth"
 )
@@ -27,13 +28,16 @@ func DomainParentCheck(extract auth.RouteInfoExtractor, checker ParentChecker) f
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			info := extract(r)
+			if !strings.Contains(info.RoutePattern, "{domainKey}/") {
+				next.ServeHTTP(w, r)
+				return
+			}
 			if !parentExists(w, info.RouteParams, checker, "domainKey", "Domain key") {
 				return
 			}
 			next.ServeHTTP(w, r)
 		})
 	}
-
 }
 
 func parentExists(w http.ResponseWriter, params map[string]string, checker ParentChecker, paramName string, paramLabel string) bool {
