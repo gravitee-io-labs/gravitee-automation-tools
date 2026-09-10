@@ -17,6 +17,7 @@ package server
 import (
 	"context"
 	"net/http"
+	"sync"
 
 	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/store"
 )
@@ -24,25 +25,37 @@ import (
 // MockAM is an in-memory StrictServer. Tenants are created on first request, keyed by org+env. Data is process-local.
 type MockAM struct {
 	tenants map[string]*tenant
+	mutex   sync.Mutex
+}
+
+type Child[T store.Identifiable] struct {
+	ParentIdentity string
+	Self           T
+}
+
+func (m Child[T]) Identity() string {
+	return m.Self.Identity()
 }
 
 type tenant struct {
 	Domains           *store.Store[Domain]
-	Certificates      *store.Store[Certificate]
-	IdentityProviders *store.Store[IdentityProvider]
-	Reporters         *store.Store[Reporter]
+	Certificates      *store.Store[Child[Certificate]]
+	IdentityProviders *store.Store[Child[IdentityProvider]]
+	Reporters         *store.Store[Child[Reporter]]
 }
 
 func newTenant() *tenant {
 	return &tenant{
 		Domains:           store.NewStore[Domain](),
-		Certificates:      store.NewStore[Certificate](),
-		IdentityProviders: store.NewStore[IdentityProvider](),
-		Reporters:         store.NewStore[Reporter](),
+		Certificates:      store.NewStore[Child[Certificate]](),
+		IdentityProviders: store.NewStore[Child[IdentityProvider]](),
+		Reporters:         store.NewStore[Child[Reporter]](),
 	}
 }
 
 func (m *MockAM) getTenant(aware store.OrgEnvAware) *tenant {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
 	tenantKey := aware.GetOrgId() + "-" + aware.GetEnvId()
 	et, ok := m.tenants[tenantKey]
 	if !ok {
@@ -67,6 +80,7 @@ func (o orgEnv) GetEnvId() string { return o.env }
 func NewMockAM() *MockAM {
 	return &MockAM{
 		tenants: make(map[string]*tenant),
+		mutex:   sync.Mutex{},
 	}
 }
 
@@ -84,8 +98,23 @@ func (m *MockAM) UpsertDomain(_ context.Context, req UpsertDomainRequestObject) 
 }
 
 func (m *MockAM) DeleteDomain(_ context.Context, req DeleteDomainRequestObject) (DeleteDomainResponseObject, error) {
-	m.getTenant(req).Domains.DeleteByKey(req.DomainKey)
+	tenant := m.getTenant(req)
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+	tenant.Domains.DeleteByKey(req.DomainKey)
+	deleteChildren(tenant.Certificates, req.DomainKey)
+	deleteChildren(tenant.IdentityProviders, req.DomainKey)
+	deleteChildren(tenant.Reporters, req.DomainKey)
 	return DeleteDomain204Response{}, nil
+}
+
+func deleteChildren[T store.Identifiable](s *store.Store[Child[T]], parentIdentity string) {
+	all := s.GetAll()
+	for _, child := range all {
+		if child.ParentIdentity == parentIdentity {
+			s.DeleteByKey(child.Self.Identity())
+		}
+	}
 }
 
 func (m *MockAM) GetDomain(_ context.Context, req GetDomainRequestObject) (GetDomainResponseObject, error) {
@@ -97,79 +126,79 @@ func (m *MockAM) GetDomain(_ context.Context, req GetDomainRequestObject) (GetDo
 }
 
 func (m *MockAM) ListCertificates(_ context.Context, req ListCertificatesRequestObject) (ListCertificatesResponseObject, error) {
-	return ListCertificates200JSONResponse(m.getTenant(req).Certificates.GetAll()), nil
+	return ListCertificates200JSONResponse(asSelves(ofParent(m.getTenant(req).Certificates.GetAll(), req.DomainKey))), nil
 }
 
 func (m *MockAM) UpsertCertificate(_ context.Context, req UpsertCertificateRequestObject) (UpsertCertificateResponseObject, error) {
 	if req.Body != nil {
 		body := *req.Body
-		m.getTenant(req).Certificates.Put(body)
+		m.getTenant(req).Certificates.Put(newChild(body, req.DomainKey))
 		return UpsertCertificate200JSONResponse(body), nil
 	}
 	return UpsertCertificate400JSONResponse(emptyBodyError()), nil
 }
 
 func (m *MockAM) DeleteCertificate(_ context.Context, req DeleteCertificateRequestObject) (DeleteCertificateResponseObject, error) {
-	m.getTenant(req).Certificates.DeleteByKey(req.CertKey)
+	deleteChild(m.getTenant(req).Certificates, req.DomainKey, req.CertKey)
 	return DeleteCertificate204Response{}, nil
 }
 
 func (m *MockAM) GetCertificate(_ context.Context, req GetCertificateRequestObject) (GetCertificateResponseObject, error) {
-	cert, ok := m.getTenant(req).Certificates.Get(req.CertKey)
+	cert, ok := isChildOf(m.getTenant(req).Certificates, req.DomainKey, req.CertKey)
 	if ok {
-		return GetCertificate200JSONResponse(cert), nil
+		return GetCertificate200JSONResponse(cert.Self), nil
 	}
 	return GetCertificate404JSONResponse(notFoundError("Certificate", req.CertKey)), nil
 }
 
 func (m *MockAM) ListIdentityProviders(_ context.Context, req ListIdentityProvidersRequestObject) (ListIdentityProvidersResponseObject, error) {
-	return ListIdentityProviders200JSONResponse(m.getTenant(req).IdentityProviders.GetAll()), nil
+	return ListIdentityProviders200JSONResponse(asSelves(ofParent(m.getTenant(req).IdentityProviders.GetAll(), req.DomainKey))), nil
 }
 
 func (m *MockAM) UpsertIdentityProvider(_ context.Context, req UpsertIdentityProviderRequestObject) (UpsertIdentityProviderResponseObject, error) {
 	if req.Body != nil {
 		body := *req.Body
-		m.getTenant(req).IdentityProviders.Put(body)
+		m.getTenant(req).IdentityProviders.Put(newChild(body, req.DomainKey))
 		return UpsertIdentityProvider200JSONResponse(body), nil
 	}
 	return UpsertIdentityProvider400JSONResponse(emptyBodyError()), nil
 }
 
 func (m *MockAM) DeleteIdentityProvider(_ context.Context, req DeleteIdentityProviderRequestObject) (DeleteIdentityProviderResponseObject, error) {
-	m.getTenant(req).IdentityProviders.DeleteByKey(req.IdentityKey)
+	deleteChild(m.getTenant(req).IdentityProviders, req.DomainKey, req.IdentityKey)
 	return DeleteIdentityProvider204Response{}, nil
 }
 
 func (m *MockAM) GetIdentityProvider(_ context.Context, req GetIdentityProviderRequestObject) (GetIdentityProviderResponseObject, error) {
-	idp, ok := m.getTenant(req).IdentityProviders.Get(req.IdentityKey)
+	idp, ok := isChildOf(m.getTenant(req).IdentityProviders, req.DomainKey, req.IdentityKey)
 	if ok {
-		return GetIdentityProvider200JSONResponse(idp), nil
+		return GetIdentityProvider200JSONResponse(idp.Self), nil
 	}
 	return GetIdentityProvider404JSONResponse(notFoundError("IdentityProvider", req.IdentityKey)), nil
 }
 
 func (m *MockAM) ListReporters(_ context.Context, req ListReportersRequestObject) (ListReportersResponseObject, error) {
-	return ListReporters200JSONResponse(m.getTenant(req).Reporters.GetAll()), nil
+	return ListReporters200JSONResponse(asSelves(ofParent(m.getTenant(req).Reporters.GetAll(), req.DomainKey))), nil
 }
 
 func (m *MockAM) UpsertReporter(_ context.Context, req UpsertReporterRequestObject) (UpsertReporterResponseObject, error) {
 	if req.Body != nil {
 		body := *req.Body
-		m.getTenant(req).Reporters.Put(body)
+		m.getTenant(req).Reporters.Put(newChild(body, req.DomainKey))
 		return UpsertReporter200JSONResponse(body), nil
 	}
 	return UpsertReporter400JSONResponse(emptyBodyError()), nil
 }
 
 func (m *MockAM) DeleteReporter(_ context.Context, req DeleteReporterRequestObject) (DeleteReporterResponseObject, error) {
-	m.getTenant(req).Reporters.DeleteByKey(req.ReporterKey)
+	deleteChild(m.getTenant(req).Reporters, req.DomainKey, req.ReporterKey)
 	return DeleteReporter204Response{}, nil
 }
 
 func (m *MockAM) GetReporter(_ context.Context, req GetReporterRequestObject) (GetReporterResponseObject, error) {
-	reporter, ok := m.getTenant(req).Reporters.Get(req.ReporterKey)
+	reporter, ok := isChildOf(m.getTenant(req).Reporters, req.DomainKey, req.ReporterKey)
 	if ok {
-		return GetReporter200JSONResponse(reporter), nil
+		return GetReporter200JSONResponse(reporter.Self), nil
 	}
 	return GetReporter404JSONResponse(notFoundError("Reporter", req.ReporterKey)), nil
 }
@@ -185,5 +214,44 @@ func notFoundError(kind, key string) Error {
 	return Error{
 		HttpStatus: new(int32(http.StatusNotFound)),
 		Message:    new(kind + " [" + key + "] not found"),
+	}
+}
+
+func asSelves[T store.Identifiable](children []Child[T]) []T {
+	mapped := make([]T, len(children))
+	for i, child := range children {
+		mapped[i] = child.Self
+	}
+	return mapped
+}
+
+func ofParent[T store.Identifiable](children []Child[T], parentIdentity string) []Child[T] {
+	matched := make([]Child[T], 0)
+	for _, child := range children {
+		if child.ParentIdentity == parentIdentity {
+			matched = append(matched, child)
+		}
+	}
+	return matched
+}
+
+func isChildOf[T store.Identifiable](s *store.Store[Child[T]], parentIdentity, id string) (Child[T], bool) {
+	child, ok := s.Get(id)
+	if !ok || child.ParentIdentity != parentIdentity {
+		return Child[T]{}, false
+	}
+	return child, true
+}
+
+func deleteChild[T store.Identifiable](s *store.Store[Child[T]], parentIdentity, id string) {
+	if _, ok := isChildOf(s, parentIdentity, id); ok {
+		s.DeleteByKey(id)
+	}
+}
+
+func newChild[T store.Identifiable](identifiable T, parentIdentity string) Child[T] {
+	return Child[T]{
+		ParentIdentity: parentIdentity,
+		Self:           identifiable,
 	}
 }

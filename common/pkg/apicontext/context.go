@@ -78,16 +78,16 @@ func (c APIContext) AuthInterceptor() (func(ctx context.Context, req *http.Reque
 	return nil, errors.NewClientError(errors.NoAuthProvided)
 }
 
-// GetOrgIDOrDefault returns OrgID, or "DEFAULT" when OrgID is empty.
-func (c APIContext) GetOrgIDOrDefault() string {
+// GetOrgIdOrDefault returns OrgID, or "DEFAULT" when OrgID is empty.
+func (c APIContext) GetOrgIdOrDefault() string {
 	if c.OrgID != "" {
 		return c.OrgID
 	}
 	return defaultOrgEnv
 }
 
-// GetEnvIDOrDefault returns EnvID, or "DEFAULT" when EnvID is empty.
-func (c APIContext) GetEnvIDOrDefault() string {
+// GetEnvIdOrDefault returns EnvID, or "DEFAULT" when EnvID is empty.
+func (c APIContext) GetEnvIdOrDefault() string {
 	if c.EnvID != "" {
 		return c.EnvID
 	}

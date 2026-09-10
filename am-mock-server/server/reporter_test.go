@@ -30,14 +30,14 @@ func testReporterSDK() reporter.Reporter {
 
 func TestListReporters(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Reporters.Put(testReporter())
+	defaultTenant(am).Reporters.Put(newChild(testReporter(), defaultDomainKey))
 
 	assertListEqual(t, reportersURL(srv), []Reporter{testReporter()})
 }
 
 func TestGetReporter(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Reporters.Put(testReporter())
+	defaultTenant(am).Reporters.Put(newChild(testReporter(), defaultDomainKey))
 
 	assertGetEqual(t, reportersURL(srv), "test", testReporter())
 }
@@ -58,14 +58,14 @@ func TestPutGetReporter(t *testing.T) {
 
 func TestDeleteReporter(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Reporters.Put(testReporter())
+	defaultTenant(am).Reporters.Put(newChild(testReporter(), defaultDomainKey))
 
 	assertDeleteGone(t, reportersURL(srv), "test", "Reporter")
 }
 
 func TestListReportersSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Reporters.Put(testReporter())
+	defaultTenant(am).Reporters.Put(newChild(testReporter(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
 	res, err := client.Reporters.ListReportersWithResponse(t.Context(), defaultDomainKey)
@@ -74,7 +74,7 @@ func TestListReportersSDK(t *testing.T) {
 
 func TestGetReporterSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Reporters.Put(testReporter())
+	defaultTenant(am).Reporters.Put(newChild(testReporter(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
 	res, err := client.Reporters.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
@@ -103,7 +103,7 @@ func TestPutGetReporterSDK(t *testing.T) {
 
 func TestDeleteReporterSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Reporters.Put(testReporter())
+	defaultTenant(am).Reporters.Put(newChild(testReporter(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
 	del, err := client.Reporters.DeleteReporterWithResponse(t.Context(), defaultDomainKey, "test")

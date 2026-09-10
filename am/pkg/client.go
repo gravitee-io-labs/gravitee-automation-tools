@@ -59,8 +59,8 @@ func NewClient(ac apicontext.APIContext, timeoutMs int) (*AMClient, error) {
 
 	server, err := domain.NewScopedServerURL(
 		domain.ScopedServerURLBaseUrlVariable(baseUrl.String()),
-		domain.ScopedServerURLEnvIdVariable(ac.GetEnvIDOrDefault()),
-		domain.ScopedServerURLOrgIdVariable(ac.GetOrgIDOrDefault()),
+		domain.ScopedServerURLEnvIdVariable(ac.GetEnvIdOrDefault()),
+		domain.ScopedServerURLOrgIdVariable(ac.GetOrgIdOrDefault()),
 	)
 	if err != nil {
 		return nil, err
