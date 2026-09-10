@@ -30,14 +30,14 @@ func testIdentityProviderSDK() identityprovider.IdentityProvider {
 
 func TestListIdentityProviders(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).IdentityProviders.Put(testIdentityProvider())
+	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 
 	assertListEqual(t, identitiesURL(srv), []IdentityProvider{testIdentityProvider()})
 }
 
 func TestGetIdentityProvider(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).IdentityProviders.Put(testIdentityProvider())
+	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 
 	assertGetEqual(t, identitiesURL(srv), "test", testIdentityProvider())
 }
@@ -58,14 +58,14 @@ func TestPutGetIdentityProvider(t *testing.T) {
 
 func TestDeleteIdentityProvider(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).IdentityProviders.Put(testIdentityProvider())
+	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 
 	assertDeleteGone(t, identitiesURL(srv), "test", "IdentityProvider")
 }
 
 func TestListIdentityProvidersSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).IdentityProviders.Put(testIdentityProvider())
+	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
 	res, err := client.IdentityProviders.ListIdentityProvidersWithResponse(t.Context(), defaultDomainKey)
@@ -74,7 +74,7 @@ func TestListIdentityProvidersSDK(t *testing.T) {
 
 func TestGetIdentityProviderSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).IdentityProviders.Put(testIdentityProvider())
+	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
 	res, err := client.IdentityProviders.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
@@ -103,7 +103,7 @@ func TestPutGetIdentityProviderSDK(t *testing.T) {
 
 func TestDeleteIdentityProviderSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).IdentityProviders.Put(testIdentityProvider())
+	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
 	del, err := client.IdentityProviders.DeleteIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")

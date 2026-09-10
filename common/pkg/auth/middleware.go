@@ -39,6 +39,7 @@ func withUser(ctx context.Context, u *User) context.Context {
 type RouteInfo struct {
 	Method       string
 	RoutePattern string
+	RouteParams  map[string]string
 }
 
 // RouteInfoExtractor reads RouteInfo from the current request (typically chi.RouteContext).
@@ -50,7 +51,7 @@ func AuthnMiddleware(reg *Registry) func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			header := r.Header.Get("Authorization")
 			if header == "" {
-				writeError(w, http.StatusUnauthorized, "Missing Authorization header")
+				WriteError(w, http.StatusUnauthorized, "Missing Authorization header")
 				return
 			}
 
@@ -62,17 +63,17 @@ func AuthnMiddleware(reg *Registry) func(http.Handler) http.Handler {
 			} else if encoded, found := strings.CutPrefix(header, "Basic "); found {
 				username, password, valid := decodeBasic(encoded)
 				if !valid {
-					writeError(w, http.StatusUnauthorized, "Invalid Basic credentials encoding")
+					WriteError(w, http.StatusUnauthorized, "Invalid Basic credentials encoding")
 					return
 				}
 				user, ok = reg.AuthenticateBasic(username, password)
 			} else {
-				writeError(w, http.StatusUnauthorized, "Unsupported authorization scheme")
+				WriteError(w, http.StatusUnauthorized, "Unsupported authorization scheme")
 				return
 			}
 
 			if !ok {
-				writeError(w, http.StatusUnauthorized, "Invalid credentials")
+				WriteError(w, http.StatusUnauthorized, "Invalid credentials")
 				return
 			}
 
@@ -88,7 +89,7 @@ func AuthzMiddleware(reg *Registry, extract RouteInfoExtractor) func(http.Handle
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			user := UserFromContext(r.Context())
 			if user == nil {
-				writeError(w, http.StatusUnauthorized, "Not authenticated")
+				WriteError(w, http.StatusUnauthorized, "Not authenticated")
 				return
 			}
 
@@ -105,7 +106,7 @@ func AuthzMiddleware(reg *Registry, extract RouteInfoExtractor) func(http.Handle
 			}
 
 			if !user.HasPermission(perm) {
-				writeError(w, http.StatusForbidden, "Missing permission: "+perm+" for route "+info.RoutePattern)
+				WriteError(w, http.StatusForbidden, "Missing permission: "+perm+" for route "+info.RoutePattern)
 				return
 			}
 
@@ -131,7 +132,7 @@ type errorBody struct {
 	Message    string `json:"message"`
 }
 
-func writeError(w http.ResponseWriter, status int, message string) {
+func WriteError(w http.ResponseWriter, status int, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(errorBody{

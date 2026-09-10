@@ -30,14 +30,14 @@ func testCertificateSDK() certificate.Certificate {
 
 func TestListCertificates(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Certificates.Put(testCertificate())
+	defaultTenant(am).Certificates.Put(newChild(testCertificate(), defaultDomainKey))
 
 	assertListEqual(t, certificatesURL(srv), []Certificate{testCertificate()})
 }
 
 func TestGetCertificate(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Certificates.Put(testCertificate())
+	defaultTenant(am).Certificates.Put(newChild(testCertificate(), defaultDomainKey))
 
 	assertGetEqual(t, certificatesURL(srv), "test", testCertificate())
 }
@@ -58,14 +58,14 @@ func TestPutGetCertificate(t *testing.T) {
 
 func TestDeleteCertificate(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Certificates.Put(testCertificate())
+	defaultTenant(am).Certificates.Put(newChild(testCertificate(), defaultDomainKey))
 
 	assertDeleteGone(t, certificatesURL(srv), "test", "Certificate")
 }
 
 func TestListCertificatesSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Certificates.Put(testCertificate())
+	defaultTenant(am).Certificates.Put(newChild(testCertificate(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
 	res, err := client.Certificates.ListCertificatesWithResponse(t.Context(), defaultDomainKey)
@@ -74,7 +74,7 @@ func TestListCertificatesSDK(t *testing.T) {
 
 func TestGetCertificateSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Certificates.Put(testCertificate())
+	defaultTenant(am).Certificates.Put(newChild(testCertificate(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
 	res, err := client.Certificates.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
@@ -103,7 +103,7 @@ func TestPutGetCertificateSDK(t *testing.T) {
 
 func TestDeleteCertificateSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Certificates.Put(testCertificate())
+	defaultTenant(am).Certificates.Put(newChild(testCertificate(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
 	del, err := client.Certificates.DeleteCertificateWithResponse(t.Context(), defaultDomainKey, "test")

@@ -27,12 +27,12 @@ import (
 const BasePath = "/automation"
 
 // New mounts the API at BasePath with no auth.
-func New(impl StrictServerInterface) http.Handler {
+func New(impl *MockAM) http.Handler {
 	return NewWithPath(impl, BasePath, nil)
 }
 
 // NewWithPath mounts the API at basePath. nil Registry leaves the API open. nil impl serves Unimplemented.
-func NewWithPath(impl StrictServerInterface, basePath string, reg *auth.Registry) http.Handler {
+func NewWithPath(mockAM *MockAM, basePath string, reg *auth.Registry) http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 
@@ -40,11 +40,15 @@ func NewWithPath(impl StrictServerInterface, basePath string, reg *auth.Registry
 	if reg != nil {
 		r.Use(auth.AuthnMiddleware(reg))
 		middlewares = append(middlewares, auth.AuthzMiddleware(reg, chiRouteInfoExtractor()))
+		middlewares = append(middlewares, DomainParentCheck(chiRouteInfoExtractor(), func(org, env, key string) bool {
+			_, exists := mockAM.getTenant(orgEnv{org: org, env: env}).Domains.Get(key)
+			return exists
+		}))
 	}
 
 	var si ServerInterface = Unimplemented{}
-	if impl != nil {
-		si = NewStrictHandler(impl, nil)
+	if mockAM != nil {
+		si = NewStrictHandler(mockAM, nil)
 	}
 
 	return HandlerWithOptions(si, ChiServerOptions{
@@ -56,9 +60,18 @@ func NewWithPath(impl StrictServerInterface, basePath string, reg *auth.Registry
 
 func chiRouteInfoExtractor() auth.RouteInfoExtractor {
 	return func(r *http.Request) auth.RouteInfo {
+		context := chi.RouteContext(r.Context())
 		return auth.RouteInfo{
 			Method:       r.Method,
-			RoutePattern: chi.RouteContext(r.Context()).RoutePattern(),
+			RoutePattern: context.RoutePattern(),
+			RouteParams: func(params chi.RouteParams) map[string]string {
+				r := make(map[string]string)
+				for i, key := range params.Keys {
+					r[key] = params.Values[i]
+				}
+				return r
+			}(context.URLParams),
 		}
 	}
+
 }
