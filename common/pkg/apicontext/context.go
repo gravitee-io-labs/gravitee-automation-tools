@@ -19,7 +19,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/errors"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/errors"
 	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
 )
 

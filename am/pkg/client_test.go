@@ -21,8 +21,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/apicontext"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/errors"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/apicontext"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
 

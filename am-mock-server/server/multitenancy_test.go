@@ -17,8 +17,8 @@ package server
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/domain"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/response"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg/sdk/domain"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/response"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -17,7 +17,7 @@ package server
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/certificate"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg/sdk/certificate"
 )
 
 func testCertificate() Certificate {

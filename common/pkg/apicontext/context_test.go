@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/errors"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
 

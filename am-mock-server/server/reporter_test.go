@@ -17,7 +17,7 @@ package server
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/reporter"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg/sdk/reporter"
 )
 
 func testReporter() Reporter {
