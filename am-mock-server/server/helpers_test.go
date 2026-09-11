@@ -22,7 +22,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	am "github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg"
+	am "github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg"
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/apicontext"
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/response"
 	"github.com/stretchr/testify/assert"

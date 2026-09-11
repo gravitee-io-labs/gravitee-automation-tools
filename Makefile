@@ -1,10 +1,10 @@
-MODULES := am apim common am-mock-server
+MODULES := am-sdk apim-sdk common am-mock-server
 
 HAS_GO = [ -n "$$(find $$mod -name '*.go' -print -quit)" ]
 
 AM_OAS_BRANCH ?= master
 AM_OAS_URL := https://raw.githubusercontent.com/gravitee-io/gravitee-access-management/refs/heads/$(AM_OAS_BRANCH)/docs/automation/openapi.yaml
-AM_OAS_FILE := am/openapi/openapi.yaml
+AM_OAS_FILE := am-sdk/openapi/openapi.yaml
 
 ##@ 🧹 Lint
 
@@ -44,7 +44,7 @@ lint-licenses: ## Check license headers
 	@addlicense -check -f LICENSE_TEMPLATE.txt \
 		-ignore "**/*.gen.go" \
 		-ignore "**/overlay.merged.yaml" \
-		-ignore "am/pkg/sdk/overlay.yaml" \
+		-ignore "am-sdk/pkg/sdk/overlay.yaml" \
 		-ignore "am-mock-server/server/overlay.yaml" \
 		-ignore ".github/**" \
 		-ignore ".idea/**" \
@@ -58,7 +58,7 @@ lint-fix: ## Auto-fix linting issues and add license headers
 	@addlicense -f LICENSE_TEMPLATE.txt \
 		-ignore "**/*.gen.go" \
 		-ignore "**/overlay.merged.yaml" \
-		-ignore "am/pkg/sdk/overlay.yaml" \
+		-ignore "am-sdk/pkg/sdk/overlay.yaml" \
 		-ignore "am-mock-server/server/overlay.yaml" \
 		-ignore ".github/**" \
 		-ignore ".idea/**" \
