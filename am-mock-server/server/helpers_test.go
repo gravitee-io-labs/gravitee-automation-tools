@@ -22,9 +22,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	am "github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/apicontext"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/response"
+	am "github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/apicontext"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/response"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

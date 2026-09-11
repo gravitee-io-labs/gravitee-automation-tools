@@ -50,4 +50,4 @@ actions:
         description: The reference to the AMContext
         x-go-type: refs.NamespaceName
         x-go-import:
-          path: github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/refs
+          path: github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/refs

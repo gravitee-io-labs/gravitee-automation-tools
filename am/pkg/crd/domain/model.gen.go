@@ -6,7 +6,7 @@ package domain
 import (
 	"time"
 
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/refs"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/refs"
 )
 
 // Defines values for TokenExchangeClaimMappingSource.

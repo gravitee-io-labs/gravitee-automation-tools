@@ -19,7 +19,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/auth"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/auth"
 )
 
 type ParentChecker func(org, env, key string) bool

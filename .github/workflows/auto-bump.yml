@@ -33,7 +33,7 @@ jobs:
             [ -z "$TAG" ] && continue
             COMPONENT="${TAG%%/*}"
             VERSION="${TAG#*/}"
-            MODULE="github.com/gravitee-io-labs/gravitee-automation-sdks/${COMPONENT}"
+            MODULE="github.com/gravitee-io-labs/gravitee-automation-tools/${COMPONENT}"
             for mod in am apim am-mock-server; do
               [ "$mod" = "$COMPONENT" ] && continue
               if grep -q "$MODULE" "$mod/go.mod"; then

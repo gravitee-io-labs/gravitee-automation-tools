@@ -1,15 +1,15 @@
-module github.com/gravitee-io-labs/gravitee-automation-sdks/am
+module github.com/gravitee-io-labs/gravitee-automation-tools/am
 
 go 1.26.1
 
 require (
-	github.com/gravitee-io-labs/gravitee-automation-sdks/common v1.0.0
+	github.com/gravitee-io-labs/gravitee-automation-tools/common v1.0.0
 	github.com/oapi-codegen/runtime v1.7.0
 	github.com/stretchr/testify v1.12.1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-replace github.com/gravitee-io-labs/gravitee-automation-sdks/common => ../common
+replace github.com/gravitee-io-labs/gravitee-automation-tools/common => ../common
 
 require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect

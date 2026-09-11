@@ -17,7 +17,7 @@ package server
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/identityprovider"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg/sdk/identityprovider"
 )
 
 func testIdentityProvider() IdentityProvider {

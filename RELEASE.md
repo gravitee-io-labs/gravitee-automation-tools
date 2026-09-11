@@ -18,7 +18,7 @@ This repository uses [release-please](https://github.com/googleapis/release-plea
 
 ## Tag Format
 
-Each module gets its own semver tag: `am/v0.2.0`, `common/v0.1.3`, `am-mock-server/v0.3.0`, etc. This is the standard Go multi-module convention — consumers use `go get github.com/gravitee-io-labs/gravitee-automation-sdks/am@v0.2.0`.
+Each module gets its own semver tag: `am/v0.2.0`, `common/v0.1.3`, `am-mock-server/v0.3.0`, etc. This is the standard Go multi-module convention — consumers use `go get github.com/gravitee-io-labs/gravitee-automation-tools/am@v0.2.0`.
 
 ## Module Types
 

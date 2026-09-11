@@ -22,12 +22,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/certificate"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/domain"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/identityprovider"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/am/pkg/sdk/reporter"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/apicontext"
-	"github.com/gravitee-io-labs/gravitee-automation-sdks/common/pkg/errors"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg/sdk/certificate"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg/sdk/domain"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg/sdk/identityprovider"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg/sdk/reporter"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/apicontext"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/errors"
 )
 
 // AMClient groups generated resource clients that share one base URL, org/env, auth, and HTTP timeout.
