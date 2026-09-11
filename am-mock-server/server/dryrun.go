@@ -1,0 +1,51 @@
+// Copyright (C) 2015 The Gravitee team (http://gravitee.io)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//         http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package server
+
+import (
+	"encoding/json"
+	"net/http"
+	"strconv"
+)
+
+const dryRunMessage = "Mock server is in dry-run-reject mode, all PUT request are rejected on purpose when ?dryRun=true"
+
+// DryRunError is the AM Automation dry-run payload item.
+type DryRunError struct {
+	Severity string `json:"severity"`
+	Message  string `json:"message"`
+}
+
+var dryRunErrors = []DryRunError{{Severity: "ERROR", Message: dryRunMessage}}
+
+// DryRunReject skips PUT persistence when ?dryRun=true and returns a fixed DryRunError list.
+func DryRunReject() func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.Method == http.MethodPut && isDryRun(r) {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusOK)
+				_ = json.NewEncoder(w).Encode(dryRunErrors)
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+func isDryRun(r *http.Request) bool {
+	ok, err := strconv.ParseBool(r.URL.Query().Get("dryRun"))
+	return err == nil && ok
+}
