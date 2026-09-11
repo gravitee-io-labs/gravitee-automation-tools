@@ -15,24 +15,6 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
-// Defines values for TokenExchangeClaimMappingSource.
-const (
-	ActorToken   TokenExchangeClaimMappingSource = "actor_token"
-	SubjectToken TokenExchangeClaimMappingSource = "subject_token"
-)
-
-// Valid indicates whether the value is a known member of the TokenExchangeClaimMappingSource enum.
-func (e TokenExchangeClaimMappingSource) Valid() bool {
-	switch e {
-	case ActorToken:
-		return true
-	case SubjectToken:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for TokenExchangeOAuthSettingsScopeHandling.
 const (
 	Downscoping TokenExchangeOAuthSettingsScopeHandling = "downscoping"
@@ -337,6 +319,63 @@ type ClientRegistrationSettings struct {
 	OpenDynamicClientRegistrationEnabled *bool `json:"openDynamicClientRegistrationEnabled,omitempty"`
 }
 
+// AutomationDataPlane A data plane managed by the Automation API. Data planes store the runtime data of the domains bound to them. The id field is the stable, immutable identity used for idempotent create-or-update.
+type AutomationDataPlane = DataPlane
+
+// DataPlane A data plane managed by the Automation API. Data planes store the runtime data of the domains bound to them. The id field is the stable, immutable identity used for idempotent create-or-update.
+type DataPlane struct {
+	// Configuration Connection settings. Write-only: it can hold credentials.
+	//
+	// Example: {"mongodb":{"dbname":"gravitee-am-acme","host":"mongo","port":27017}}
+	Configuration *map[string]interface{} `json:"configuration,omitempty"`
+
+	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
+
+	// Database Name of the database the configuration points at. Read-only.
+	//
+	// Example: gravitee-am-acme
+	Database *string `json:"database,omitempty"`
+
+	// EnvironmentId Identifier of the environment the data plane belongs to. Read-only.
+	//
+	// Example: DEFAULT
+	EnvironmentId *string `json:"environmentId,omitempty"`
+
+	// GatewayUrl Base URL of the gateway serving the domains bound to this data plane.
+	//
+	// Example: https://gateway-eu.example.com
+	GatewayUrl *string `json:"gatewayUrl,omitempty"`
+
+	// Hosts Hosts the configuration points at, as host:port. Read-only.
+	//
+	// Example: ["mongo:27017"]
+	Hosts *[]string `json:"hosts,omitempty"`
+
+	// Id Stable, immutable identifier for the data plane within its environment. Lowercase alphanumeric and hyphens, starting and ending with an alphanumeric character. This is the value a domain's dataPlaneId refers to.
+	//
+	// Example: acme-eu
+	Id string `json:"id"`
+
+	// Name Human-readable name of the data plane.
+	//
+	// Example: ACME EU data plane
+	Name *string `json:"name,omitempty"`
+
+	// OrganizationId Identifier of the organization the data plane belongs to. Read-only.
+	//
+	// Example: DEFAULT
+	OrganizationId *string `json:"organizationId,omitempty"`
+
+	// Type Data plane plugin type identifier, matching the dataplane-am-<type> plugin. Immutable after creation.
+	//
+	// Example: mongodb
+	Type *string `json:"type,omitempty"`
+
+	// UpdatedAt Last-update timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
+	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+}
+
 // AutomationDomain A security domain managed by the Automation API. The key field is the stable, immutable identity used for idempotent create-or-update. Certificates, identity providers, and reporters are not embedded; they are managed via the domain's sub-resource endpoints and referenced here by key.
 type AutomationDomain = Domain
 
@@ -357,7 +396,7 @@ type Domain struct {
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 
-	// DataPlaneId Identifier of the data plane this domain is connected to. Optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards; included in the desired-state document but never re-applied on update.
+	// DataPlaneId Identifier of the data plane this domain is connected to. Optional at creation and resolved from the environment's data planes when omitted. Immutable afterwards: an apply that names a different one is rejected.
 	//
 	// Example: default
 	DataPlaneId *string `json:"dataPlaneId,omitempty"`
@@ -374,6 +413,9 @@ type Domain struct {
 	//
 	// Example: example-domain
 	Key string `json:"key"`
+
+	// KeyRetrievalSettings Fetch, SSRF and cache limits applied to every trusted domain in the security domain.
+	KeyRetrievalSettings *KeyRetrievalSettings `json:"keyRetrievalSettings,omitempty"`
 
 	// LoginSettings Configuration of the domain's login flow and the features offered on the sign-in page.
 	LoginSettings *LoginSettings `json:"loginSettings,omitempty"`
@@ -519,6 +561,9 @@ type AutomationReporter = Reporter
 
 // Reporter A reporter managed under a domain by the Automation API. Reporters persist audit events to a backend. The key field is the stable, immutable identity used for idempotent create-or-update.
 type Reporter struct {
+	// AttributeMappingEventTypes Audit event types the attribute mappings apply to. Empty means every event type. Ignored when system is true.
+	AttributeMappingEventTypes *[]string `json:"attributeMappingEventTypes,omitempty"`
+
 	// AttributeMappings Additional attributes exported alongside the regular audit payload. Each entry pairs an expression read from the audit context with the field name its value is exported under. Ignored when system is true; a system reporter exports no additional attributes.
 	AttributeMappings *[]ReporterAttributeMapping `json:"attributeMappings,omitempty"`
 
@@ -546,7 +591,7 @@ type Reporter struct {
 	// Example: Audit events to Kafka
 	Name *string `json:"name,omitempty"`
 
-	// System Whether this is the domain's system reporter. Immutable after creation. When true, only key is required; the reporter is built from the domains.reporters.default.* and repository system settings and the name, type, configuration, and attributeMappings fields are ignored.
+	// System Whether this is the domain's system reporter. Immutable after creation. When true, only key is required; the reporter is built from the domains.reporters.default.* and repository system settings and the name, type, configuration, attributeMappings and attributeMappingEventTypes fields are ignored.
 	System *bool `json:"system,omitempty"`
 
 	// Type Reporter plugin type identifier. Immutable after creation.
@@ -654,6 +699,27 @@ type FormField struct {
 	//
 	// Example: email
 	Type *string `json:"type,omitempty"`
+}
+
+// KeyRetrievalSettings Fetch, SSRF and cache limits applied to every trusted domain in the security domain.
+type KeyRetrievalSettings struct {
+	// AllowPrivateIpAddress Whether key material can be fetched from private IP addresses.
+	AllowPrivateIpAddress *bool `json:"allowPrivateIpAddress,omitempty"`
+
+	// AllowUnsecuredHttpUri Whether key material can be fetched over unsecured HTTP URIs.
+	AllowUnsecuredHttpUri *bool `json:"allowUnsecuredHttpUri,omitempty"`
+
+	// CacheMaxEntries Maximum number of key material entries retained in the cache.
+	CacheMaxEntries *int32 `json:"cacheMaxEntries,omitempty"`
+
+	// CacheTtlSeconds Time-to-live, in seconds, for cached key material.
+	CacheTtlSeconds *int32 `json:"cacheTtlSeconds,omitempty"`
+
+	// FetchTimeoutMs Timeout, in milliseconds, for fetching key material.
+	FetchTimeoutMs *int32 `json:"fetchTimeoutMs,omitempty"`
+
+	// MaxResponseSizeKb Maximum key material response size, in kilobytes.
+	MaxResponseSizeKb *int32 `json:"maxResponseSizeKb,omitempty"`
 }
 
 // LoginSettings Configuration of the domain's login flow and the features offered on the sign-in page.
@@ -808,16 +874,20 @@ type SelfServiceAccountManagementSettings struct {
 
 // SpiffeDomainSettings Workload identity (SPIFFE) settings for the domain.
 type SpiffeDomainSettings struct {
-	// AllowPrivateIpAddress Whether trust bundles can be fetched from private IP addresses.
+	// AllowPrivateIpAddress Deprecated: moved to keyRetrievalSettings.allowPrivateIpAddress.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	AllowPrivateIpAddress *bool `json:"allowPrivateIpAddress,omitempty"`
 
-	// AllowUnsecuredHttpUri Whether trust bundles can be fetched over unsecured HTTP URIs.
+	// AllowUnsecuredHttpUri Deprecated: moved to keyRetrievalSettings.allowUnsecuredHttpUri.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	AllowUnsecuredHttpUri *bool `json:"allowUnsecuredHttpUri,omitempty"`
 
-	// CacheMaxEntries Maximum number of trust bundle entries retained in the cache.
+	// CacheMaxEntries Deprecated: moved to keyRetrievalSettings.cacheMaxEntries.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	CacheMaxEntries *int32 `json:"cacheMaxEntries,omitempty"`
 
-	// CacheTtlSeconds Time-to-live, in seconds, for cached trust bundle entries.
+	// CacheTtlSeconds Deprecated: moved to keyRetrievalSettings.cacheTtlSeconds.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	CacheTtlSeconds *int32 `json:"cacheTtlSeconds,omitempty"`
 
 	// ClockSkewSeconds Allowed clock skew, in seconds, when validating JWT temporal claims.
@@ -829,36 +899,20 @@ type SpiffeDomainSettings struct {
 	// Enabled Whether SPIFFE workload identity support is enabled for the domain.
 	Enabled *bool `json:"enabled,omitempty"`
 
-	// FetchTimeoutMs Timeout, in milliseconds, for fetching trust bundles.
+	// FetchTimeoutMs Deprecated: moved to keyRetrievalSettings.fetchTimeoutMs.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	FetchTimeoutMs *int32 `json:"fetchTimeoutMs,omitempty"`
 
 	// MaxJwtLifetimeSeconds Maximum accepted JWT lifetime, in seconds, computed as exp minus iat.
 	MaxJwtLifetimeSeconds *int32 `json:"maxJwtLifetimeSeconds,omitempty"`
 
-	// MaxResponseSizeKb Maximum trust bundle response size, in kilobytes.
+	// MaxResponseSizeKb Deprecated: moved to keyRetrievalSettings.maxResponseSizeKb.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	MaxResponseSizeKb *int32 `json:"maxResponseSizeKb,omitempty"`
 }
 
-// TokenExchangeClaimMapping Copies a claim from the validated subject or actor token onto the issued token.
-type TokenExchangeClaimMapping struct {
-	// Source The validated token the claim is read from.
-	Source *TokenExchangeClaimMappingSource `json:"source,omitempty"`
-
-	// SourceClaim The name of the claim on the source token.
-	SourceClaim *string `json:"sourceClaim,omitempty"`
-
-	// TokenClaim The name the claim takes on the issued token.
-	TokenClaim *string `json:"tokenClaim,omitempty"`
-}
-
-// TokenExchangeClaimMappingSource The validated token the claim is read from.
-type TokenExchangeClaimMappingSource string
-
 // TokenExchangeOAuthSettings OAuth-specific token-exchange behavior, such as how scopes are handled, with optional inheritance from domain defaults.
 type TokenExchangeOAuthSettings struct {
-	// ClaimMappings Claims copied from the validated subject or actor token onto the issued token. A claim that is absent from its source token is skipped.
-	ClaimMappings *[]TokenExchangeClaimMapping `json:"claimMappings,omitempty"`
-
 	// Inherited Whether these settings are inherited from the domain defaults rather than defined here.
 	Inherited *bool `json:"inherited,omitempty"`
 
@@ -901,11 +955,14 @@ type TokenExchangeSettings struct {
 	// TokenExchangeOAuthSettings OAuth-specific token-exchange behavior, such as how scopes are handled, with optional inheritance from domain defaults.
 	TokenExchangeOAuthSettings *TokenExchangeOAuthSettings `json:"tokenExchangeOAuthSettings,omitempty"`
 
-	// TrustedIssuers External issuers whose JWTs may be accepted as subject or actor tokens. When unset, only domain-issued tokens are accepted.
+	// TrustedIssuers Deprecated: use the trusted-domains API instead. External issuers whose JWTs may be accepted as subject or actor tokens. A projection over the security domain's token-exchange trusted domains; a write replaces the list, so an omitted issuer is no longer trusted.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	TrustedIssuers *[]TrustedIssuer `json:"trustedIssuers,omitempty"`
 }
 
 // TrustedIssuer An external token issuer whose JWTs are accepted as subject or actor tokens during token exchange, validated with the configured key material.
+//
+// Deprecated: this type has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 type TrustedIssuer struct {
 	// Certificate PEM-encoded X.509 certificate. Required when keyResolutionMethod is PEM.
 	Certificate *string `json:"certificate,omitempty"`
@@ -1062,6 +1119,9 @@ type XssProtectionSettings struct {
 	Inherited *bool `json:"inherited,omitempty"`
 }
 
+// UpsertDataPlaneJSONRequestBody defines body for UpsertDataPlane for application/json ContentType.
+type UpsertDataPlaneJSONRequestBody = AutomationDataPlane
+
 // UpsertDomainJSONRequestBody defines body for UpsertDomain for application/json ContentType.
 type UpsertDomainJSONRequestBody = AutomationDomain
 
@@ -1076,6 +1136,18 @@ type UpsertReporterJSONRequestBody = AutomationReporter
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// ListDataPlanes List an environment's data planes
+	// (GET /organizations/{orgId}/environments/{envId}/dataplanes)
+	ListDataPlanes(w http.ResponseWriter, r *http.Request, orgId string, envId string)
+	// UpsertDataPlane Create or update a data plane
+	// (PUT /organizations/{orgId}/environments/{envId}/dataplanes)
+	UpsertDataPlane(w http.ResponseWriter, r *http.Request, orgId string, envId string)
+	// DeleteDataPlane Delete a data plane
+	// (DELETE /organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId})
+	DeleteDataPlane(w http.ResponseWriter, r *http.Request, orgId string, envId string, dataPlaneId string)
+	// GetDataPlane Get a data plane
+	// (GET /organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId})
+	GetDataPlane(w http.ResponseWriter, r *http.Request, orgId string, envId string, dataPlaneId string)
 	// ListDomains List all domains
 	// (GET /organizations/{orgId}/environments/{envId}/domains)
 	ListDomains(w http.ResponseWriter, r *http.Request, orgId string, envId string)
@@ -1129,6 +1201,30 @@ type ServerInterface interface {
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
+
+// ListDataPlanes List an environment's data planes
+// (GET /organizations/{orgId}/environments/{envId}/dataplanes)
+func (_ Unimplemented) ListDataPlanes(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// UpsertDataPlane Create or update a data plane
+// (PUT /organizations/{orgId}/environments/{envId}/dataplanes)
+func (_ Unimplemented) UpsertDataPlane(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// DeleteDataPlane Delete a data plane
+// (DELETE /organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId})
+func (_ Unimplemented) DeleteDataPlane(w http.ResponseWriter, r *http.Request, orgId string, envId string, dataPlaneId string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// GetDataPlane Get a data plane
+// (GET /organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId})
+func (_ Unimplemented) GetDataPlane(w http.ResponseWriter, r *http.Request, orgId string, envId string, dataPlaneId string) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
 
 // ListDomains List all domains
 // (GET /organizations/{orgId}/environments/{envId}/domains)
@@ -1234,6 +1330,164 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(http.Handler) http.Handler
+
+// ListDataPlanes operation middleware
+func (siw *ServerInterfaceWrapper) ListDataPlanes(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "orgId" -------------
+	var orgId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "orgId", chi.URLParam(r, "orgId"), &orgId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "orgId", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "envId" -------------
+	var envId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "envId", chi.URLParam(r, "envId"), &envId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "envId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListDataPlanes(w, r, orgId, envId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// UpsertDataPlane operation middleware
+func (siw *ServerInterfaceWrapper) UpsertDataPlane(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "orgId" -------------
+	var orgId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "orgId", chi.URLParam(r, "orgId"), &orgId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "orgId", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "envId" -------------
+	var envId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "envId", chi.URLParam(r, "envId"), &envId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "envId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpsertDataPlane(w, r, orgId, envId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteDataPlane operation middleware
+func (siw *ServerInterfaceWrapper) DeleteDataPlane(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "orgId" -------------
+	var orgId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "orgId", chi.URLParam(r, "orgId"), &orgId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "orgId", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "envId" -------------
+	var envId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "envId", chi.URLParam(r, "envId"), &envId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "envId", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "dataPlaneId" -------------
+	var dataPlaneId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "dataPlaneId", chi.URLParam(r, "dataPlaneId"), &dataPlaneId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "dataPlaneId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteDataPlane(w, r, orgId, envId, dataPlaneId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetDataPlane operation middleware
+func (siw *ServerInterfaceWrapper) GetDataPlane(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "orgId" -------------
+	var orgId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "orgId", chi.URLParam(r, "orgId"), &orgId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "orgId", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "envId" -------------
+	var envId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "envId", chi.URLParam(r, "envId"), &envId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "envId", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "dataPlaneId" -------------
+	var dataPlaneId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "dataPlaneId", chi.URLParam(r, "dataPlaneId"), &dataPlaneId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: r.URL.RawPath == ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "dataPlaneId", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetDataPlane(w, r, orgId, envId, dataPlaneId)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
 
 // ListDomains operation middleware
 func (siw *ServerInterfaceWrapper) ListDomains(w http.ResponseWriter, r *http.Request) {
@@ -2089,6 +2343,18 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/dataplanes", wrapper.ListDataPlanes)
+	})
+	r.Group(func(r chi.Router) {
+		r.Put(options.BaseURL+"/organizations/{orgId}/environments/{envId}/dataplanes", wrapper.UpsertDataPlane)
+	})
+	r.Group(func(r chi.Router) {
+		r.Delete(options.BaseURL+"/organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId}", wrapper.DeleteDataPlane)
+	})
+	r.Group(func(r chi.Router) {
+		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId}", wrapper.GetDataPlane)
+	})
+	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/organizations/{orgId}/environments/{envId}/domains", wrapper.ListDomains)
 	})
 	r.Group(func(r chi.Router) {
@@ -2138,6 +2404,238 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 
 	return r
+}
+
+type ListDataPlanesRequestObject struct {
+	OrgId string `json:"orgId"`
+	EnvId string `json:"envId"`
+}
+
+type ListDataPlanesResponseObject interface {
+	VisitListDataPlanesResponse(w http.ResponseWriter) error
+}
+
+type ListDataPlanes200JSONResponse []AutomationDataPlane
+
+func (response ListDataPlanes200JSONResponse) VisitListDataPlanesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListDataPlanes403JSONResponse Error
+
+func (response ListDataPlanes403JSONResponse) VisitListDataPlanesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type ListDataPlanesdefaultJSONResponse struct {
+	Body       Error
+	StatusCode int
+}
+
+func (response ListDataPlanesdefaultJSONResponse) VisitListDataPlanesResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response.Body); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpsertDataPlaneRequestObject struct {
+	OrgId string `json:"orgId"`
+	EnvId string `json:"envId"`
+	Body  *UpsertDataPlaneJSONRequestBody
+}
+
+type UpsertDataPlaneResponseObject interface {
+	VisitUpsertDataPlaneResponse(w http.ResponseWriter) error
+}
+
+type UpsertDataPlane200JSONResponse AutomationDataPlane
+
+func (response UpsertDataPlane200JSONResponse) VisitUpsertDataPlaneResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpsertDataPlane400JSONResponse Error
+
+func (response UpsertDataPlane400JSONResponse) VisitUpsertDataPlaneResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpsertDataPlane403JSONResponse Error
+
+func (response UpsertDataPlane403JSONResponse) VisitUpsertDataPlaneResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpsertDataPlane404JSONResponse Error
+
+func (response UpsertDataPlane404JSONResponse) VisitUpsertDataPlaneResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type UpsertDataPlane409JSONResponse Error
+
+func (response UpsertDataPlane409JSONResponse) VisitUpsertDataPlaneResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteDataPlaneRequestObject struct {
+	OrgId       string `json:"orgId"`
+	EnvId       string `json:"envId"`
+	DataPlaneId string `json:"dataPlaneId"`
+}
+
+type DeleteDataPlaneResponseObject interface {
+	VisitDeleteDataPlaneResponse(w http.ResponseWriter) error
+}
+
+type DeleteDataPlane204Response struct {
+}
+
+func (response DeleteDataPlane204Response) VisitDeleteDataPlaneResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
+}
+
+type DeleteDataPlane403JSONResponse Error
+
+func (response DeleteDataPlane403JSONResponse) VisitDeleteDataPlaneResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type DeleteDataPlane409JSONResponse Error
+
+func (response DeleteDataPlane409JSONResponse) VisitDeleteDataPlaneResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(409)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDataPlaneRequestObject struct {
+	OrgId       string `json:"orgId"`
+	EnvId       string `json:"envId"`
+	DataPlaneId string `json:"dataPlaneId"`
+}
+
+type GetDataPlaneResponseObject interface {
+	VisitGetDataPlaneResponse(w http.ResponseWriter) error
+}
+
+type GetDataPlane200JSONResponse AutomationDataPlane
+
+func (response GetDataPlane200JSONResponse) VisitGetDataPlaneResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDataPlane403JSONResponse Error
+
+func (response GetDataPlane403JSONResponse) VisitGetDataPlaneResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(403)
+	_, err := buf.WriteTo(w)
+	return err
+}
+
+type GetDataPlane404JSONResponse Error
+
+func (response GetDataPlane404JSONResponse) VisitGetDataPlaneResponse(w http.ResponseWriter) error {
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(response); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+	_, err := buf.WriteTo(w)
+	return err
 }
 
 type ListDomainsRequestObject struct {
@@ -3015,6 +3513,18 @@ func (response GetReporter404JSONResponse) VisitGetReporterResponse(w http.Respo
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
+	// ListDataPlanes List an environment's data planes
+	// (GET /organizations/{orgId}/environments/{envId}/dataplanes)
+	ListDataPlanes(ctx context.Context, request ListDataPlanesRequestObject) (ListDataPlanesResponseObject, error)
+	// UpsertDataPlane Create or update a data plane
+	// (PUT /organizations/{orgId}/environments/{envId}/dataplanes)
+	UpsertDataPlane(ctx context.Context, request UpsertDataPlaneRequestObject) (UpsertDataPlaneResponseObject, error)
+	// DeleteDataPlane Delete a data plane
+	// (DELETE /organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId})
+	DeleteDataPlane(ctx context.Context, request DeleteDataPlaneRequestObject) (DeleteDataPlaneResponseObject, error)
+	// GetDataPlane Get a data plane
+	// (GET /organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId})
+	GetDataPlane(ctx context.Context, request GetDataPlaneRequestObject) (GetDataPlaneResponseObject, error)
 	// ListDomains List all domains
 	// (GET /organizations/{orgId}/environments/{envId}/domains)
 	ListDomains(ctx context.Context, request ListDomainsRequestObject) (ListDomainsResponseObject, error)
@@ -3102,6 +3612,123 @@ type strictHandler struct {
 	ssi         StrictServerInterface
 	middlewares []StrictMiddlewareFunc
 	options     StrictHTTPServerOptions
+}
+
+// ListDataPlanes operation middleware
+func (sh *strictHandler) ListDataPlanes(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
+	var request ListDataPlanesRequestObject
+
+	request.OrgId = orgId
+	request.EnvId = envId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListDataPlanes(ctx, request.(ListDataPlanesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListDataPlanes")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListDataPlanesResponseObject); ok {
+		if err := validResponse.VisitListDataPlanesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpsertDataPlane operation middleware
+func (sh *strictHandler) UpsertDataPlane(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
+	var request UpsertDataPlaneRequestObject
+
+	request.OrgId = orgId
+	request.EnvId = envId
+
+	var body UpsertDataPlaneJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.UpsertDataPlane(ctx, request.(UpsertDataPlaneRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "UpsertDataPlane")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(UpsertDataPlaneResponseObject); ok {
+		if err := validResponse.VisitUpsertDataPlaneResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// DeleteDataPlane operation middleware
+func (sh *strictHandler) DeleteDataPlane(w http.ResponseWriter, r *http.Request, orgId string, envId string, dataPlaneId string) {
+	var request DeleteDataPlaneRequestObject
+
+	request.OrgId = orgId
+	request.EnvId = envId
+	request.DataPlaneId = dataPlaneId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.DeleteDataPlane(ctx, request.(DeleteDataPlaneRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "DeleteDataPlane")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(DeleteDataPlaneResponseObject); ok {
+		if err := validResponse.VisitDeleteDataPlaneResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// GetDataPlane operation middleware
+func (sh *strictHandler) GetDataPlane(w http.ResponseWriter, r *http.Request, orgId string, envId string, dataPlaneId string) {
+	var request GetDataPlaneRequestObject
+
+	request.OrgId = orgId
+	request.EnvId = envId
+	request.DataPlaneId = dataPlaneId
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.GetDataPlane(ctx, request.(GetDataPlaneRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetDataPlane")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(GetDataPlaneResponseObject); ok {
+		if err := validResponse.VisitGetDataPlaneResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
 }
 
 // ListDomains operation middleware

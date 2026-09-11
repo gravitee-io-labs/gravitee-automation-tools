@@ -51,24 +51,6 @@ func NewScopedServerURL(baseUrl ScopedServerURLBaseUrlVariable, envId ScopedServ
 	return u, nil
 }
 
-// Defines values for TokenExchangeClaimMappingSource.
-const (
-	ActorToken   TokenExchangeClaimMappingSource = "actor_token"
-	SubjectToken TokenExchangeClaimMappingSource = "subject_token"
-)
-
-// Valid indicates whether the value is a known member of the TokenExchangeClaimMappingSource enum.
-func (e TokenExchangeClaimMappingSource) Valid() bool {
-	switch e {
-	case ActorToken:
-		return true
-	case SubjectToken:
-		return true
-	default:
-		return false
-	}
-}
-
 // Defines values for TokenExchangeOAuthSettingsScopeHandling.
 const (
 	Downscoping TokenExchangeOAuthSettingsScopeHandling = "downscoping"
@@ -355,7 +337,7 @@ type Domain struct {
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 
-	// DataPlaneId Identifier of the data plane this domain is connected to. Optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards; included in the desired-state document but never re-applied on update.
+	// DataPlaneId Identifier of the data plane this domain is connected to. Optional at creation and resolved from the environment's data planes when omitted. Immutable afterwards: an apply that names a different one is rejected.
 	//
 	// Example: default
 	DataPlaneId *string `json:"dataPlaneId,omitempty"`
@@ -372,6 +354,9 @@ type Domain struct {
 	//
 	// Example: example-domain
 	Key string `json:"key"`
+
+	// KeyRetrievalSettings Fetch, SSRF and cache limits applied to every trusted domain in the security domain.
+	KeyRetrievalSettings *KeyRetrievalSettings `json:"keyRetrievalSettings,omitempty"`
 
 	// LoginSettings Configuration of the domain's login flow and the features offered on the sign-in page.
 	LoginSettings *LoginSettings `json:"loginSettings,omitempty"`
@@ -559,6 +544,27 @@ type FormField struct {
 	Type *string `json:"type,omitempty"`
 }
 
+// KeyRetrievalSettings Fetch, SSRF and cache limits applied to every trusted domain in the security domain.
+type KeyRetrievalSettings struct {
+	// AllowPrivateIpAddress Whether key material can be fetched from private IP addresses.
+	AllowPrivateIpAddress *bool `json:"allowPrivateIpAddress,omitempty"`
+
+	// AllowUnsecuredHttpUri Whether key material can be fetched over unsecured HTTP URIs.
+	AllowUnsecuredHttpUri *bool `json:"allowUnsecuredHttpUri,omitempty"`
+
+	// CacheMaxEntries Maximum number of key material entries retained in the cache.
+	CacheMaxEntries *int32 `json:"cacheMaxEntries,omitempty"`
+
+	// CacheTtlSeconds Time-to-live, in seconds, for cached key material.
+	CacheTtlSeconds *int32 `json:"cacheTtlSeconds,omitempty"`
+
+	// FetchTimeoutMs Timeout, in milliseconds, for fetching key material.
+	FetchTimeoutMs *int32 `json:"fetchTimeoutMs,omitempty"`
+
+	// MaxResponseSizeKb Maximum key material response size, in kilobytes.
+	MaxResponseSizeKb *int32 `json:"maxResponseSizeKb,omitempty"`
+}
+
 // LoginSettings Configuration of the domain's login flow and the features offered on the sign-in page.
 type LoginSettings struct {
 	// CertificateBasedAuthEnabled Whether certificate-based authentication is offered.
@@ -698,16 +704,20 @@ type SelfServiceAccountManagementSettings struct {
 
 // SpiffeDomainSettings Workload identity (SPIFFE) settings for the domain.
 type SpiffeDomainSettings struct {
-	// AllowPrivateIpAddress Whether trust bundles can be fetched from private IP addresses.
+	// AllowPrivateIpAddress Deprecated: moved to keyRetrievalSettings.allowPrivateIpAddress.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	AllowPrivateIpAddress *bool `json:"allowPrivateIpAddress,omitempty"`
 
-	// AllowUnsecuredHttpUri Whether trust bundles can be fetched over unsecured HTTP URIs.
+	// AllowUnsecuredHttpUri Deprecated: moved to keyRetrievalSettings.allowUnsecuredHttpUri.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	AllowUnsecuredHttpUri *bool `json:"allowUnsecuredHttpUri,omitempty"`
 
-	// CacheMaxEntries Maximum number of trust bundle entries retained in the cache.
+	// CacheMaxEntries Deprecated: moved to keyRetrievalSettings.cacheMaxEntries.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	CacheMaxEntries *int32 `json:"cacheMaxEntries,omitempty"`
 
-	// CacheTtlSeconds Time-to-live, in seconds, for cached trust bundle entries.
+	// CacheTtlSeconds Deprecated: moved to keyRetrievalSettings.cacheTtlSeconds.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	CacheTtlSeconds *int32 `json:"cacheTtlSeconds,omitempty"`
 
 	// ClockSkewSeconds Allowed clock skew, in seconds, when validating JWT temporal claims.
@@ -719,36 +729,20 @@ type SpiffeDomainSettings struct {
 	// Enabled Whether SPIFFE workload identity support is enabled for the domain.
 	Enabled *bool `json:"enabled,omitempty"`
 
-	// FetchTimeoutMs Timeout, in milliseconds, for fetching trust bundles.
+	// FetchTimeoutMs Deprecated: moved to keyRetrievalSettings.fetchTimeoutMs.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	FetchTimeoutMs *int32 `json:"fetchTimeoutMs,omitempty"`
 
 	// MaxJwtLifetimeSeconds Maximum accepted JWT lifetime, in seconds, computed as exp minus iat.
 	MaxJwtLifetimeSeconds *int32 `json:"maxJwtLifetimeSeconds,omitempty"`
 
-	// MaxResponseSizeKb Maximum trust bundle response size, in kilobytes.
+	// MaxResponseSizeKb Deprecated: moved to keyRetrievalSettings.maxResponseSizeKb.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	MaxResponseSizeKb *int32 `json:"maxResponseSizeKb,omitempty"`
 }
 
-// TokenExchangeClaimMapping Copies a claim from the validated subject or actor token onto the issued token.
-type TokenExchangeClaimMapping struct {
-	// Source The validated token the claim is read from.
-	Source *TokenExchangeClaimMappingSource `json:"source,omitempty"`
-
-	// SourceClaim The name of the claim on the source token.
-	SourceClaim *string `json:"sourceClaim,omitempty"`
-
-	// TokenClaim The name the claim takes on the issued token.
-	TokenClaim *string `json:"tokenClaim,omitempty"`
-}
-
-// TokenExchangeClaimMappingSource The validated token the claim is read from.
-type TokenExchangeClaimMappingSource string
-
 // TokenExchangeOAuthSettings OAuth-specific token-exchange behavior, such as how scopes are handled, with optional inheritance from domain defaults.
 type TokenExchangeOAuthSettings struct {
-	// ClaimMappings Claims copied from the validated subject or actor token onto the issued token. A claim that is absent from its source token is skipped.
-	ClaimMappings *[]TokenExchangeClaimMapping `json:"claimMappings,omitempty"`
-
 	// Inherited Whether these settings are inherited from the domain defaults rather than defined here.
 	Inherited *bool `json:"inherited,omitempty"`
 
@@ -791,11 +785,14 @@ type TokenExchangeSettings struct {
 	// TokenExchangeOAuthSettings OAuth-specific token-exchange behavior, such as how scopes are handled, with optional inheritance from domain defaults.
 	TokenExchangeOAuthSettings *TokenExchangeOAuthSettings `json:"tokenExchangeOAuthSettings,omitempty"`
 
-	// TrustedIssuers External issuers whose JWTs may be accepted as subject or actor tokens. When unset, only domain-issued tokens are accepted.
+	// TrustedIssuers Deprecated: use the trusted-domains API instead. External issuers whose JWTs may be accepted as subject or actor tokens. A projection over the security domain's token-exchange trusted domains; a write replaces the list, so an omitted issuer is no longer trusted.
+	// Deprecated: this property has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 	TrustedIssuers *[]TrustedIssuer `json:"trustedIssuers,omitempty"`
 }
 
 // TrustedIssuer An external token issuer whose JWTs are accepted as subject or actor tokens during token exchange, validated with the configured key material.
+//
+// Deprecated: this type has been marked as deprecated upstream, but no `x-deprecated-reason` was set
 type TrustedIssuer struct {
 	// Certificate PEM-encoded X.509 certificate. Required when keyResolutionMethod is PEM.
 	Certificate *string `json:"certificate,omitempty"`

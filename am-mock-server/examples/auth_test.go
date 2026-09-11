@@ -35,6 +35,10 @@ var sampleRoutes = []struct {
 	{"/organizations/{orgId}/environments/{envId}/domains", http.MethodPut, "DOMAIN_UPDATE"},
 	{"/organizations/{orgId}/environments/{envId}/domains/{domainKey}", http.MethodGet, "DOMAIN_READ"},
 	{"/organizations/{orgId}/environments/{envId}/domains/{domainKey}", http.MethodDelete, "DOMAIN_DELETE"},
+	{"/organizations/{orgId}/environments/{envId}/dataplanes", http.MethodGet, "DATA_PLANE_LIST"},
+	{"/organizations/{orgId}/environments/{envId}/dataplanes", http.MethodPut, "DATA_PLANE_UPDATE"},
+	{"/organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId}", http.MethodGet, "DATA_PLANE_READ"},
+	{"/organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId}", http.MethodDelete, "DATA_PLANE_DELETE"},
 	{"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates", http.MethodGet, "DOMAIN_CERTIFICATE_LIST"},
 	{"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates", http.MethodPut, "DOMAIN_CERTIFICATE_UPDATE"},
 	{"/organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates/{certKey}", http.MethodGet, "DOMAIN_CERTIFICATE_READ"},
@@ -74,19 +78,29 @@ func TestSampleAuthYAML(t *testing.T) {
 	require.True(t, ok)
 	assert.True(t, readonly.HasPermission("DOMAIN_LIST"))
 	assert.True(t, readonly.HasPermission("DOMAIN_READ"))
+	assert.True(t, readonly.HasPermission("DATA_PLANE_LIST"))
+	assert.True(t, readonly.HasPermission("DATA_PLANE_READ"))
 	assert.False(t, readonly.HasPermission("DOMAIN_UPDATE"))
 	assert.False(t, readonly.HasPermission("DOMAIN_DELETE"))
+	assert.False(t, readonly.HasPermission("DATA_PLANE_UPDATE"))
+	assert.False(t, readonly.HasPermission("DATA_PLANE_DELETE"))
 
 	updater, ok := reg.AuthenticateBearer("updater-token")
 	require.True(t, ok)
 	assert.True(t, updater.HasPermission("DOMAIN_UPDATE"))
+	assert.True(t, updater.HasPermission("DATA_PLANE_UPDATE"))
 	assert.False(t, updater.HasPermission("DOMAIN_READ"))
 	assert.False(t, updater.HasPermission("DOMAIN_DELETE"))
+	assert.False(t, updater.HasPermission("DATA_PLANE_READ"))
 
 	resourceAdmin, ok := reg.AuthenticateBearer("admin-per-resource-token")
 	require.True(t, ok)
 	assert.False(t, resourceAdmin.AllPermissions)
 	assert.True(t, resourceAdmin.HasPermission("DOMAIN_DELETE"))
+	assert.True(t, resourceAdmin.HasPermission("DATA_PLANE_LIST"))
+	assert.True(t, resourceAdmin.HasPermission("DATA_PLANE_READ"))
+	assert.True(t, resourceAdmin.HasPermission("DATA_PLANE_UPDATE"))
+	assert.True(t, resourceAdmin.HasPermission("DATA_PLANE_DELETE"))
 	assert.True(t, resourceAdmin.HasPermission("DOMAIN_CERTIFICATE_UPDATE"))
 	assert.False(t, resourceAdmin.HasPermission("UNKNOWN_PERM"))
 }

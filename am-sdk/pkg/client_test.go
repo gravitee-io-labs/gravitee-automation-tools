@@ -59,6 +59,7 @@ func TestNewClient_Valid(t *testing.T) {
 	client, err := NewClient(ac, 0)
 	assert.NoError(t, err)
 	assert.NotNil(t, client.Certificates)
+	assert.NotNil(t, client.DataPlanes)
 	assert.NotNil(t, client.Domains)
 	assert.NotNil(t, client.IdentityProviders)
 	assert.NotNil(t, client.Reporters)

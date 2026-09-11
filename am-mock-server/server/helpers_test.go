@@ -75,6 +75,10 @@ func domainsURL(srv *httptest.Server) string {
 	return collectionURL(srv, "/domains")
 }
 
+func dataPlanesURL(srv *httptest.Server) string {
+	return collectionURL(srv, "/dataplanes")
+}
+
 func certificatesURL(srv *httptest.Server) string {
 	return collectionURL(srv, "/domains/"+defaultDomainKey+"/certificates")
 }

@@ -33,6 +33,8 @@ users:
     permissions:
       - DOMAIN_LIST
       - DOMAIN_READ
+      - DATA_PLANE_LIST
+      - DATA_PLANE_READ
       - DOMAIN_CERTIFICATE_LIST
       - DOMAIN_CERTIFICATE_READ
       - DOMAIN_IDENTITY_PROVIDER_LIST
@@ -44,6 +46,7 @@ users:
     token: updater-token
     permissions:
       - DOMAIN_UPDATE
+      - DATA_PLANE_UPDATE
       - DOMAIN_CERTIFICATE_UPDATE
       - DOMAIN_IDENTITY_PROVIDER_UPDATE
       - DOMAIN_REPORTER_UPDATE
@@ -55,6 +58,10 @@ users:
       - DOMAIN_READ
       - DOMAIN_UPDATE
       - DOMAIN_DELETE
+      - DATA_PLANE_LIST
+      - DATA_PLANE_READ
+      - DATA_PLANE_UPDATE
+      - DATA_PLANE_DELETE
       - DOMAIN_CERTIFICATE_LIST
       - DOMAIN_CERTIFICATE_READ
       - DOMAIN_CERTIFICATE_UPDATE
@@ -75,6 +82,12 @@ permissions:
   - path: /organizations/{orgId}/environments/{envId}/domains/{domainKey}
     get: DOMAIN_READ
     delete: DOMAIN_DELETE
+  - path: /organizations/{orgId}/environments/{envId}/dataplanes
+    get: DATA_PLANE_LIST
+    put: DATA_PLANE_UPDATE
+  - path: /organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId}
+    get: DATA_PLANE_READ
+    delete: DATA_PLANE_DELETE
   - path: /organizations/{orgId}/environments/{envId}/domains/{domainKey}/certificates
     get: DOMAIN_CERTIFICATE_LIST
     put: DOMAIN_CERTIFICATE_UPDATE

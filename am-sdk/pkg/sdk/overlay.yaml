@@ -18,6 +18,9 @@ actions:
     - target: $.components.schemas.AutomationClientRegistrationSettings
       update:
         x-go-type-name: ClientRegistrationSettings
+    - target: $.components.schemas.AutomationDataPlane
+      update:
+        x-go-type-name: DataPlane
     - target: $.components.schemas.AutomationDomain
       update:
         x-go-type-name: Domain
@@ -33,6 +36,18 @@ actions:
     - target: $.components.schemas.AutomationSamlSettings
       update:
         x-go-type-name: SamlSettings
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/dataplanes"].get
+      update:
+        operationId: listDataPlanes
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/dataplanes"].put
+      update:
+        operationId: upsertDataPlane
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId}"].get
+      update:
+        operationId: getDataPlane
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId}"].delete
+      update:
+        operationId: deleteDataPlane
     - target: $.paths["/organizations/{orgId}/environments/{envId}/domains"].get
       update:
         operationId: listDomains
@@ -96,6 +111,8 @@ actions:
                 default: DEFAULT
     - target: $.paths
       update:
+        /dataplanes: {}
+        "/dataplanes/{dataPlaneId}": {}
         /domains: {}
         "/domains/{domainKey}": {}
         "/domains/{domainKey}/certificates": {}
@@ -104,6 +121,10 @@ actions:
         "/domains/{domainKey}/identities/{identityKey}": {}
         "/domains/{domainKey}/reporters": {}
         "/domains/{domainKey}/reporters/{reporterKey}": {}
+    - target: $.paths["/dataplanes"]
+      copy: $.paths["/organizations/{orgId}/environments/{envId}/dataplanes"]
+    - target: $.paths["/dataplanes/{dataPlaneId}"]
+      copy: $.paths["/organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId}"]
     - target: $.paths["/domains"]
       copy: $.paths["/organizations/{orgId}/environments/{envId}/domains"]
     - target: $.paths["/domains/{domainKey}"]
@@ -120,6 +141,10 @@ actions:
       copy: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters"]
     - target: $.paths["/domains/{domainKey}/reporters/{reporterKey}"]
       copy: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}/reporters/{reporterKey}"]
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/dataplanes"]
+      remove: true
+    - target: $.paths["/organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId}"]
+      remove: true
     - target: $.paths["/organizations/{orgId}/environments/{envId}/domains"]
       remove: true
     - target: $.paths["/organizations/{orgId}/environments/{envId}/domains/{domainKey}"]
