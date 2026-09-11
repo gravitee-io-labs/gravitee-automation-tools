@@ -1,15 +1,63 @@
 # Gravitee Automation SDKs
 
-Go SDK clients and mock server for the Gravitee Access Management (AM) Automation API.
+Go clients and a mock server for the Gravitee Access Management (AM) Automation API.
 
-## Modules
+Aim: talk to AM the same way GKO does (idempotent PUT, org/env scoped), and test that against a local mock.
 
-| Module | Description |
-|--------|-------------|
-| `common` | Shared utilities: API context, response helpers, in-memory store, error types |
-| `am-sdk` | Generated SDK clients for AM resources (domains, certificates, identity providers, reporters) |
-| `am-mock-server` | Mock HTTP server implementing the AM Automation API, used for integration testing |
-| `apim-sdk` | Placeholder for future APIM SDK |
+## Layout
+
+```
+common/            shared: API context, errors, response helpers, in-memory store
+am-sdk/            AM Automation client (generated + thin facade)
+am-mock-server/    in-memory HTTP mock of the same API
+apim-sdk/          placeholder (empty)
+```
+
+## AM SDK
+
+Import the facade as `am`:
+
+`github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg`
+
+`am.NewClient` takes an `apicontext.APIContext` (base URL, org, env, **one** of bearer or basic) and returns an `AMClient`. Org/env default to `DEFAULT`.
+
+**Capabilities** — list / upsert (PUT) / get / delete:
+
+| Field | Scope |
+|-------|--------|
+| `Domains` | environment |
+| `DataPlanes` | environment |
+| `Certificates` | domain |
+| `IdentityProviders` | domain |
+| `Reporters` | domain |
+
+Calls return the generated `(resp, err)` pair. `err` is transport/construction only.
+
+**Errors**
+
+| When | What |
+|------|------|
+| `NewClient` | `errors.ClientError` (bad URL, etc.) |
+| Auth missing or both set | `errors.NoAuthProvided` / `errors.ManyAuthProvided` |
+| HTTP call | use `common/pkg/response`: `IsNotFound`, `IsUnauthorized`, `IsForbidden`, `IsServerError`, `IsNetworkError` |
+| 200 body | `response.Payload[T](resp)` |
+
+Not an API reference — generated methods live under `am-sdk/pkg/sdk/<resource>/`.
+
+## Mock server
+
+```bash
+go run ./am-mock-server --port 8080
+go run ./am-mock-server --auth-file am-mock-server/examples/auth.yaml
+go run ./am-mock-server --dry-run-reject
+```
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--port` | `8080` | HTTP listen port |
+| `--base-path` | `/automation` | API base path |
+| `--auth-file` | | Auth YAML (optional). Sample: `am-mock-server/examples/auth.yaml` |
+| `--dry-run-reject` | off | PUT `?dryRun=true` returns `200` `[{severity: ERROR, message}]` and does **not** persist. Without this flag, `dryRun` is ignored. |
 
 ## Prerequisites
 
@@ -18,41 +66,19 @@ Go SDK clients and mock server for the Gravitee Access Management (AM) Automatio
 ## Build & Test
 
 ```bash
-# Run all tests
 go test ./am-sdk/... ./am-mock-server/... ./common/...
-
-# Run tests for a single module
 go test ./am-mock-server/server/...
-
-# Sync AM Automation OpenAPI from gravitee-access-management (override with AM_OAS_BRANCH)
-make sync-oas
-
-# Regenerate code (overlays + oapi-codegen)
+make sync-oas          # AM_OAS_BRANCH to override
 go generate ./am-sdk/... ./am-mock-server/...
 ```
 
-> **Note:** `go test ./...` does not work from the workspace root — specify module paths explicitly.
+`go test ./...` does not work from the workspace root — pass module paths.
 
-## Running the Mock Server
+## Code generation
 
-```bash
-go run ./am-mock-server --port 8080
-go run ./am-mock-server --auth-file am-mock-server/examples/auth.yaml
-```
+Spec: `am-sdk/openapi/openapi.yaml`. Overlays reshape it; `oapi-codegen` emits clients and the mock server.
 
-Options:
-
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--port` | `8080` | HTTP listen port |
-| `--base-path` | `/automation` | API base path |
-| `--auth-file` | | Path to auth config YAML (optional). Sample: `am-mock-server/examples/auth.yaml` |
-
-## Code Generation
-
-All generated code comes from the OpenAPI spec at `am-sdk/openapi/openapi.yaml`. Generation uses OpenAPI Overlay files to reshape the spec, then `oapi-codegen` to produce typed Go clients and strict servers.
-
-Files ending in `.gen.go` are generated — do not edit them.
+Do not edit `*.gen.go`.
 
 ## License
 
