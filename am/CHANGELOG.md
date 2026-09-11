@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/gravitee-io-labs/gravitee-automation-sdks/compare/am/v1.0.0...am/v1.0.1) (2026-09-11)
+
+
+### Bug Fixes
+
+* **deps:** bump internal dependencies ([bf4a596](https://github.com/gravitee-io-labs/gravitee-automation-sdks/commit/bf4a596ce3350b51d03394bfe8b45761d2b49b52))
+
 ## 1.0.0 (2026-09-11)
 
 
