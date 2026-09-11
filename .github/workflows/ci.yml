@@ -8,6 +8,12 @@ permissions:
   contents: read
 
 jobs:
+  oas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make check-oas
+
   generate:
     runs-on: ubuntu-latest
     steps:

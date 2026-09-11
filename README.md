@@ -24,6 +24,9 @@ go test ./am/... ./am-mock-server/... ./common/...
 # Run tests for a single module
 go test ./am-mock-server/server/...
 
+# Sync AM Automation OpenAPI from gravitee-access-management (override with AM_OAS_BRANCH)
+make sync-oas
+
 # Regenerate code (overlays + oapi-codegen)
 go generate ./am/... ./am-mock-server/...
 ```
