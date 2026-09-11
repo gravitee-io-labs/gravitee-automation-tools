@@ -37,6 +37,7 @@ go generate ./am-sdk/... ./am-mock-server/...
 
 ```bash
 go run ./am-mock-server --port 8080
+go run ./am-mock-server --auth-file am-mock-server/examples/auth.yaml
 ```
 
 Options:
@@ -45,7 +46,7 @@ Options:
 |------|---------|-------------|
 | `--port` | `8080` | HTTP listen port |
 | `--base-path` | `/automation` | API base path |
-| `--auth-file` | | Path to auth config YAML (optional) |
+| `--auth-file` | | Path to auth config YAML (optional). Sample: `am-mock-server/examples/auth.yaml` |
 
 ## Code Generation
 
