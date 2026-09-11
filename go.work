@@ -1,8 +1,8 @@
 go 1.26.1
 
 use (
-	./am
+	./am-sdk
 	./am-mock-server
-	./apim
+	./apim-sdk
 	./common
 )

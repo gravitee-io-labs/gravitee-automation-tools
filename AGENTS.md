@@ -75,17 +75,17 @@ A Go workspace with four modules:
 | Module | Role |
 |--------|------|
 | `common` | Shared utilities: `apicontext` (auth + base URL), `response` (status helpers + generic `Payload[T]` extractor), `store` (channel-based in-memory generic store), `errors`, `refs` |
-| `am` | Generated SDK clients for AM resources (domains, certificates, identity providers, reporters). Each resource lives in `am/pkg/sdk/<resource>/` with a `generate.go` and `cfg.yaml` |
+| `am-sdk` | Generated SDK clients for AM resources (domains, certificates, identity providers, reporters). Each resource lives in `am-sdk/pkg/sdk/<resource>/` with a `generate.go` and `cfg.yaml` |
 | `am-mock-server` | Standalone mock HTTP server implementing the same OpenAPI spec with strict-server codegen. Used for integration-testing the SDK |
-| `apim` | Placeholder module for a future APIM SDK (empty) |
+| `apim-sdk` | Placeholder module for a future APIM SDK (empty) |
 
 ---
 
 ## 3. Code Generation Pipeline
 
-All generated code comes from a single OpenAPI spec at `am/openapi/openapi.yaml`. Generation is driven by `//go:generate` directives in `generate.go` files and involves two steps:
+All generated code comes from a single OpenAPI spec at `am-sdk/openapi/openapi.yaml`. Generation is driven by `//go:generate` directives in `generate.go` files and involves two steps:
 
-1. **Overlay merge** — `am/overlays/mergeoverlay.go` is a CLI tool that merges multiple YAML overlay files into one. Overlays rename models (strip `Automation` prefix via `x-go-type-name`), standardize operationIds (`get`, `list`, `upsert`, `delete`), and (for SDK clients) rewrite paths to bake `orgId`/`envId` into the server URL.
+1. **Overlay merge** — `am-sdk/overlays/mergeoverlay.go` is a CLI tool that merges multiple YAML overlay files into one. Overlays rename models (strip `Automation` prefix via `x-go-type-name`), standardize operationIds (`get`, `list`, `upsert`, `delete`), and (for SDK clients) rewrite paths to bake `orgId`/`envId` into the server URL.
 2. **oapi-codegen** — Generates typed Go clients or strict servers from the overlaid spec. Each package has a `cfg.yaml` controlling what gets generated and which tags to include.
 
 ### Overlay Chains
@@ -94,9 +94,9 @@ The overlay chain differs between SDK and mock server:
 
 | Target | Overlays merged | What is generated |
 |--------|----------------|-------------------|
-| SDK (`am/pkg/sdk/<resource>/`) | `models.yaml` + `operations.yaml` + `overlay-paths.yaml` + per-resource `overlay.yaml` | Client + models, filtered by tag |
+| SDK (`am-sdk/pkg/sdk/<resource>/`) | `models.yaml` + `operations.yaml` + `overlay-paths.yaml` + per-resource `overlay.yaml` | Client + models, filtered by tag |
 | Mock server (`am-mock-server/server/`) | `models.yaml` + `operations.yaml` + its own `overlay.yaml` | chi strict-server + models (all tags, original paths kept) |
-| CRD models (`am/pkg/crd/domain/`) | Separate chain writing `overlay.merged.yaml` | Models only |
+| CRD models (`am-sdk/pkg/crd/domain/`) | Separate chain writing `overlay.merged.yaml` | Models only |
 
 **Files ending in `.gen.go` are generated — do not edit them.**
 

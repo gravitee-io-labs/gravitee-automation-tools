@@ -1,4 +1,4 @@
-module github.com/gravitee-io-labs/gravitee-automation-tools/am
+module github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk
 
 go 1.26.1
 

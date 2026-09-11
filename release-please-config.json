@@ -3,14 +3,14 @@
   "separate-pull-requests": true,
   "tag-separator": "/",
   "packages": {
-    "am": {
+    "am-sdk": {
       "release-type": "go",
-      "component": "am",
+      "component": "am-sdk",
       "bump-minor-pre-major": true
     },
-    "apim": {
+    "apim-sdk": {
       "release-type": "go",
-      "component": "apim",
+      "component": "apim-sdk",
       "bump-minor-pre-major": true
     },
     "common": {

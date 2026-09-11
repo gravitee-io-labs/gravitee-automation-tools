@@ -18,11 +18,11 @@ This repository uses [release-please](https://github.com/googleapis/release-plea
 
 ## Tag Format
 
-Each module gets its own semver tag: `am/v0.2.0`, `common/v0.1.3`, `am-mock-server/v0.3.0`, etc. This is the standard Go multi-module convention — consumers use `go get github.com/gravitee-io-labs/gravitee-automation-tools/am@v0.2.0`.
+Each module gets its own semver tag: `am-sdk/v0.2.0`, `common/v0.1.3`, `am-mock-server/v0.3.0`, etc. This is the standard Go multi-module convention — consumers use `go get github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk@v0.2.0`.
 
 ## Module Types
 
-### Libraries (`am`, `apim`, `common`)
+### Libraries (`am-sdk`, `apim-sdk`, `common`)
 
 Release artifact is the git tag + GitHub Release with changelog. No binaries — Go resolves the source from the module proxy.
 
@@ -32,7 +32,7 @@ Same as libraries, plus [goreleaser](https://goreleaser.com/) cross-compiles bin
 
 ## Auto-bump Dependencies
 
-When `common` or `am` is released, a GitHub Actions workflow automatically:
+When `common` or `am-sdk` is released, a GitHub Actions workflow automatically:
 
 1. Updates `go.mod` in dependent modules (`go mod edit -require` + `go mod tidy`)
 2. Opens a PR with `fix(deps): update <module> to <version>`
@@ -50,7 +50,7 @@ When `common` or `am` is released, a GitHub Actions workflow automatically:
 
 All modules start at `0.0.0` in the manifest. The first `feat:` commit touching a module will produce a `v0.1.0` release PR.
 
-**Important:** Release `common` first, then `am`, then `am-mock-server` — so that dependency versions resolve correctly on the Go module proxy.
+**Important:** Release `common` first, then `am-sdk`, then `am-mock-server` — so that dependency versions resolve correctly on the Go module proxy.
 
 ## CI Checks (on every PR)
 

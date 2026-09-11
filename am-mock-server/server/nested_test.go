@@ -17,10 +17,10 @@ package server
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg/sdk/certificate"
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg/sdk/domain"
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg/sdk/identityprovider"
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am/pkg/sdk/reporter"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/certificate"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/domain"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/identityprovider"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/reporter"
 )
 
 func TestNested_IsolatedByDomain(t *testing.T) {
