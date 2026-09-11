@@ -28,11 +28,11 @@ const BasePath = "/automation"
 
 // New mounts the API at BasePath with no auth.
 func New(impl *MockAM) http.Handler {
-	return NewWithPath(impl, BasePath, nil)
+	return NewWithPath(impl, BasePath, nil, false)
 }
 
 // NewWithPath mounts the API at basePath. nil Registry leaves the API open. nil impl serves Unimplemented.
-func NewWithPath(mockAM *MockAM, basePath string, reg *auth.Registry) http.Handler {
+func NewWithPath(mockAM *MockAM, basePath string, reg *auth.Registry, dryRunReject bool) http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 
@@ -45,6 +45,9 @@ func NewWithPath(mockAM *MockAM, basePath string, reg *auth.Registry) http.Handl
 		_, exists := mockAM.getTenant(orgEnv{org: org, env: env}).Domains.Get(key)
 		return exists
 	}))
+	if dryRunReject {
+		middlewares = append(middlewares, DryRunReject())
+	}
 
 	var si ServerInterface = Unimplemented{}
 	if mockAM != nil {

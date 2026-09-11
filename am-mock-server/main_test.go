@@ -32,12 +32,16 @@ func TestCommand_DefaultFlags(t *testing.T) {
 	basePath, err := cmd.Flags().GetString("base-path")
 	require.NoError(t, err)
 	assert.Equal(t, server.BasePath, basePath)
+
+	dryRunReject, err := cmd.Flags().GetBool("dry-run-reject")
+	require.NoError(t, err)
+	assert.False(t, dryRunReject)
 }
 
 func TestCommand_ParseFlags(t *testing.T) {
 	cmd := newCommand()
 
-	err := cmd.ParseFlags([]string{"--port", "9090", "--base-path", "/api"})
+	err := cmd.ParseFlags([]string{"--port", "9090", "--base-path", "/api", "--dry-run-reject"})
 	require.NoError(t, err)
 
 	port, err := cmd.Flags().GetInt("port")
@@ -47,4 +51,8 @@ func TestCommand_ParseFlags(t *testing.T) {
 	basePath, err := cmd.Flags().GetString("base-path")
 	require.NoError(t, err)
 	assert.Equal(t, "/api", basePath)
+
+	dryRunReject, err := cmd.Flags().GetBool("dry-run-reject")
+	require.NoError(t, err)
+	assert.True(t, dryRunReject)
 }

@@ -58,7 +58,7 @@ func createAMServerWithAuth(t *testing.T) (*MockAM, *httptest.Server) {
 	cfg := testAuthConfig()
 	reg := auth.NewRegistry(cfg, BasePath)
 	am := NewMockAM()
-	srv := httptest.NewServer(NewWithPath(am, BasePath, reg))
+	srv := httptest.NewServer(NewWithPath(am, BasePath, reg, false))
 	t.Cleanup(srv.Close)
 	return am, srv
 }

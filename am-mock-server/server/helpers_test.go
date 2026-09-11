@@ -37,8 +37,13 @@ func defaultTenant(am *MockAM) *tenant {
 
 func createAMServer(t *testing.T) (*MockAM, *httptest.Server) {
 	t.Helper()
+	return createAMServerWithDryRunReject(t, false)
+}
+
+func createAMServerWithDryRunReject(t *testing.T, dryRunReject bool) (*MockAM, *httptest.Server) {
+	t.Helper()
 	am := NewMockAM()
-	srv := httptest.NewServer(New(am))
+	srv := httptest.NewServer(NewWithPath(am, BasePath, nil, dryRunReject))
 	t.Cleanup(srv.Close)
 	return am, srv
 }
