@@ -24,6 +24,9 @@ If you are an AI agent operating in this repository:
 # Install lint/dev tools (staticcheck, revive, addlicense, goimports)
 make tools
 
+# Sync AM Automation OAS from gravitee-access-management (AM_OAS_BRANCH, default master)
+make sync-oas
+
 # Regenerate all code (overlays + oapi-codegen)
 make generate
 

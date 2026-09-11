@@ -2,6 +2,10 @@ MODULES := am apim common am-mock-server
 
 HAS_GO = [ -n "$$(find $$mod -name '*.go' -print -quit)" ]
 
+AM_OAS_BRANCH ?= master
+AM_OAS_URL := https://raw.githubusercontent.com/gravitee-io/gravitee-access-management/refs/heads/$(AM_OAS_BRANCH)/docs/automation/openapi.yaml
+AM_OAS_FILE := am/openapi/openapi.yaml
+
 ##@ 🧹 Lint
 
 .PHONY: lint
@@ -61,6 +65,15 @@ lint-fix: ## Auto-fix linting issues and add license headers
 		.
 
 ##@ 🔄 Generate
+
+.PHONY: sync-oas
+sync-oas: ## Download AM Automation OAS from gravitee-access-management
+	curl -fsSL "$(AM_OAS_URL)" -o $(AM_OAS_FILE)
+
+.PHONY: check-oas
+check-oas: ## Fail if committed OAS differs from upstream $(AM_OAS_BRANCH)
+	curl -fsSL "$(AM_OAS_URL)" -o /tmp/am-openapi.yaml
+	@diff -u $(AM_OAS_FILE) /tmp/am-openapi.yaml || { echo "OAS out of date. Run 'make sync-oas' and commit."; exit 1; }
 
 .PHONY: generate
 generate: ## Run go generate across all modules
