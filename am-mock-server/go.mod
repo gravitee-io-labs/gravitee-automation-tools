@@ -4,7 +4,7 @@ go 1.26.1
 
 require (
 	github.com/go-chi/chi/v5 v5.3.2
-	github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk v0.0.0
+	github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk v1.0.0
 	github.com/gravitee-io-labs/gravitee-automation-tools/common v1.0.0
 	github.com/oapi-codegen/runtime v1.7.0
 	github.com/spf13/cobra v1.10.2
