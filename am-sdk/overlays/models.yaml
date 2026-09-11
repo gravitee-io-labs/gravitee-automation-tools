@@ -32,6 +32,9 @@ actions:
   - target: $.components.schemas.AutomationClientRegistrationSettings
     update:
       x-go-type-name: ClientRegistrationSettings
+  - target: $.components.schemas.AutomationDataPlane
+    update:
+      x-go-type-name: DataPlane
   - target: $.components.schemas.AutomationDomain
     update:
       x-go-type-name: Domain

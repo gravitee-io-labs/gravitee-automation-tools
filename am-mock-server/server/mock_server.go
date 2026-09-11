@@ -39,6 +39,7 @@ func (m Child[T]) Identity() string {
 
 type tenant struct {
 	Domains           *store.Store[Domain]
+	DataPlanes        *store.Store[DataPlane]
 	Certificates      *store.Store[Child[Certificate]]
 	IdentityProviders *store.Store[Child[IdentityProvider]]
 	Reporters         *store.Store[Child[Reporter]]
@@ -47,6 +48,7 @@ type tenant struct {
 func newTenant() *tenant {
 	return &tenant{
 		Domains:           store.NewStore[Domain](),
+		DataPlanes:        store.NewStore[DataPlane](),
 		Certificates:      store.NewStore[Child[Certificate]](),
 		IdentityProviders: store.NewStore[Child[IdentityProvider]](),
 		Reporters:         store.NewStore[Child[Reporter]](),
@@ -120,6 +122,32 @@ func (m *MockAM) GetDomain(_ context.Context, req GetDomainRequestObject) (GetDo
 		return GetDomain200JSONResponse(domain), nil
 	}
 	return GetDomain404JSONResponse(notFoundError("Domain", req.DomainKey)), nil
+}
+
+func (m *MockAM) ListDataPlanes(_ context.Context, r ListDataPlanesRequestObject) (ListDataPlanesResponseObject, error) {
+	return ListDataPlanes200JSONResponse(m.getTenant(r).DataPlanes.GetAll()), nil
+}
+
+func (m *MockAM) UpsertDataPlane(_ context.Context, req UpsertDataPlaneRequestObject) (UpsertDataPlaneResponseObject, error) {
+	if req.Body != nil {
+		body := *req.Body
+		m.getTenant(req).DataPlanes.Put(body)
+		return UpsertDataPlane200JSONResponse(body), nil
+	}
+	return UpsertDataPlane400JSONResponse(emptyBodyError()), nil
+}
+
+func (m *MockAM) DeleteDataPlane(_ context.Context, req DeleteDataPlaneRequestObject) (DeleteDataPlaneResponseObject, error) {
+	m.getTenant(req).DataPlanes.DeleteByKey(req.DataPlaneId)
+	return DeleteDataPlane204Response{}, nil
+}
+
+func (m *MockAM) GetDataPlane(_ context.Context, req GetDataPlaneRequestObject) (GetDataPlaneResponseObject, error) {
+	dataPlane, ok := m.getTenant(req).DataPlanes.Get(req.DataPlaneId)
+	if ok {
+		return GetDataPlane200JSONResponse(dataPlane), nil
+	}
+	return GetDataPlane404JSONResponse(notFoundError("DataPlane", req.DataPlaneId)), nil
 }
 
 func (m *MockAM) ListCertificates(_ context.Context, req ListCertificatesRequestObject) (ListCertificatesResponseObject, error) {

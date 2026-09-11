@@ -56,6 +56,9 @@ type AutomationReporter = Reporter
 
 // Reporter A reporter managed under a domain by the Automation API. Reporters persist audit events to a backend. The key field is the stable, immutable identity used for idempotent create-or-update.
 type Reporter struct {
+	// AttributeMappingEventTypes Audit event types the attribute mappings apply to. Empty means every event type. Ignored when system is true.
+	AttributeMappingEventTypes *[]string `json:"attributeMappingEventTypes,omitempty"`
+
 	// AttributeMappings Additional attributes exported alongside the regular audit payload. Each entry pairs an expression read from the audit context with the field name its value is exported under. Ignored when system is true; a system reporter exports no additional attributes.
 	AttributeMappings *[]ReporterAttributeMapping `json:"attributeMappings,omitempty"`
 
@@ -83,7 +86,7 @@ type Reporter struct {
 	// Example: Audit events to Kafka
 	Name *string `json:"name,omitempty"`
 
-	// System Whether this is the domain's system reporter. Immutable after creation. When true, only key is required; the reporter is built from the domains.reporters.default.* and repository system settings and the name, type, configuration, and attributeMappings fields are ignored.
+	// System Whether this is the domain's system reporter. Immutable after creation. When true, only key is required; the reporter is built from the domains.reporters.default.* and repository system settings and the name, type, configuration, attributeMappings and attributeMappingEventTypes fields are ignored.
 	System *bool `json:"system,omitempty"`
 
 	// Type Reporter plugin type identifier. Immutable after creation.

@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/certificate"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/dataplane"
 	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/domain"
 	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/identityprovider"
 	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/reporter"
@@ -34,6 +35,7 @@ import (
 // Fields are set by NewClient and are safe to read; do not replace them after construction.
 type AMClient struct {
 	Domains           domain.ClientWithResponsesInterface
+	DataPlanes        dataplane.ClientWithResponsesInterface
 	Certificates      certificate.ClientWithResponsesInterface
 	IdentityProviders identityprovider.ClientWithResponsesInterface
 	Reporters         reporter.ClientWithResponsesInterface
@@ -72,6 +74,10 @@ func NewClient(ac apicontext.APIContext, timeoutMs int) (*AMClient, error) {
 	if err != nil {
 		return nil, err
 	}
+	dataPlanes, err := newDataPlaneClient(server, httpClient, editor)
+	if err != nil {
+		return nil, err
+	}
 	certificates, err := newCertificateClient(server, httpClient, editor)
 	if err != nil {
 		return nil, err
@@ -87,6 +93,7 @@ func NewClient(ac apicontext.APIContext, timeoutMs int) (*AMClient, error) {
 
 	return &AMClient{
 		Domains:           domains,
+		DataPlanes:        dataPlanes,
 		Certificates:      certificates,
 		IdentityProviders: identities,
 		Reporters:         reporters,
@@ -98,6 +105,14 @@ func newDomainClient(server string, httpClient *http.Client, editor requestEdito
 		server,
 		domain.WithHTTPClient(httpClient),
 		domain.WithRequestEditorFn(editor),
+	)
+}
+
+func newDataPlaneClient(server string, httpClient *http.Client, editor requestEditor) (dataplane.ClientWithResponsesInterface, error) {
+	return dataplane.NewClientWithResponses(
+		server,
+		dataplane.WithHTTPClient(httpClient),
+		dataplane.WithRequestEditorFn(editor),
 	)
 }
 

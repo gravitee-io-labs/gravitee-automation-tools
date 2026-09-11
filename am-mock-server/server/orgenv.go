@@ -23,6 +23,15 @@ func (r DeleteDomainRequestObject) GetEnvId() string { return r.EnvId }
 func (r GetDomainRequestObject) GetOrgId() string    { return r.OrgId }
 func (r GetDomainRequestObject) GetEnvId() string    { return r.EnvId }
 
+func (r ListDataPlanesRequestObject) GetOrgId() string  { return r.OrgId }
+func (r ListDataPlanesRequestObject) GetEnvId() string  { return r.EnvId }
+func (r UpsertDataPlaneRequestObject) GetOrgId() string { return r.OrgId }
+func (r UpsertDataPlaneRequestObject) GetEnvId() string { return r.EnvId }
+func (r DeleteDataPlaneRequestObject) GetOrgId() string { return r.OrgId }
+func (r DeleteDataPlaneRequestObject) GetEnvId() string { return r.EnvId }
+func (r GetDataPlaneRequestObject) GetOrgId() string    { return r.OrgId }
+func (r GetDataPlaneRequestObject) GetEnvId() string    { return r.EnvId }
+
 func (r ListCertificatesRequestObject) GetOrgId() string  { return r.OrgId }
 func (r ListCertificatesRequestObject) GetEnvId() string  { return r.EnvId }
 func (r UpsertCertificateRequestObject) GetOrgId() string { return r.OrgId }

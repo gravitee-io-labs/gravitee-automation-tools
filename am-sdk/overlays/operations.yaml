@@ -17,6 +17,19 @@ info:
   title: Rename operationIds to get|list|upsert|delete
   version: 0.0.1
 actions:
+  - target: $.paths["/organizations/{orgId}/environments/{envId}/dataplanes"].get
+    update:
+      operationId: listDataPlanes
+  - target: $.paths["/organizations/{orgId}/environments/{envId}/dataplanes"].put
+    update:
+      operationId: upsertDataPlane
+  - target: $.paths["/organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId}"].get
+    update:
+      operationId: getDataPlane
+  - target: $.paths["/organizations/{orgId}/environments/{envId}/dataplanes/{dataPlaneId}"].delete
+    update:
+      operationId: deleteDataPlane
+
   - target: $.paths["/organizations/{orgId}/environments/{envId}/domains"].get
     update:
       operationId: listDomains

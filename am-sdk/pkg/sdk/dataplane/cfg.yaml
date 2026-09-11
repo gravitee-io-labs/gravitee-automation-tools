@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # yaml-language-server: $schema=../../../configuration-schema.json
-package: domain
+package: dataplane
 output: client.gen.go
 generate:
   models: true
@@ -23,9 +23,4 @@ output-options:
   overlay:
     path: ../overlay.yaml
   include-tags:
-    - Domains
-  exclude-tags:
-    - Certificates
     - Data Planes
-    - Identity Providers
-    - Reporters
