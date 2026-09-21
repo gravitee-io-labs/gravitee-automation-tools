@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-mock-server/v1.0.0...am-mock-server/v1.0.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* sync OAS (dryrun) ([0a4230a](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/0a4230a67108630b84d1dd02be8369c33433cf98))
+
 ## 1.0.0 (2026-09-11)
 
 
