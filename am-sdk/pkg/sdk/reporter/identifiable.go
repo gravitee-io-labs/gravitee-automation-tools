@@ -14,6 +14,6 @@
 
 package reporter
 
-func (r Reporter) Identify() string {
+func (r Reporter) Identity() string {
 	return r.Key
 }

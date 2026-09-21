@@ -14,6 +14,6 @@
 
 package domain
 
-func (d Domain) Identify() string {
+func (d Domain) Identity() string {
 	return d.Key
 }

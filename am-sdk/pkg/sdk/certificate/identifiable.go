@@ -14,6 +14,6 @@
 
 package certificate
 
-func (d Certificate) Identify() string {
+func (d Certificate) Identity() string {
 	return d.Key
 }

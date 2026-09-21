@@ -14,6 +14,6 @@
 
 package dataplane
 
-func (d DataPlane) Identify() string {
+func (d DataPlane) Identity() string {
 	return d.Id
 }

@@ -14,6 +14,6 @@
 
 package identityprovider
 
-func (d IdentityProvider) Identify() string {
+func (d IdentityProvider) Identity() string {
 	return d.Key
 }
