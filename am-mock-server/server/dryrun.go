@@ -22,13 +22,7 @@ import (
 
 const dryRunMessage = "Mock server is in dry-run-reject mode, all PUT request are rejected on purpose when ?dryRun=true"
 
-// DryRunError is the AM Automation dry-run payload item.
-type DryRunError struct {
-	Severity string `json:"severity"`
-	Message  string `json:"message"`
-}
-
-var dryRunErrors = []DryRunError{{Severity: "ERROR", Message: dryRunMessage}}
+var dryRunErrors = []DryRunError{{Severity: new(SeverityError), Message: new(dryRunMessage)}}
 
 // DryRunReject skips PUT persistence when ?dryRun=true and returns a fixed DryRunError list.
 func DryRunReject() func(http.Handler) http.Handler {

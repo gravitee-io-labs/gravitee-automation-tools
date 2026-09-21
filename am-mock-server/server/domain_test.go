@@ -86,7 +86,7 @@ func TestPutGetDomainSDK(t *testing.T) {
 	client := newAMClient(t, srv)
 	body := domain.Domain{Key: "test", Name: "Test domain"}
 
-	put, err := client.Domains.UpsertDomainWithResponse(t.Context(), body)
+	put, err := client.Domains.UpsertDomainWithResponse(t.Context(), nil, body)
 	assertSDKOK(t, put, err, body)
 
 	get, err := client.Domains.GetDomainWithResponse(t.Context(), "test")

@@ -31,10 +31,10 @@ func TestMultiTenancy_DomainIsolation(t *testing.T) {
 	domainT2 := domain.Domain{Key: "shared-key", Name: "Tenant 2 Domain"}
 
 	t.Run("create in both tenants", func(t *testing.T) {
-		put1, err := t1.Domains.UpsertDomainWithResponse(t.Context(), domainT1)
+		put1, err := t1.Domains.UpsertDomainWithResponse(t.Context(), nil, domainT1)
 		assertSDKOK(t, put1, err, domainT1)
 
-		put2, err := t2.Domains.UpsertDomainWithResponse(t.Context(), domainT2)
+		put2, err := t2.Domains.UpsertDomainWithResponse(t.Context(), nil, domainT2)
 		assertSDKOK(t, put2, err, domainT2)
 	})
 
@@ -56,7 +56,7 @@ func TestMultiTenancy_DomainIsolation(t *testing.T) {
 
 	t.Run("update in tenant 1 does not affect tenant 2", func(t *testing.T) {
 		updated := domain.Domain{Key: "shared-key", Name: "Tenant 1 Updated"}
-		put, err := t1.Domains.UpsertDomainWithResponse(t.Context(), updated)
+		put, err := t1.Domains.UpsertDomainWithResponse(t.Context(), nil, updated)
 		assertSDKOK(t, put, err, updated)
 
 		get1, err := t1.Domains.GetDomainWithResponse(t.Context(), "shared-key")

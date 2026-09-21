@@ -43,7 +43,7 @@ func TestDryRunPut_DoesNotPersist(t *testing.T) {
 	defer resp.Body.Close()
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, []DryRunError{{Severity: "ERROR", Message: dryRunMessage}}, decodeToSliceOf[DryRunError](t, resp))
+	assert.Equal(t, []DryRunError{{Severity: new(SeverityError), Message: new(dryRunMessage)}}, decodeToSliceOf[DryRunError](t, resp))
 	_, exists := defaultTenant(am).Domains.Get("test")
 	assert.False(t, exists)
 	assertGet404(t, domainsURL(srv), "test", "Domain")
@@ -70,7 +70,7 @@ func TestDryRunPut_LeavesExistingUnchanged(t *testing.T) {
 	resp := httpPut(t, domainsURL(srv)+"?dryRun=true", Domain{Key: "test", Name: "Changed"})
 	defer resp.Body.Close()
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, []DryRunError{{Severity: "ERROR", Message: dryRunMessage}}, decodeToSliceOf[DryRunError](t, resp))
+	assert.Equal(t, []DryRunError{{Severity: new(SeverityError), Message: new(dryRunMessage)}}, decodeToSliceOf[DryRunError](t, resp))
 
 	got, exists := defaultTenant(am).Domains.Get("test")
 	require.True(t, exists)
@@ -85,6 +85,6 @@ func TestDryRunPut_NestedDoesNotPersist(t *testing.T) {
 	defer resp.Body.Close()
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, []DryRunError{{Severity: "ERROR", Message: dryRunMessage}}, decodeToSliceOf[DryRunError](t, resp))
+	assert.Equal(t, []DryRunError{{Severity: new(SeverityError), Message: new(dryRunMessage)}}, decodeToSliceOf[DryRunError](t, resp))
 	assert.Empty(t, defaultTenant(am).Certificates.GetAll())
 }
