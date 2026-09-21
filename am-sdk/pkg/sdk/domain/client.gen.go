@@ -51,6 +51,24 @@ func NewScopedServerURL(baseUrl ScopedServerURLBaseUrlVariable, envId ScopedServ
 	return u, nil
 }
 
+// Defines values for Severity.
+const (
+	SeverityError   Severity = "error"
+	SeverityWarning Severity = "warning"
+)
+
+// Valid indicates whether the value is a known member of the Severity enum.
+func (e Severity) Valid() bool {
+	switch e {
+	case SeverityError:
+		return true
+	case SeverityWarning:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for TokenExchangeOAuthSettingsScopeHandling.
 const (
 	Downscoping TokenExchangeOAuthSettingsScopeHandling = "downscoping"
@@ -347,6 +365,9 @@ type Domain struct {
 	// Example: An example authentication domain
 	Description *string `json:"description,omitempty"`
 
+	// DryRunErrors Validation errors returned when dryRun is true. Absent when validation succeeds.
+	DryRunErrors *[]DryRunError `json:"dryRunErrors,omitempty"`
+
 	// Enabled Whether the domain handles incoming authentication and authorization requests.
 	Enabled *bool `json:"enabled,omitempty"`
 
@@ -513,6 +534,12 @@ type CspSettings struct {
 
 	// ScriptInlineNonce Whether inline scripts are allowed via a per-request nonce.
 	ScriptInlineNonce *bool `json:"scriptInlineNonce,omitempty"`
+}
+
+// DryRunError Validation errors returned when dryRun is true. Absent when validation succeeds.
+type DryRunError struct {
+	Message  *string   `json:"message,omitempty"`
+	Severity *Severity `json:"severity,omitempty"`
 }
 
 // Error Error response body returned for failed requests.
@@ -701,6 +728,9 @@ type SelfServiceAccountManagementSettings struct {
 	// ResetPassword Rules applied to a self-service password reset.
 	ResetPassword *ResetPasswordSettings `json:"resetPassword,omitempty"`
 }
+
+// Severity defines model for Severity.
+type Severity string
 
 // SpiffeDomainSettings Workload identity (SPIFFE) settings for the domain.
 type SpiffeDomainSettings struct {
@@ -949,6 +979,12 @@ type XssProtectionSettings struct {
 	Inherited *bool `json:"inherited,omitempty"`
 }
 
+// UpsertDomainParams defines parameters for UpsertDomain.
+type UpsertDomainParams struct {
+	// DryRun When true, validates the payload without persisting. The returned domain includes a dryRunErrors field.
+	DryRun *bool `form:"dryRun,omitempty" json:"dryRun,omitempty"`
+}
+
 // UpsertDomainJSONRequestBody defines body for UpsertDomain for application/json ContentType.
 type UpsertDomainJSONRequestBody = AutomationDomain
 
@@ -1035,21 +1071,21 @@ type ClientInterface interface {
 
 	// UpsertDomainWithBody Create or update a domain
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
+	// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards. When dryRun is true, the endpoint validates the payload without persisting; the returned domain carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with PUT /domains (the `UpsertDomain` operationId).
-	UpsertDomainWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpsertDomainWithBody(ctx context.Context, params *UpsertDomainParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpsertDomain Create or update a domain
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
+	// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards. When dryRun is true, the endpoint validates the payload without persisting; the returned domain carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with PUT /domains (the `UpsertDomain` operationId).
-	UpsertDomain(ctx context.Context, body UpsertDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpsertDomain(ctx context.Context, params *UpsertDomainParams, body UpsertDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteDomain Delete a domain
 	//
@@ -1085,13 +1121,13 @@ func (c *Client) ListDomains(ctx context.Context, reqEditors ...RequestEditorFn)
 
 // UpsertDomainWithBody Create or update a domain
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
+// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards. When dryRun is true, the endpoint validates the payload without persisting; the returned domain carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes any type of body and a specified content type.
 //
 // Corresponds with PUT /domains (the `UpsertDomain` operationId).
-func (c *Client) UpsertDomainWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpsertDomainRequestWithBody(c.Server, contentType, body)
+func (c *Client) UpsertDomainWithBody(ctx context.Context, params *UpsertDomainParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertDomainRequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1104,13 +1140,13 @@ func (c *Client) UpsertDomainWithBody(ctx context.Context, contentType string, b
 
 // UpsertDomain Create or update a domain
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
+// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards. When dryRun is true, the endpoint validates the payload without persisting; the returned domain carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with PUT /domains (the `UpsertDomain` operationId).
-func (c *Client) UpsertDomain(ctx context.Context, body UpsertDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpsertDomainRequest(c.Server, body)
+func (c *Client) UpsertDomain(ctx context.Context, params *UpsertDomainParams, body UpsertDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertDomainRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1183,18 +1219,18 @@ func NewListDomainsRequest(server string) (*http.Request, error) {
 }
 
 // NewUpsertDomainRequest calls the generic UpsertDomain builder with application/json body
-func NewUpsertDomainRequest(server string, body UpsertDomainJSONRequestBody) (*http.Request, error) {
+func NewUpsertDomainRequest(server string, params *UpsertDomainParams, body UpsertDomainJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewUpsertDomainRequestWithBody(server, "application/json", bodyReader)
+	return NewUpsertDomainRequestWithBody(server, params, "application/json", bodyReader)
 }
 
 // NewUpsertDomainRequestWithBody constructs an http.Request for the UpsertDomain method, with any body, and a specified content type
-func NewUpsertDomainRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func NewUpsertDomainRequestWithBody(server string, params *UpsertDomainParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1210,6 +1246,33 @@ func NewUpsertDomainRequestWithBody(server string, contentType string, body io.R
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.DryRun != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "dryRun", *params.DryRun, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "boolean", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
@@ -1345,21 +1408,21 @@ type ClientWithResponsesInterface interface {
 
 	// UpsertDomainWithBodyWithResponse Create or update a domain
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
+	// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards. When dryRun is true, the endpoint validates the payload without persisting; the returned domain carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /domains (the `UpsertDomain` operationId).
-	UpsertDomainWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertDomainResponse, error)
+	UpsertDomainWithBodyWithResponse(ctx context.Context, params *UpsertDomainParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertDomainResponse, error)
 
 	// UpsertDomainWithResponse Create or update a domain
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
+	// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards. When dryRun is true, the endpoint validates the payload without persisting; the returned domain carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /domains (the `UpsertDomain` operationId).
-	UpsertDomainWithResponse(ctx context.Context, body UpsertDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertDomainResponse, error)
+	UpsertDomainWithResponse(ctx context.Context, params *UpsertDomainParams, body UpsertDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertDomainResponse, error)
 
 	// DeleteDomainWithResponse Delete a domain
 	//
@@ -1610,13 +1673,13 @@ func (c *ClientWithResponses) ListDomainsWithResponse(ctx context.Context, reqEd
 
 // UpsertDomainWithBodyWithResponse Create or update a domain
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
+// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards. When dryRun is true, the endpoint validates the payload without persisting; the returned domain carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with PUT /domains (the `UpsertDomain` operationId).
-func (c *ClientWithResponses) UpsertDomainWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertDomainResponse, error) {
-	rsp, err := c.UpsertDomainWithBody(ctx, contentType, body, reqEditors...)
+func (c *ClientWithResponses) UpsertDomainWithBodyWithResponse(ctx context.Context, params *UpsertDomainParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertDomainResponse, error) {
+	rsp, err := c.UpsertDomainWithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -1625,13 +1688,13 @@ func (c *ClientWithResponses) UpsertDomainWithBodyWithResponse(ctx context.Conte
 
 // UpsertDomainWithResponse Create or update a domain
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards.
+// Idempotent create-or-update. Uses the key field in the body to identify the domain. On first apply the domain is created; subsequent applies update it. dataPlaneId is optional at creation, resolved from the environment's data planes when omitted, and immutable afterwards. When dryRun is true, the endpoint validates the payload without persisting; the returned domain carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with PUT /domains (the `UpsertDomain` operationId).
-func (c *ClientWithResponses) UpsertDomainWithResponse(ctx context.Context, body UpsertDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertDomainResponse, error) {
-	rsp, err := c.UpsertDomain(ctx, body, reqEditors...)
+func (c *ClientWithResponses) UpsertDomainWithResponse(ctx context.Context, params *UpsertDomainParams, body UpsertDomainJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertDomainResponse, error) {
+	rsp, err := c.UpsertDomain(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

@@ -9,6 +9,24 @@ import (
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/refs"
 )
 
+// Defines values for Severity.
+const (
+	SeverityError   Severity = "error"
+	SeverityWarning Severity = "warning"
+)
+
+// Valid indicates whether the value is a known member of the Severity enum.
+func (e Severity) Valid() bool {
+	switch e {
+	case SeverityError:
+		return true
+	case SeverityWarning:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for TokenExchangeOAuthSettingsScopeHandling.
 const (
 	Downscoping TokenExchangeOAuthSettingsScopeHandling = "downscoping"
@@ -346,6 +364,9 @@ type DomainSpec struct {
 	// Example: An example authentication domain
 	Description *string `json:"description,omitempty"`
 
+	// DryRunErrors Validation errors returned when dryRun is true. Absent when validation succeeds.
+	DryRunErrors *[]DryRunError `json:"dryRunErrors,omitempty"`
+
 	// Enabled Whether the domain handles incoming authentication and authorization requests.
 	Enabled *bool `json:"enabled,omitempty"`
 
@@ -612,6 +633,12 @@ type CspSettings struct {
 	ScriptInlineNonce *bool `json:"scriptInlineNonce,omitempty"`
 }
 
+// DryRunError Validation errors returned when dryRun is true. Absent when validation succeeds.
+type DryRunError struct {
+	Message  *string   `json:"message,omitempty"`
+	Severity *Severity `json:"severity,omitempty"`
+}
+
 // Error Error response body returned for failed requests.
 type Error struct {
 	// HttpStatus HTTP status code of the error response.
@@ -811,6 +838,9 @@ type SelfServiceAccountManagementSettings struct {
 	// ResetPassword Rules applied to a self-service password reset.
 	ResetPassword *ResetPasswordSettings `json:"resetPassword,omitempty"`
 }
+
+// Severity defines model for Severity.
+type Severity string
 
 // SpiffeDomainSettings Workload identity (SPIFFE) settings for the domain.
 type SpiffeDomainSettings struct {
@@ -1057,6 +1087,12 @@ type XssProtectionSettings struct {
 
 	// Inherited Whether X-XSS-Protection settings are inherited from the gateway defaults (gravitee.yml). When null, legacy behaviour applies: enabled=true overrides and enabled=false inherits.
 	Inherited *bool `json:"inherited,omitempty"`
+}
+
+// UpsertDomainParams defines parameters for UpsertDomain.
+type UpsertDomainParams struct {
+	// DryRun When true, validates the payload without persisting. The returned domain includes a dryRunErrors field.
+	DryRun *bool `form:"dryRun,omitempty" json:"dryRun,omitempty"`
 }
 
 // UpsertDomainJSONRequestBody defines body for UpsertDomain for application/json ContentType.

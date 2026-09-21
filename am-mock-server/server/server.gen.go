@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -14,6 +15,24 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/oapi-codegen/runtime"
 )
+
+// Defines values for Severity.
+const (
+	SeverityError   Severity = "error"
+	SeverityWarning Severity = "warning"
+)
+
+// Valid indicates whether the value is a known member of the Severity enum.
+func (e Severity) Valid() bool {
+	switch e {
+	case SeverityError:
+		return true
+	case SeverityWarning:
+		return true
+	default:
+		return false
+	}
+}
 
 // Defines values for TokenExchangeOAuthSettingsScopeHandling.
 const (
@@ -406,6 +425,9 @@ type Domain struct {
 	// Example: An example authentication domain
 	Description *string `json:"description,omitempty"`
 
+	// DryRunErrors Validation errors returned when dryRun is true. Absent when validation succeeds.
+	DryRunErrors *[]DryRunError `json:"dryRunErrors,omitempty"`
+
 	// Enabled Whether the domain handles incoming authentication and authorization requests.
 	Enabled *bool `json:"enabled,omitempty"`
 
@@ -672,6 +694,12 @@ type CspSettings struct {
 	ScriptInlineNonce *bool `json:"scriptInlineNonce,omitempty"`
 }
 
+// DryRunError Validation errors returned when dryRun is true. Absent when validation succeeds.
+type DryRunError struct {
+	Message  *string   `json:"message,omitempty"`
+	Severity *Severity `json:"severity,omitempty"`
+}
+
 // Error Error response body returned for failed requests.
 type Error struct {
 	// HttpStatus HTTP status code of the error response.
@@ -871,6 +899,9 @@ type SelfServiceAccountManagementSettings struct {
 	// ResetPassword Rules applied to a self-service password reset.
 	ResetPassword *ResetPasswordSettings `json:"resetPassword,omitempty"`
 }
+
+// Severity defines model for Severity.
+type Severity string
 
 // SpiffeDomainSettings Workload identity (SPIFFE) settings for the domain.
 type SpiffeDomainSettings struct {
@@ -1119,6 +1150,12 @@ type XssProtectionSettings struct {
 	Inherited *bool `json:"inherited,omitempty"`
 }
 
+// UpsertDomainParams defines parameters for UpsertDomain.
+type UpsertDomainParams struct {
+	// DryRun When true, validates the payload without persisting. The returned domain includes a dryRunErrors field.
+	DryRun *bool `form:"dryRun,omitempty" json:"dryRun,omitempty"`
+}
+
 // UpsertDataPlaneJSONRequestBody defines body for UpsertDataPlane for application/json ContentType.
 type UpsertDataPlaneJSONRequestBody = AutomationDataPlane
 
@@ -1153,7 +1190,7 @@ type ServerInterface interface {
 	ListDomains(w http.ResponseWriter, r *http.Request, orgId string, envId string)
 	// UpsertDomain Create or update a domain
 	// (PUT /organizations/{orgId}/environments/{envId}/domains)
-	UpsertDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string)
+	UpsertDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, params UpsertDomainParams)
 	// DeleteDomain Delete a domain
 	// (DELETE /organizations/{orgId}/environments/{envId}/domains/{domainKey})
 	DeleteDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, domainKey string)
@@ -1234,7 +1271,7 @@ func (_ Unimplemented) ListDomains(w http.ResponseWriter, r *http.Request, orgId
 
 // UpsertDomain Create or update a domain
 // (PUT /organizations/{orgId}/environments/{envId}/domains)
-func (_ Unimplemented) UpsertDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
+func (_ Unimplemented) UpsertDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, params UpsertDomainParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -1548,8 +1585,24 @@ func (siw *ServerInterfaceWrapper) UpsertDomain(w http.ResponseWriter, r *http.R
 		return
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpsertDomainParams
+
+	// ------------- Optional query parameter "dryRun" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "dryRun", r.URL.Query(), &params.DryRun, runtime.BindQueryParameterOptions{Type: "boolean", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "dryRun"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "dryRun", Err: err})
+		}
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.UpsertDomain(w, r, orgId, envId)
+		siw.Handler.UpsertDomain(w, r, orgId, envId, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -2693,9 +2746,10 @@ func (response ListDomainsdefaultJSONResponse) VisitListDomainsResponse(w http.R
 }
 
 type UpsertDomainRequestObject struct {
-	OrgId string `json:"orgId"`
-	EnvId string `json:"envId"`
-	Body  *UpsertDomainJSONRequestBody
+	OrgId  string `json:"orgId"`
+	EnvId  string `json:"envId"`
+	Params UpsertDomainParams
+	Body   *UpsertDomainJSONRequestBody
 }
 
 type UpsertDomainResponseObject interface {
@@ -3759,11 +3813,12 @@ func (sh *strictHandler) ListDomains(w http.ResponseWriter, r *http.Request, org
 }
 
 // UpsertDomain operation middleware
-func (sh *strictHandler) UpsertDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string) {
+func (sh *strictHandler) UpsertDomain(w http.ResponseWriter, r *http.Request, orgId string, envId string, params UpsertDomainParams) {
 	var request UpsertDomainRequestObject
 
 	request.OrgId = orgId
 	request.EnvId = envId
+	request.Params = params
 
 	var body UpsertDomainJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {

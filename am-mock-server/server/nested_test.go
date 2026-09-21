@@ -29,9 +29,9 @@ func TestNested_IsolatedByDomain(t *testing.T) {
 
 	d1 := domain.Domain{Key: "dom-a", Name: "A"}
 	d2 := domain.Domain{Key: "dom-b", Name: "B"}
-	put, err := client.Domains.UpsertDomainWithResponse(t.Context(), d1)
+	put, err := client.Domains.UpsertDomainWithResponse(t.Context(), nil, d1)
 	assertSDKOK(t, put, err, d1)
-	put, err = client.Domains.UpsertDomainWithResponse(t.Context(), d2)
+	put, err = client.Domains.UpsertDomainWithResponse(t.Context(), nil, d2)
 	assertSDKOK(t, put, err, d2)
 
 	certA := certificate.Certificate{Key: "cert", Name: new("A cert")}
@@ -58,9 +58,9 @@ func TestNested_DeleteDomainCascades(t *testing.T) {
 
 	keep := domain.Domain{Key: "keep", Name: "Keep"}
 	drop := domain.Domain{Key: "drop", Name: "Drop"}
-	put, err := client.Domains.UpsertDomainWithResponse(t.Context(), keep)
+	put, err := client.Domains.UpsertDomainWithResponse(t.Context(), nil, keep)
 	assertSDKOK(t, put, err, keep)
-	put, err = client.Domains.UpsertDomainWithResponse(t.Context(), drop)
+	put, err = client.Domains.UpsertDomainWithResponse(t.Context(), nil, drop)
 	assertSDKOK(t, put, err, drop)
 
 	certKeep := certificate.Certificate{Key: "ck", Name: new("keep cert")}
