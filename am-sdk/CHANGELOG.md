@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-sdk/v1.0.0...am-sdk/v1.0.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* implement identifiable interface ([e80bf3d](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/e80bf3d280011bb9f2543962a807f1778dc88fd1))
+* sync OAS (dryrun) ([0a4230a](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/0a4230a67108630b84d1dd02be8369c33433cf98))
+
 ## 1.0.0 (2026-09-11)
 
 
