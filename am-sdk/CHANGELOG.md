@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-sdk/v1.0.1...am-sdk/v1.0.2) (2026-09-21)
+
+
+### Bug Fixes
+
+* implement identifiable interface ([9e8fe9f](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/9e8fe9f8fb68757475c09cf24f67b8cd861c6be8))
+
 ## [1.0.1](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-sdk/v1.0.0...am-sdk/v1.0.1) (2026-09-21)
 
 
