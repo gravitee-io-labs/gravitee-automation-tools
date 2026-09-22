@@ -33,8 +33,8 @@
 
 ### Bug Fixes
 
-* **deps:** bump internal dependencies ([f61d720](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/f61d7202a701362d379a110759c73a0173a4adbf))
-* **deps:** bump internal dependencies ([bf4a596](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/bf4a596ce3350b51d03394bfe8b45761d2b49b52))
+* **deps:** bump common to v1.0.0 ([f61d720](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/f61d7202a701362d379a110759c73a0173a4adbf))
+* **deps:** bump common to v1.0.0 ([bf4a596](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/bf4a596ce3350b51d03394bfe8b45761d2b49b52))
 * drop Automation suffix ([62daa55](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/62daa55f9c5e8f0bb7cc764e2ca0822ec96638a2))
 * org/env overlay, specialized client per resource ([3923841](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/392384177030eb0695cbaeceb2e7f6dc2e93d300))
 * rename AM operationIds to get, list, upsert, delete ([9aa1dcb](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/9aa1dcb13264ef51723b1b6d65d9a02548b07a6d))
