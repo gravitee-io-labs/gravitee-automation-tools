@@ -5,8 +5,8 @@
 
 ### Bug Fixes
 
-* **deps:** bump internal dependencies ([56df1cc](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/56df1cc85f0a7becefa01ccc3d003ac856805a62))
-* **deps:** bump internal dependencies ([155f2ff](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/155f2ff035ed4ded263a76d445fea55705dffa6f))
+* **deps:** bump am-sdk to v1.0.2 ([56df1cc](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/56df1cc85f0a7becefa01ccc3d003ac856805a62))
+* **deps:** bump am-sdk to v1.0.1 ([155f2ff](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/155f2ff035ed4ded263a76d445fea55705dffa6f))
 
 ## [1.0.1](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-mock-server/v1.0.0...am-mock-server/v1.0.1) (2026-09-21)
 
@@ -34,10 +34,10 @@
 
 * address code review findings ([2c9a7af](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/2c9a7afed1dbdaafd27316fcf3170adb561b3a18))
 * composite Child identity, store TOCTOU, domain parent check ([39bc99f](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/39bc99f61fe11794a5952285ba329c5b73f18909))
-* **deps:** bump internal dependencies ([754fe72](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/754fe72f9d41692b01f81520bc3d4748c0857752))
-* **deps:** bump internal dependencies ([f61d720](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/f61d7202a701362d379a110759c73a0173a4adbf))
-* **deps:** bump internal dependencies ([4119269](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/41192691a549ca6de5a2fb0b7630ff152e60cb76))
-* **deps:** bump internal dependencies ([bf4a596](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/bf4a596ce3350b51d03394bfe8b45761d2b49b52))
+* **deps:** bump am-sdk to v1.0.0 ([754fe72](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/754fe72f9d41692b01f81520bc3d4748c0857752))
+* **deps:** bump common to v1.0.0 ([f61d720](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/f61d7202a701362d379a110759c73a0173a4adbf))
+* **deps:** bump am to v1.0.1 ([4119269](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/41192691a549ca6de5a2fb0b7630ff152e60cb76))
+* **deps:** bump am and common to v1.0.0 ([bf4a596](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/bf4a596ce3350b51d03394bfe8b45761d2b49b52))
 * linting ([4db14d1](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/4db14d1252c92a2ddacfb52c1894cb8bf8636dc9))
 * make in-memory store safe for concurrent use ([4dd38cf](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/4dd38cff5c503e27fae4a30b563b995f1ff9ae28))
 
