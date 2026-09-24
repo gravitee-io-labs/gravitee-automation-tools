@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.2](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-mock-server/v1.1.1...am-mock-server/v1.1.2) (2026-09-24)
+
+
+### Bug Fixes
+
+* **am-mock-server:** dryRun PUT returns 200 with empty body when not rejecting ([f1c3360](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/f1c3360e6ac407b9f33ebe2c8d261a191bc34445))
+* **deps:** bump am-sdk to v2.0.2 ([c069da6](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/c069da6a6c139acc6caeab51dede1e4928b9e4df))
+* regen following OAS changes ([81fd8a3](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/81fd8a32eaec6bcaa4c2a36119f55b5ddfe189e0))
+
 ## [1.1.1](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-mock-server/v1.1.0...am-mock-server/v1.1.1) (2026-09-24)
 
 
