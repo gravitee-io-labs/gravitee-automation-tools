@@ -999,6 +999,20 @@ func (v FormField) WithDefaults() FormField {
 	return v
 }
 
+// IdJagSettings ID-JAG issuance behavior of token exchange.
+type IdJagSettings struct {
+	// LaxValidation Lax validation: also accept an access token issued to the requesting client as the subject token. By default only an ID token is accepted.
+	LaxValidation *bool `json:"laxValidation,omitempty"`
+}
+
+// WithDefaults returns a copy of IdJagSettings with unset fields set to their OpenAPI defaults.
+func (v IdJagSettings) WithDefaults() IdJagSettings {
+	if v.LaxValidation == nil {
+		v.LaxValidation = new(bool(false))
+	}
+	return v
+}
+
 // KeyRetrievalSettings Fetch, SSRF and cache limits applied to every trusted domain in the security domain.
 type KeyRetrievalSettings struct {
 	// AllowPrivateIpAddress Whether key material can be fetched from private IP addresses.
@@ -1408,6 +1422,9 @@ type TokenExchangeSettings struct {
 	// Enabled Whether token exchange is enabled for the domain.
 	Enabled *bool `json:"enabled,omitempty"`
 
+	// IdJagSettings ID-JAG issuance behavior of token exchange.
+	IdJagSettings *IdJagSettings `json:"idJagSettings,omitempty"`
+
 	// MaxDelegationDepth Maximum depth of the delegation chain (nested "act" claims). Clamped to the range 1–100.
 	MaxDelegationDepth *int32 `json:"maxDelegationDepth,omitempty"`
 
@@ -1429,6 +1446,10 @@ func (v TokenExchangeSettings) WithDefaults() TokenExchangeSettings {
 	}
 	if v.Enabled == nil {
 		v.Enabled = new(bool(false))
+	}
+	if v.IdJagSettings != nil {
+		withDefaults := v.IdJagSettings.WithDefaults()
+		v.IdJagSettings = &withDefaults
 	}
 	if v.MaxDelegationDepth == nil {
 		v.MaxDelegationDepth = new(int32(25))
