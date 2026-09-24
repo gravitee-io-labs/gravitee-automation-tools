@@ -20,6 +20,6 @@ generate:
   client: false
 output-options:
   overlay:
-    path: overlay.merged.yaml
+    path: overlay.gen.yaml
   include-tags:
     - Domains

@@ -357,7 +357,7 @@ type DomainSpec struct {
 	// DataPlaneId Identifier of the data plane this domain is connected to. Optional at creation and resolved from the environment's data planes when omitted. Immutable afterwards: an apply that names a different one is rejected.
 	//
 	// Example: default
-	DataPlaneId *string `json:"dataPlaneId,omitempty"`
+	DataPlaneId *string `drift:"ignore-remote-default" json:"dataPlaneId,omitempty"`
 
 	// Description Human-readable description of the domain.
 	//
@@ -864,7 +864,7 @@ type SpiffeDomainSettings struct {
 	ClockSkewSeconds *int32 `json:"clockSkewSeconds,omitempty"`
 
 	// DefaultAllowedAlgorithms Default allowlist of signature algorithms accepted for SPIFFE JWT validation.
-	DefaultAllowedAlgorithms *[]string `json:"defaultAllowedAlgorithms,omitempty"`
+	DefaultAllowedAlgorithms *[]string `drift:"ignore-remote-default" json:"defaultAllowedAlgorithms,omitempty"`
 
 	// Enabled Whether SPIFFE workload identity support is enabled for the domain.
 	Enabled *bool `json:"enabled,omitempty"`

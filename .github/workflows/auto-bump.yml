@@ -35,6 +35,9 @@ jobs:
             COMPONENT="${TAG%%/*}"
             VERSION="${TAG#*/}"
             MODULE="github.com/gravitee-io-labs/gravitee-automation-tools/${COMPONENT}"
+            MAJOR="${VERSION%%.*}"; MAJOR="${MAJOR#v}"
+            # Go major versions >= 2 carry a /vN suffix in the module path.
+            [ "$MAJOR" -ge 2 ] && MODULE="${MODULE}/v${MAJOR}"
             SOURCE_USED=false
             for mod in am-sdk apim-sdk am-mock-server; do
               [ "$mod" = "$COMPONENT" ] && continue

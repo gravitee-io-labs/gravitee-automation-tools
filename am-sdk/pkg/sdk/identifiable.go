@@ -12,7 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package dataplane
+package sdk
 
-//go:generate go run ../../../overlays/mergeoverlay.go ../../../overlays/models.yaml ../../../overlays/operations.yaml ../overlay-paths.yaml ../overlay.yaml
-//go:generate go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config cfg.yaml ../../../openapi/openapi.yaml
+func (c Certificate) Identity() string {
+	return c.Key
+}
+
+func (d DataPlane) Identity() string {
+	return d.Id
+}
+
+func (d Domain) Identity() string {
+	return d.Key
+}
+
+func (i IdentityProvider) Identity() string {
+	return i.Key
+}
+
+func (r Reporter) Identity() string {
+	return r.Key
+}
