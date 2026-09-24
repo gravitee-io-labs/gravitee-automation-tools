@@ -65,7 +65,7 @@ func createAMServerWithAuth(t *testing.T) (*MockAM, *httptest.Server) {
 
 func TestAuth_BearerOK(t *testing.T) {
 	am, srv := createAMServerWithAuth(t)
-	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain", Path: "/test"})
 
 	req, _ := http.NewRequest(http.MethodGet, domainsURL(srv), nil)
 	req.Header.Set("Authorization", "Bearer admin-token")
@@ -78,7 +78,7 @@ func TestAuth_BearerOK(t *testing.T) {
 
 func TestAuth_BasicOK(t *testing.T) {
 	am, srv := createAMServerWithAuth(t)
-	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain", Path: "/test"})
 
 	req, _ := http.NewRequest(http.MethodGet, domainsURL(srv), nil)
 	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte("admin:admin")))
@@ -124,7 +124,7 @@ func TestAuth_WrongPassword_401(t *testing.T) {
 
 func TestAuth_ReaderCanRead_200(t *testing.T) {
 	am, srv := createAMServerWithAuth(t)
-	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain", Path: "/test"})
 
 	req, _ := http.NewRequest(http.MethodGet, domainsURL(srv), nil)
 	req.Header.Set("Authorization", "Bearer reader-token")
@@ -138,7 +138,7 @@ func TestAuth_ReaderCanRead_200(t *testing.T) {
 func TestAuth_ReaderCannotWrite_403(t *testing.T) {
 	_, srv := createAMServerWithAuth(t)
 
-	body := encode(t, Domain{Key: "test", Name: "Test domain"})
+	body := encode(t, Domain{Key: "test", Name: "Test domain", Path: "/test"})
 	req, _ := http.NewRequest(http.MethodPut, domainsURL(srv), body)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer reader-token")
@@ -152,7 +152,7 @@ func TestAuth_ReaderCannotWrite_403(t *testing.T) {
 func TestAuth_AdminCanWrite_200(t *testing.T) {
 	_, srv := createAMServerWithAuth(t)
 
-	body := encode(t, Domain{Key: "test", Name: "Test domain"})
+	body := encode(t, Domain{Key: "test", Name: "Test domain", Path: "/test"})
 	req, _ := http.NewRequest(http.MethodPut, domainsURL(srv), body)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer admin-token")
@@ -165,7 +165,7 @@ func TestAuth_AdminCanWrite_200(t *testing.T) {
 
 func TestAuth_NoAuthConfig_OpenAccess(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain", Path: "/test"})
 
 	resp, err := http.Get(domainsURL(srv))
 	require.NoError(t, err)

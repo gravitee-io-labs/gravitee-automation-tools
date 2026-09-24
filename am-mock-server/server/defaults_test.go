@@ -43,7 +43,7 @@ func getJSON(t *testing.T, url, key string) jsonObject {
 func TestUpsertDomainReturnsDefaults(t *testing.T) {
 	_, srv := createAMServer(t)
 
-	got := putJSON(t, domainsURL(srv), jsonObject{"key": "test", "name": "Test", "oidc": jsonObject{}})
+	got := putJSON(t, domainsURL(srv), jsonObject{"key": "test", "name": "Test", "path": "/test", "oidc": jsonObject{}})
 
 	assert.Equal(t, true, got["enabled"])
 	assert.Equal(t, false, got["master"])
@@ -53,7 +53,7 @@ func TestUpsertDomainReturnsDefaults(t *testing.T) {
 
 func TestGetDomainReturnsStoredDefaults(t *testing.T) {
 	_, srv := createAMServer(t)
-	putJSON(t, domainsURL(srv), jsonObject{"key": "test", "name": "Test"})
+	putJSON(t, domainsURL(srv), jsonObject{"key": "test", "name": "Test", "path": "/test"})
 
 	got := getJSON(t, domainsURL(srv), "test")
 
@@ -64,7 +64,7 @@ func TestGetDomainReturnsStoredDefaults(t *testing.T) {
 func TestUpsertDomainKeepsExplicitValues(t *testing.T) {
 	_, srv := createAMServer(t)
 
-	got := putJSON(t, domainsURL(srv), jsonObject{"key": "test", "name": "Test", "enabled": false})
+	got := putJSON(t, domainsURL(srv), jsonObject{"key": "test", "name": "Test", "path": "/test", "enabled": false})
 
 	assert.Equal(t, false, got["enabled"])
 }
@@ -81,7 +81,7 @@ func TestUpsertReporterReturnsDefaults(t *testing.T) {
 func TestUpsertDomainSetsTimestamps(t *testing.T) {
 	_, srv := createAMServer(t)
 
-	got := putJSON(t, domainsURL(srv), jsonObject{"key": "test", "name": "Test"})
+	got := putJSON(t, domainsURL(srv), jsonObject{"key": "test", "name": "Test", "path": "/test"})
 
 	assert.NotEmpty(t, got["createdAt"])
 	assert.Equal(t, got["createdAt"], got["updatedAt"], "a new resource is created and updated at the same instant")
@@ -89,11 +89,11 @@ func TestUpsertDomainSetsTimestamps(t *testing.T) {
 
 func TestUpsertDomainKeepsCreatedAtAndIgnoresClientTimestamps(t *testing.T) {
 	_, srv := createAMServer(t)
-	created := putJSON(t, domainsURL(srv), jsonObject{"key": "test", "name": "Test"})
+	created := putJSON(t, domainsURL(srv), jsonObject{"key": "test", "name": "Test", "path": "/test"})
 	time.Sleep(2 * time.Millisecond)
 
 	updated := putJSON(t, domainsURL(srv), jsonObject{
-		"key": "test", "name": "Renamed",
+		"key": "test", "name": "Renamed", "path": "/test",
 		"createdAt": "2000-01-01T00:00:00Z", "updatedAt": "2000-01-01T00:00:00Z",
 	})
 
