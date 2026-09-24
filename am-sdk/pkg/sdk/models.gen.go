@@ -1342,7 +1342,7 @@ type SpiffeDomainSettings struct {
 	ClockSkewSeconds *int32 `json:"clockSkewSeconds,omitempty"`
 
 	// DefaultAllowedAlgorithms Default allowlist of signature algorithms accepted for SPIFFE JWT validation.
-	DefaultAllowedAlgorithms []string `drift:"ignore-remote-default" json:"defaultAllowedAlgorithms,omitempty"`
+	DefaultAllowedAlgorithms []string `drift:"ignore-only:remote" json:"defaultAllowedAlgorithms,omitempty"`
 
 	// Enabled Whether SPIFFE workload identity support is enabled for the domain.
 	Enabled *bool `json:"enabled,omitempty"`

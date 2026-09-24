@@ -59,7 +59,7 @@ actions:
   - target: $.components.schemas.SpiffeDomainSettings.properties.defaultAllowedAlgorithms
     update:
       x-oapi-codegen-extra-tags:
-        drift: ignore-remote-default
+        drift: ignore-only:remote
 
   # Read-only properties are set by AM, never part of the desired state: drift detection skips them.
   - target: $.components.schemas.*.properties[?(@.readOnly == true)]
