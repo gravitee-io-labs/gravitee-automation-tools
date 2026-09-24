@@ -257,10 +257,10 @@ type Certificate struct {
 	Configuration *string `json:"configuration,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
 
 	// ExpiresAt Expiry timestamp (ISO-8601 / RFC 3339, UTC), when known for the certificate type. Read-only.
-	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
+	ExpiresAt *time.Time `drift:"ignore" json:"expiresAt,omitempty"`
 
 	// Key Stable, immutable identifier for the certificate within its domain. Lowercase alphanumeric and hyphens, starting and ending with an alphanumeric character. Used to identify the certificate on create-or-update.
 	//
@@ -281,7 +281,7 @@ type Certificate struct {
 	Type *string `json:"type,omitempty"`
 
 	// UpdatedAt Last-update timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt *time.Time `drift:"ignore" json:"updatedAt,omitempty"`
 }
 
 // AutomationCertificateSettings Domain-level certificate settings.
@@ -352,7 +352,7 @@ type DomainSpec struct {
 	CorsSettings *CorsSettings `json:"corsSettings,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
 
 	// DataPlaneId Identifier of the data plane this domain is connected to. Optional at creation and resolved from the environment's data planes when omitted. Immutable afterwards: an apply that names a different one is rejected.
 	//
@@ -365,7 +365,7 @@ type DomainSpec struct {
 	Description *string `json:"description,omitempty"`
 
 	// DryRunErrors Validation errors returned when dryRun is true. Absent when validation succeeds.
-	DryRunErrors *[]DryRunError `json:"dryRunErrors,omitempty"`
+	DryRunErrors *[]DryRunError `drift:"ignore" json:"dryRunErrors,omitempty"`
 
 	// Enabled Whether the domain handles incoming authentication and authorization requests.
 	Enabled *bool `json:"enabled,omitempty"`
@@ -424,7 +424,7 @@ type DomainSpec struct {
 	Uma *UMASettings `json:"uma,omitempty"`
 
 	// UpdatedAt Last-update timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt *time.Time `drift:"ignore" json:"updatedAt,omitempty"`
 
 	// VhostMode Whether the domain is exposed through its virtual hosts rather than the default context path. When true, vhosts must be supplied.
 	VhostMode *bool `json:"vhostMode,omitempty"`
@@ -450,7 +450,7 @@ type IdentityProvider struct {
 	Configuration *string `json:"configuration,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
 
 	// DomainWhitelist Email domains allowed to authenticate through this identity provider. When set, users whose email domain is not listed are rejected.
 	//
@@ -487,7 +487,7 @@ type IdentityProvider struct {
 	Type *string `json:"type,omitempty"`
 
 	// UpdatedAt Last-update timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt *time.Time `drift:"ignore" json:"updatedAt,omitempty"`
 }
 
 // AutomationOidcSettings OpenID Connect settings for the domain. CIMD (client identity metadata document) settings are not exposed by the Automation API and are reset on update.
@@ -534,10 +534,10 @@ type Reporter struct {
 	Configuration *string `json:"configuration,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
 
 	// DataType Category of data the reporter handles, derived from its type. Read-only.
-	DataType *string `json:"dataType,omitempty"`
+	DataType *string `drift:"ignore" json:"dataType,omitempty"`
 
 	// Enabled Whether the reporter is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
@@ -561,7 +561,7 @@ type Reporter struct {
 	Type *string `json:"type,omitempty"`
 
 	// UpdatedAt Last-update timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt *time.Time `drift:"ignore" json:"updatedAt,omitempty"`
 }
 
 // AutomationSamlSettings Settings for the domain acting as a SAML 2.0 identity provider (IdP).
