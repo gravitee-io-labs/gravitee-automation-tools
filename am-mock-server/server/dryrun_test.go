@@ -24,7 +24,7 @@ import (
 
 func TestDryRunPut_OffPersists(t *testing.T) {
 	am, srv := createAMServer(t)
-	body := Domain{Key: "test", Name: "Test domain"}.WithDefaults()
+	body := Domain{Key: "test", Name: "Test domain", Path: "/test"}.WithDefaults()
 
 	resp := httpPut(t, domainsURL(srv)+"?dryRun=true", body)
 	defer resp.Body.Close()
@@ -37,7 +37,7 @@ func TestDryRunPut_OffPersists(t *testing.T) {
 
 func TestDryRunPut_DoesNotPersist(t *testing.T) {
 	am, srv := createAMServerWithDryRunReject(t, true)
-	body := Domain{Key: "test", Name: "Test domain"}
+	body := Domain{Key: "test", Name: "Test domain", Path: "/test"}
 
 	resp := httpPut(t, domainsURL(srv)+"?dryRun=true", body)
 	defer resp.Body.Close()
@@ -51,7 +51,7 @@ func TestDryRunPut_DoesNotPersist(t *testing.T) {
 
 func TestDryRunPut_FalseStillPersists(t *testing.T) {
 	am, srv := createAMServerWithDryRunReject(t, true)
-	body := Domain{Key: "test", Name: "Test domain"}.WithDefaults()
+	body := Domain{Key: "test", Name: "Test domain", Path: "/test"}.WithDefaults()
 
 	resp := httpPut(t, domainsURL(srv)+"?dryRun=false", body)
 	defer resp.Body.Close()
@@ -64,10 +64,10 @@ func TestDryRunPut_FalseStillPersists(t *testing.T) {
 
 func TestDryRunPut_LeavesExistingUnchanged(t *testing.T) {
 	am, srv := createAMServerWithDryRunReject(t, true)
-	existing := Domain{Key: "test", Name: "Original"}
+	existing := Domain{Key: "test", Name: "Original", Path: "/test"}
 	defaultTenant(am).Domains.Put(existing)
 
-	resp := httpPut(t, domainsURL(srv)+"?dryRun=true", Domain{Key: "test", Name: "Changed"})
+	resp := httpPut(t, domainsURL(srv)+"?dryRun=true", Domain{Key: "test", Name: "Changed", Path: "/test"})
 	defer resp.Body.Close()
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.Equal(t, []DryRunError{{Severity: new(SeverityError), Message: new(dryRunMessage)}}, decodeToSliceOf[DryRunError](t, resp))

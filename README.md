@@ -62,6 +62,7 @@ go run ./am-mock-server --dry-run-reject
 | `--dry-run-reject` | off | PUT `?dryRun=true` returns `200` `[{severity: ERROR, message}]` and does **not** persist. Without this flag, `dryRun` is ignored. |
 
 Like AM, upserts fill unset fields with their OpenAPI defaults, so the PUT and GET responses carry them.
+Requests are validated against the OpenAPI spec: an invalid body or parameter gets a `400` with the failing field; read-only fields sent by clients are ignored.
 
 ## Prerequisites
 

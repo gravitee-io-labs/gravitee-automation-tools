@@ -24,8 +24,8 @@ func TestNested_IsolatedByDomain(t *testing.T) {
 	_, srv := createAMServer(t)
 	client := newAMClient(t, srv)
 
-	d1 := sdk.Domain{Key: "dom-a", Name: "A"}.WithDefaults()
-	d2 := sdk.Domain{Key: "dom-b", Name: "B"}.WithDefaults()
+	d1 := sdk.Domain{Key: "dom-a", Name: "A", Path: "/dom-a"}.WithDefaults()
+	d2 := sdk.Domain{Key: "dom-b", Name: "B", Path: "/dom-b"}.WithDefaults()
 	put, err := client.UpsertDomainWithResponse(t.Context(), nil, d1)
 	assertSDKOK(t, put, err, d1)
 	put, err = client.UpsertDomainWithResponse(t.Context(), nil, d2)
@@ -53,8 +53,8 @@ func TestNested_DeleteDomainCascades(t *testing.T) {
 	_, srv := createAMServer(t)
 	client := newAMClient(t, srv)
 
-	keep := sdk.Domain{Key: "keep", Name: "Keep"}.WithDefaults()
-	drop := sdk.Domain{Key: "drop", Name: "Drop"}.WithDefaults()
+	keep := sdk.Domain{Key: "keep", Name: "Keep", Path: "/keep"}.WithDefaults()
+	drop := sdk.Domain{Key: "drop", Name: "Drop", Path: "/drop"}.WithDefaults()
 	put, err := client.UpsertDomainWithResponse(t.Context(), nil, keep)
 	assertSDKOK(t, put, err, keep)
 	put, err = client.UpsertDomainWithResponse(t.Context(), nil, drop)

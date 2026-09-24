@@ -19,6 +19,7 @@ generate:
   models: true
   chi-server: true
   strict-server: true
+  embedded-spec: true
 output-options:
   user-templates:
     typedef.tmpl: ../../am-sdk/templates/typedef.tmpl

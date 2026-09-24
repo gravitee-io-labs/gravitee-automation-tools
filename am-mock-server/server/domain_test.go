@@ -22,16 +22,16 @@ import (
 
 func TestListDomains(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain", Path: "/test"})
 
-	assertListEqual(t, domainsURL(srv), []Domain{{Key: "test", Name: "Test domain"}})
+	assertListEqual(t, domainsURL(srv), []Domain{{Key: "test", Name: "Test domain", Path: "/test"}})
 }
 
 func TestGetDomain(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain", Path: "/test"})
 
-	assertGetEqual(t, domainsURL(srv), "test", Domain{Key: "test", Name: "Test domain"})
+	assertGetEqual(t, domainsURL(srv), "test", Domain{Key: "test", Name: "Test domain", Path: "/test"})
 }
 
 func TestGetDomain404(t *testing.T) {
@@ -42,7 +42,7 @@ func TestGetDomain404(t *testing.T) {
 
 func TestPutGetDomain(t *testing.T) {
 	_, srv := createAMServer(t)
-	body := Domain{Key: "test", Name: "Test domain"}.WithDefaults()
+	body := Domain{Key: "test", Name: "Test domain", Path: "/test"}.WithDefaults()
 
 	assertPutEqual(t, domainsURL(srv), body)
 	assertGetEqual(t, domainsURL(srv), "test", body)
@@ -50,27 +50,27 @@ func TestPutGetDomain(t *testing.T) {
 
 func TestDeleteDomain(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain", Path: "/test"})
 
 	assertDeleteGone(t, domainsURL(srv), "test", "Domain")
 }
 
 func TestListDomainsSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain", Path: "/test"})
 	client := newAMClient(t, srv)
 
 	res, err := client.ListDomainsWithResponse(t.Context())
-	assertSDKOK(t, res, err, []sdk.Domain{{Key: "test", Name: "Test domain"}})
+	assertSDKOK(t, res, err, []sdk.Domain{{Key: "test", Name: "Test domain", Path: "/test"}})
 }
 
 func TestGetDomainSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain", Path: "/test"})
 	client := newAMClient(t, srv)
 
 	res, err := client.GetDomainWithResponse(t.Context(), "test")
-	assertSDKOK(t, res, err, sdk.Domain{Key: "test", Name: "Test domain"})
+	assertSDKOK(t, res, err, sdk.Domain{Key: "test", Name: "Test domain", Path: "/test"})
 }
 
 func TestGetDomain404SDK(t *testing.T) {
@@ -84,7 +84,7 @@ func TestGetDomain404SDK(t *testing.T) {
 func TestPutGetDomainSDK(t *testing.T) {
 	_, srv := createAMServer(t)
 	client := newAMClient(t, srv)
-	body := sdk.Domain{Key: "test", Name: "Test domain"}.WithDefaults()
+	body := sdk.Domain{Key: "test", Name: "Test domain", Path: "/test"}.WithDefaults()
 
 	put, err := client.UpsertDomainWithResponse(t.Context(), nil, body)
 	assertSDKOK(t, put, err, body)
@@ -95,7 +95,7 @@ func TestPutGetDomainSDK(t *testing.T) {
 
 func TestDeleteDomainSDK(t *testing.T) {
 	am, srv := createAMServer(t)
-	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
+	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain", Path: "/test"})
 	client := newAMClient(t, srv)
 
 	del, err := client.DeleteDomainWithResponse(t.Context(), "test")
