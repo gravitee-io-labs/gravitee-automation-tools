@@ -51,9 +51,8 @@ func NewWithPath(mockAM *MockAM, basePath string, reg *auth.Registry, dryRunReje
 		_, exists := mockAM.getTenant(orgEnv{org: org, env: env}).Domains.Get(key)
 		return exists
 	}))
-	if dryRunReject {
-		middlewares = append(middlewares, DryRunReject())
-	}
+
+	middlewares = append(middlewares, DryRun(dryRunReject))
 
 	var si ServerInterface = Unimplemented{}
 	if mockAM != nil {

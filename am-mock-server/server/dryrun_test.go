@@ -15,6 +15,7 @@
 package server
 
 import (
+	"io"
 	"net/http"
 	"testing"
 
@@ -22,17 +23,20 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestDryRunPut_OffPersists(t *testing.T) {
+func TestDryRunPut_NoRejectReturnsEmptyAndDoesNotPersist(t *testing.T) {
 	am, srv := createAMServer(t)
-	body := Domain{Key: "test", Name: "Test domain", Path: "/test"}.WithDefaults()
+	body := Domain{Key: "test", Name: "Test domain", Path: "/test"}
 
 	resp := httpPut(t, domainsURL(srv)+"?dryRun=true", body)
 	defer resp.Body.Close()
 	failOnNotOK(t, resp)
 
-	got, exists := defaultTenant(am).Domains.Get("test")
-	require.True(t, exists)
-	assertEqualIgnoringTimestamps(t, body, got)
+	raw, err := io.ReadAll(resp.Body)
+	require.NoError(t, err)
+	assert.Empty(t, raw)
+
+	_, exists := defaultTenant(am).Domains.Get("test")
+	assert.False(t, exists)
 }
 
 func TestDryRunPut_DoesNotPersist(t *testing.T) {
