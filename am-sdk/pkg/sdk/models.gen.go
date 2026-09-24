@@ -452,7 +452,7 @@ type DataPlane struct {
 	// Example: DEFAULT
 	EnvironmentId *string `drift:"ignore" json:"environmentId,omitempty"`
 
-	// GatewayUrl Base URL of the gateway serving the domains bound to this data plane.
+	// GatewayUrl Base URL of the gateway serving the domains bound to this data plane. Must be an absolute http(s) URL with a lowercase scheme; omitted or empty leaves it unset.
 	//
 	// Example: https://gateway-eu.example.com
 	GatewayUrl *string `json:"gatewayUrl,omitempty"`
