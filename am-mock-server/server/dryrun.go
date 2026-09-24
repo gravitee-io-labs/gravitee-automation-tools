@@ -24,14 +24,16 @@ const dryRunMessage = "Mock server is in dry-run-reject mode, all PUT request ar
 
 var dryRunErrors = []DryRunError{{Severity: new(SeverityError), Message: new(dryRunMessage)}}
 
-// DryRunReject skips PUT persistence when ?dryRun=true and returns a fixed DryRunError list.
-func DryRunReject() func(http.Handler) http.Handler {
+// DryRun skips PUT persistence when ?dryRun=true and returns a fixed DryRunError list.
+func DryRun(reject bool) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.Method == http.MethodPut && isDryRun(r) {
+			if isDryRun(r) && r.Method == http.MethodPut {
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusOK)
-				_ = json.NewEncoder(w).Encode(dryRunErrors)
+				if reject {
+					_ = json.NewEncoder(w).Encode(dryRunErrors)
+				}
 				return
 			}
 			next.ServeHTTP(w, r)
