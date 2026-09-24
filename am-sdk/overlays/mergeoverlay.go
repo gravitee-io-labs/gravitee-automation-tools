@@ -36,7 +36,7 @@ func main() {
 	}
 	inPaths, outPath := os.Args[1:len(os.Args)-1], os.Args[len(os.Args)-1]
 	merged := overlay{Info: mergedInfo()}
-	for _, path := range inPaths {
+	for i, path := range inPaths {
 		raw, err := os.ReadFile(path)
 		if err != nil {
 			fatal(err)
@@ -45,7 +45,9 @@ func main() {
 		if err := yaml.Unmarshal(raw, &next); err != nil {
 			fatal(fmt.Errorf("%s: %w", path, err))
 		}
-		merged.Overlay = next.Overlay
+		if i == 0 {
+			merged.Overlay = next.Overlay
+		}
 		markSource(next, path)
 		merged.Actions = append(merged.Actions, next.Actions...)
 	}

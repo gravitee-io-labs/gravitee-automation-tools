@@ -60,3 +60,9 @@ actions:
     update:
       x-oapi-codegen-extra-tags:
         drift: ignore-remote-default
+
+  # Read-only properties are set by AM, never part of the desired state: drift detection skips them.
+  - target: $.components.schemas.*.properties[?(@.readOnly == true)]
+    update:
+      x-oapi-codegen-extra-tags:
+        drift: ignore
