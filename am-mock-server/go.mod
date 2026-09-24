@@ -4,7 +4,7 @@ go 1.26.1
 
 require (
 	github.com/go-chi/chi/v5 v5.3.2
-	github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk v1.0.2
+	github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2 v2.0.0
 	github.com/gravitee-io-labs/gravitee-automation-tools/common v1.0.0
 	github.com/oapi-codegen/runtime v1.7.0
 	github.com/spf13/cobra v1.10.2
@@ -35,9 +35,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace (
-	github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk => ../am-sdk
-	github.com/gravitee-io-labs/gravitee-automation-tools/common => ../common
-)
+replace github.com/gravitee-io-labs/gravitee-automation-tools/common => ../common
 
 tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
+
+replace github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2 => ../am-sdk

@@ -17,15 +17,15 @@ package server
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/identityprovider"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg/sdk"
 )
 
 func testIdentityProvider() IdentityProvider {
-	return IdentityProvider{Key: "test", Name: new("Test identity provider")}
+	return IdentityProvider{Key: "test", Name: new("Test identity provider")}.WithDefaults()
 }
 
-func testIdentityProviderSDK() identityprovider.IdentityProvider {
-	return identityprovider.IdentityProvider{Key: "test", Name: new("Test identity provider")}
+func testIdentityProviderSDK() sdk.IdentityProvider {
+	return sdk.IdentityProvider{Key: "test", Name: new("Test identity provider")}.WithDefaults()
 }
 
 func TestListIdentityProviders(t *testing.T) {
@@ -68,8 +68,8 @@ func TestListIdentityProvidersSDK(t *testing.T) {
 	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
-	res, err := client.IdentityProviders.ListIdentityProvidersWithResponse(t.Context(), defaultDomainKey)
-	assertSDKOK(t, res, err, []identityprovider.IdentityProvider{testIdentityProviderSDK()})
+	res, err := client.ListIdentityProvidersWithResponse(t.Context(), defaultDomainKey)
+	assertSDKOK(t, res, err, []sdk.IdentityProvider{testIdentityProviderSDK()})
 }
 
 func TestGetIdentityProviderSDK(t *testing.T) {
@@ -77,7 +77,7 @@ func TestGetIdentityProviderSDK(t *testing.T) {
 	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
-	res, err := client.IdentityProviders.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
+	res, err := client.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKOK(t, res, err, testIdentityProviderSDK())
 }
 
@@ -85,7 +85,7 @@ func TestGetIdentityProvider404SDK(t *testing.T) {
 	_, srv := createAMServerWithDomain(t)
 	client := newAMClient(t, srv)
 
-	res, err := client.IdentityProviders.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
+	res, err := client.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDK404(t, res, err)
 }
 
@@ -94,10 +94,10 @@ func TestPutGetIdentityProviderSDK(t *testing.T) {
 	client := newAMClient(t, srv)
 	body := testIdentityProviderSDK()
 
-	put, err := client.IdentityProviders.UpsertIdentityProviderWithResponse(t.Context(), defaultDomainKey, body)
+	put, err := client.UpsertIdentityProviderWithResponse(t.Context(), defaultDomainKey, body)
 	assertSDKOK(t, put, err, body)
 
-	get, err := client.IdentityProviders.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
+	get, err := client.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKOK(t, get, err, body)
 }
 
@@ -106,9 +106,9 @@ func TestDeleteIdentityProviderSDK(t *testing.T) {
 	defaultTenant(am).IdentityProviders.Put(newChild(testIdentityProvider(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
-	del, err := client.IdentityProviders.DeleteIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
+	del, err := client.DeleteIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKNoContent(t, del, err)
 
-	get, err := client.IdentityProviders.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
+	get, err := client.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDK404(t, get, err)
 }

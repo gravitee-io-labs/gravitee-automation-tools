@@ -17,7 +17,7 @@ package server
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/dataplane"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg/sdk"
 )
 
 func TestListDataPlanes(t *testing.T) {
@@ -42,7 +42,7 @@ func TestGetDataPlane404(t *testing.T) {
 
 func TestPutGetDataPlane(t *testing.T) {
 	_, srv := createAMServer(t)
-	body := DataPlane{Id: "test"}
+	body := DataPlane{Id: "test", OrganizationId: new("DEFAULT"), EnvironmentId: new("DEFAULT")}
 
 	assertPutEqual(t, dataPlanesURL(srv), body)
 	assertGetEqual(t, dataPlanesURL(srv), "test", body)
@@ -60,8 +60,8 @@ func TestListDataPlanesSDK(t *testing.T) {
 	defaultTenant(am).DataPlanes.Put(DataPlane{Id: "test"})
 	client := newAMClient(t, srv)
 
-	res, err := client.DataPlanes.ListDataPlanesWithResponse(t.Context())
-	assertSDKOK(t, res, err, []dataplane.DataPlane{{Id: "test"}})
+	res, err := client.ListDataPlanesWithResponse(t.Context())
+	assertSDKOK(t, res, err, []sdk.DataPlane{{Id: "test"}})
 }
 
 func TestGetDataPlaneSDK(t *testing.T) {
@@ -69,27 +69,27 @@ func TestGetDataPlaneSDK(t *testing.T) {
 	defaultTenant(am).DataPlanes.Put(DataPlane{Id: "test"})
 	client := newAMClient(t, srv)
 
-	res, err := client.DataPlanes.GetDataPlaneWithResponse(t.Context(), "test")
-	assertSDKOK(t, res, err, dataplane.DataPlane{Id: "test"})
+	res, err := client.GetDataPlaneWithResponse(t.Context(), "test")
+	assertSDKOK(t, res, err, sdk.DataPlane{Id: "test"})
 }
 
 func TestGetDataPlane404SDK(t *testing.T) {
 	_, srv := createAMServer(t)
 	client := newAMClient(t, srv)
 
-	res, err := client.DataPlanes.GetDataPlaneWithResponse(t.Context(), "test")
+	res, err := client.GetDataPlaneWithResponse(t.Context(), "test")
 	assertSDK404(t, res, err)
 }
 
 func TestPutGetDataPlaneSDK(t *testing.T) {
 	_, srv := createAMServer(t)
 	client := newAMClient(t, srv)
-	body := dataplane.DataPlane{Id: "test"}
+	body := sdk.DataPlane{Id: "test", OrganizationId: new("DEFAULT"), EnvironmentId: new("DEFAULT")}
 
-	put, err := client.DataPlanes.UpsertDataPlaneWithResponse(t.Context(), body)
+	put, err := client.UpsertDataPlaneWithResponse(t.Context(), body)
 	assertSDKOK(t, put, err, body)
 
-	get, err := client.DataPlanes.GetDataPlaneWithResponse(t.Context(), "test")
+	get, err := client.GetDataPlaneWithResponse(t.Context(), "test")
 	assertSDKOK(t, get, err, body)
 }
 
@@ -98,9 +98,9 @@ func TestDeleteDataPlaneSDK(t *testing.T) {
 	defaultTenant(am).DataPlanes.Put(DataPlane{Id: "test"})
 	client := newAMClient(t, srv)
 
-	del, err := client.DataPlanes.DeleteDataPlaneWithResponse(t.Context(), "test")
+	del, err := client.DeleteDataPlaneWithResponse(t.Context(), "test")
 	assertSDKNoContent(t, del, err)
 
-	get, err := client.DataPlanes.GetDataPlaneWithResponse(t.Context(), "test")
+	get, err := client.GetDataPlaneWithResponse(t.Context(), "test")
 	assertSDK404(t, get, err)
 }

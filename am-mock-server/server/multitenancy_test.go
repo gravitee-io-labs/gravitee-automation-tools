@@ -17,7 +17,7 @@ package server
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/domain"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg/sdk"
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/response"
 	"github.com/stretchr/testify/assert"
 )
@@ -27,53 +27,53 @@ func TestMultiTenancy_DomainIsolation(t *testing.T) {
 	t1 := newTestClient(t, srv, "org-alpha", "env-alpha", "test")
 	t2 := newTestClient(t, srv, "org-beta", "env-beta", "test")
 
-	domainT1 := domain.Domain{Key: "shared-key", Name: "Tenant 1 Domain"}
-	domainT2 := domain.Domain{Key: "shared-key", Name: "Tenant 2 Domain"}
+	domainT1 := sdk.Domain{Key: "shared-key", Name: "Tenant 1 Domain"}.WithDefaults()
+	domainT2 := sdk.Domain{Key: "shared-key", Name: "Tenant 2 Domain"}.WithDefaults()
 
 	t.Run("create in both tenants", func(t *testing.T) {
-		put1, err := t1.Domains.UpsertDomainWithResponse(t.Context(), nil, domainT1)
+		put1, err := t1.UpsertDomainWithResponse(t.Context(), nil, domainT1)
 		assertSDKOK(t, put1, err, domainT1)
 
-		put2, err := t2.Domains.UpsertDomainWithResponse(t.Context(), nil, domainT2)
+		put2, err := t2.UpsertDomainWithResponse(t.Context(), nil, domainT2)
 		assertSDKOK(t, put2, err, domainT2)
 	})
 
 	t.Run("get returns own tenant data", func(t *testing.T) {
-		get1, err := t1.Domains.GetDomainWithResponse(t.Context(), "shared-key")
+		get1, err := t1.GetDomainWithResponse(t.Context(), "shared-key")
 		assertSDKOK(t, get1, err, domainT1)
 
-		get2, err := t2.Domains.GetDomainWithResponse(t.Context(), "shared-key")
+		get2, err := t2.GetDomainWithResponse(t.Context(), "shared-key")
 		assertSDKOK(t, get2, err, domainT2)
 	})
 
 	t.Run("list returns only own tenant data", func(t *testing.T) {
-		list1, err := t1.Domains.ListDomainsWithResponse(t.Context())
-		assertSDKOK(t, list1, err, []domain.Domain{domainT1})
+		list1, err := t1.ListDomainsWithResponse(t.Context())
+		assertSDKOK(t, list1, err, []sdk.Domain{domainT1})
 
-		list2, err := t2.Domains.ListDomainsWithResponse(t.Context())
-		assertSDKOK(t, list2, err, []domain.Domain{domainT2})
+		list2, err := t2.ListDomainsWithResponse(t.Context())
+		assertSDKOK(t, list2, err, []sdk.Domain{domainT2})
 	})
 
 	t.Run("update in tenant 1 does not affect tenant 2", func(t *testing.T) {
-		updated := domain.Domain{Key: "shared-key", Name: "Tenant 1 Updated"}
-		put, err := t1.Domains.UpsertDomainWithResponse(t.Context(), nil, updated)
+		updated := sdk.Domain{Key: "shared-key", Name: "Tenant 1 Updated"}.WithDefaults()
+		put, err := t1.UpsertDomainWithResponse(t.Context(), nil, updated)
 		assertSDKOK(t, put, err, updated)
 
-		get1, err := t1.Domains.GetDomainWithResponse(t.Context(), "shared-key")
+		get1, err := t1.GetDomainWithResponse(t.Context(), "shared-key")
 		assertSDKOK(t, get1, err, updated)
 
-		get2, err := t2.Domains.GetDomainWithResponse(t.Context(), "shared-key")
+		get2, err := t2.GetDomainWithResponse(t.Context(), "shared-key")
 		assertSDKOK(t, get2, err, domainT2)
 	})
 
 	t.Run("delete in tenant 1 does not affect tenant 2", func(t *testing.T) {
-		del, err := t1.Domains.DeleteDomainWithResponse(t.Context(), "shared-key")
+		del, err := t1.DeleteDomainWithResponse(t.Context(), "shared-key")
 		assertSDKNoContent(t, del, err)
 
-		get1, err := t1.Domains.GetDomainWithResponse(t.Context(), "shared-key")
+		get1, err := t1.GetDomainWithResponse(t.Context(), "shared-key")
 		assert.True(t, response.IsNotFound(get1, err))
 
-		get2, err := t2.Domains.GetDomainWithResponse(t.Context(), "shared-key")
+		get2, err := t2.GetDomainWithResponse(t.Context(), "shared-key")
 		assertSDKOK(t, get2, err, domainT2)
 	})
 }

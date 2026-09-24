@@ -18,6 +18,7 @@ import (
 	"context"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/store"
 )
@@ -92,8 +93,11 @@ func (m *MockAM) ListDomains(_ context.Context, r ListDomainsRequestObject) (Lis
 
 func (m *MockAM) UpsertDomain(_ context.Context, req UpsertDomainRequestObject) (UpsertDomainResponseObject, error) {
 	if req.Body != nil {
-		body := *req.Body
-		m.getTenant(req).Domains.Put(body)
+		tenant := m.getTenant(req)
+		body := req.Body.WithDefaults()
+		stored, _ := tenant.Domains.Get(body.Key)
+		body.CreatedAt, body.UpdatedAt = timestamps(stored.CreatedAt)
+		tenant.Domains.Put(body)
 		return UpsertDomain200JSONResponse(body), nil
 	}
 	return UpsertDomain400JSONResponse(emptyBodyError()), nil
@@ -130,8 +134,12 @@ func (m *MockAM) ListDataPlanes(_ context.Context, r ListDataPlanesRequestObject
 
 func (m *MockAM) UpsertDataPlane(_ context.Context, req UpsertDataPlaneRequestObject) (UpsertDataPlaneResponseObject, error) {
 	if req.Body != nil {
-		body := *req.Body
-		m.getTenant(req).DataPlanes.Put(body)
+		tenant := m.getTenant(req)
+		body := req.Body.WithDefaults()
+		stored, _ := tenant.DataPlanes.Get(body.Id)
+		body.CreatedAt, body.UpdatedAt = timestamps(stored.CreatedAt)
+		body.OrganizationId, body.EnvironmentId = &req.OrgId, &req.EnvId
+		tenant.DataPlanes.Put(body)
 		return UpsertDataPlane200JSONResponse(body), nil
 	}
 	return UpsertDataPlane400JSONResponse(emptyBodyError()), nil
@@ -156,8 +164,11 @@ func (m *MockAM) ListCertificates(_ context.Context, req ListCertificatesRequest
 
 func (m *MockAM) UpsertCertificate(_ context.Context, req UpsertCertificateRequestObject) (UpsertCertificateResponseObject, error) {
 	if req.Body != nil {
-		body := *req.Body
-		m.getTenant(req).Certificates.Put(newChild(body, req.DomainKey))
+		tenant := m.getTenant(req)
+		body := req.Body.WithDefaults()
+		stored, _ := isChildOf(tenant.Certificates, req.DomainKey, body.Key)
+		body.CreatedAt, body.UpdatedAt = timestamps(stored.Self.CreatedAt)
+		tenant.Certificates.Put(newChild(body, req.DomainKey))
 		return UpsertCertificate200JSONResponse(body), nil
 	}
 	return UpsertCertificate400JSONResponse(emptyBodyError()), nil
@@ -182,8 +193,11 @@ func (m *MockAM) ListIdentityProviders(_ context.Context, req ListIdentityProvid
 
 func (m *MockAM) UpsertIdentityProvider(_ context.Context, req UpsertIdentityProviderRequestObject) (UpsertIdentityProviderResponseObject, error) {
 	if req.Body != nil {
-		body := *req.Body
-		m.getTenant(req).IdentityProviders.Put(newChild(body, req.DomainKey))
+		tenant := m.getTenant(req)
+		body := req.Body.WithDefaults()
+		stored, _ := isChildOf(tenant.IdentityProviders, req.DomainKey, body.Key)
+		body.CreatedAt, body.UpdatedAt = timestamps(stored.Self.CreatedAt)
+		tenant.IdentityProviders.Put(newChild(body, req.DomainKey))
 		return UpsertIdentityProvider200JSONResponse(body), nil
 	}
 	return UpsertIdentityProvider400JSONResponse(emptyBodyError()), nil
@@ -208,8 +222,11 @@ func (m *MockAM) ListReporters(_ context.Context, req ListReportersRequestObject
 
 func (m *MockAM) UpsertReporter(_ context.Context, req UpsertReporterRequestObject) (UpsertReporterResponseObject, error) {
 	if req.Body != nil {
-		body := *req.Body
-		m.getTenant(req).Reporters.Put(newChild(body, req.DomainKey))
+		tenant := m.getTenant(req)
+		body := req.Body.WithDefaults()
+		stored, _ := isChildOf(tenant.Reporters, req.DomainKey, body.Key)
+		body.CreatedAt, body.UpdatedAt = timestamps(stored.Self.CreatedAt)
+		tenant.Reporters.Put(newChild(body, req.DomainKey))
 		return UpsertReporter200JSONResponse(body), nil
 	}
 	return UpsertReporter400JSONResponse(emptyBodyError()), nil
@@ -226,6 +243,16 @@ func (m *MockAM) GetReporter(_ context.Context, req GetReporterRequestObject) (G
 		return GetReporter200JSONResponse(reporter.Self), nil
 	}
 	return GetReporter404JSONResponse(notFoundError("Reporter", req.ReporterKey)), nil
+}
+
+// timestamps keeps the stored creation time (now on first upsert) and stamps the update time,
+// at millisecond precision like AM.
+func timestamps(storedCreatedAt *time.Time) (createdAt, updatedAt *time.Time) {
+	now := time.Now().UTC().Truncate(time.Millisecond)
+	if storedCreatedAt == nil {
+		return &now, &now
+	}
+	return storedCreatedAt, &now
 }
 
 func emptyBodyError() Error {

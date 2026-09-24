@@ -17,7 +17,7 @@ package server
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/domain"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg/sdk"
 )
 
 func TestListDomains(t *testing.T) {
@@ -42,7 +42,7 @@ func TestGetDomain404(t *testing.T) {
 
 func TestPutGetDomain(t *testing.T) {
 	_, srv := createAMServer(t)
-	body := Domain{Key: "test", Name: "Test domain"}
+	body := Domain{Key: "test", Name: "Test domain"}.WithDefaults()
 
 	assertPutEqual(t, domainsURL(srv), body)
 	assertGetEqual(t, domainsURL(srv), "test", body)
@@ -60,8 +60,8 @@ func TestListDomainsSDK(t *testing.T) {
 	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
 	client := newAMClient(t, srv)
 
-	res, err := client.Domains.ListDomainsWithResponse(t.Context())
-	assertSDKOK(t, res, err, []domain.Domain{{Key: "test", Name: "Test domain"}})
+	res, err := client.ListDomainsWithResponse(t.Context())
+	assertSDKOK(t, res, err, []sdk.Domain{{Key: "test", Name: "Test domain"}})
 }
 
 func TestGetDomainSDK(t *testing.T) {
@@ -69,27 +69,27 @@ func TestGetDomainSDK(t *testing.T) {
 	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
 	client := newAMClient(t, srv)
 
-	res, err := client.Domains.GetDomainWithResponse(t.Context(), "test")
-	assertSDKOK(t, res, err, domain.Domain{Key: "test", Name: "Test domain"})
+	res, err := client.GetDomainWithResponse(t.Context(), "test")
+	assertSDKOK(t, res, err, sdk.Domain{Key: "test", Name: "Test domain"})
 }
 
 func TestGetDomain404SDK(t *testing.T) {
 	_, srv := createAMServer(t)
 	client := newAMClient(t, srv)
 
-	res, err := client.Domains.GetDomainWithResponse(t.Context(), "test")
+	res, err := client.GetDomainWithResponse(t.Context(), "test")
 	assertSDK404(t, res, err)
 }
 
 func TestPutGetDomainSDK(t *testing.T) {
 	_, srv := createAMServer(t)
 	client := newAMClient(t, srv)
-	body := domain.Domain{Key: "test", Name: "Test domain"}
+	body := sdk.Domain{Key: "test", Name: "Test domain"}.WithDefaults()
 
-	put, err := client.Domains.UpsertDomainWithResponse(t.Context(), nil, body)
+	put, err := client.UpsertDomainWithResponse(t.Context(), nil, body)
 	assertSDKOK(t, put, err, body)
 
-	get, err := client.Domains.GetDomainWithResponse(t.Context(), "test")
+	get, err := client.GetDomainWithResponse(t.Context(), "test")
 	assertSDKOK(t, get, err, body)
 }
 
@@ -98,9 +98,9 @@ func TestDeleteDomainSDK(t *testing.T) {
 	defaultTenant(am).Domains.Put(Domain{Key: "test", Name: "Test domain"})
 	client := newAMClient(t, srv)
 
-	del, err := client.Domains.DeleteDomainWithResponse(t.Context(), "test")
+	del, err := client.DeleteDomainWithResponse(t.Context(), "test")
 	assertSDKNoContent(t, del, err)
 
-	get, err := client.Domains.GetDomainWithResponse(t.Context(), "test")
+	get, err := client.GetDomainWithResponse(t.Context(), "test")
 	assertSDK404(t, get, err)
 }
