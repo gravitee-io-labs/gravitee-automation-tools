@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.0.0](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-sdk/v1.0.2...am-sdk/v2.0.0) (2026-09-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* **am-sdk:** module path is now `github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2`. Per-resource packages (`pkg/sdk/domain`, `pkg/sdk/certificate`, ...) are replaced by `pkg/sdk`; `AMClient.Domains.X(...)` becomes `AMClient.X(...)`; optional slice fields change from `*[]T` to `[]T`.
+
+### Features
+
+* **am-sdk:** single sdk package with WithDefaults() on models ([c68cfd2](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/c68cfd2a312d29718c1ed4d4712b691a60c0c917))
+* **am-sdk:** tag read-only properties with drift:"ignore" ([e6c91e6](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/e6c91e60fae6477fccc40a4686744aea1574fe68))
+
+
+### Bug Fixes
+
+* add IdJagSettings and KeyRetrievalSettings ([ffc00fa](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/ffc00fa6241e38ab637bbc58768f4fcf9083a344))
+
 ## [1.0.2](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-sdk/v1.0.1...am-sdk/v1.0.2) (2026-09-21)
 
 
