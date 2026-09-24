@@ -16,6 +16,8 @@ This repository uses [release-please](https://github.com/googleapis/release-plea
 | `feat:` | Minor (0.1.0 → 0.2.0) |
 | `feat!:` or `BREAKING CHANGE:` footer | Minor while < 1.0, Major after |
 
+A major bump to v2+ also needs the `/vN` suffix on the module path (`go mod edit -module .../am-sdk/v2`, imports and dependents' `go.mod` updated) in the same PR — Go refuses a `v2.x.y` tag on a module path without it.
+
 ## Tag Format
 
 Each module gets its own semver tag: `am-sdk/v0.2.0`, `common/v0.1.3`, `am-mock-server/v0.3.0`, etc. This is the standard Go multi-module convention — consumers use `go get github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk@v0.2.0`.

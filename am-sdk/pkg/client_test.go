@@ -58,11 +58,7 @@ func TestNewClient_Valid(t *testing.T) {
 	}
 	client, err := NewClient(ac, 0)
 	assert.NoError(t, err)
-	assert.NotNil(t, client.Certificates)
-	assert.NotNil(t, client.DataPlanes)
-	assert.NotNil(t, client.Domains)
-	assert.NotNil(t, client.IdentityProviders)
-	assert.NotNil(t, client.Reporters)
+	assert.NotNil(t, client.ClientWithResponsesInterface)
 }
 
 func TestNewClient_Call(t *testing.T) {
@@ -134,7 +130,7 @@ func TestNewClient_Call(t *testing.T) {
 			defer s.Close()
 			client, err := NewClient(tt.apiContextSupplier(s.URL), 0)
 			assert.NoError(t, err)
-			r, err := client.Domains.ListDomainsWithResponse(context.Background())
+			r, err := client.ListDomainsWithResponse(context.Background())
 			assert.NoError(t, err)
 			assert.NotNil(t, r)
 			assert.Equal(t, r.StatusCode(), http.StatusOK)

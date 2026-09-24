@@ -43,9 +43,7 @@ lint-licenses: ## Check license headers
 	@echo "Checking license headers ..."
 	@addlicense -check -f LICENSE_TEMPLATE.txt \
 		-ignore "**/*.gen.go" \
-		-ignore "**/overlay.merged.yaml" \
-		-ignore "am-sdk/pkg/sdk/overlay.yaml" \
-		-ignore "am-mock-server/server/overlay.yaml" \
+		-ignore "**/*.gen.yaml" \
 		-ignore ".github/**" \
 		-ignore ".idea/**" \
 		.
@@ -57,9 +55,7 @@ lint-fix: ## Auto-fix linting issues and add license headers
 	done
 	@addlicense -f LICENSE_TEMPLATE.txt \
 		-ignore "**/*.gen.go" \
-		-ignore "**/overlay.merged.yaml" \
-		-ignore "am-sdk/pkg/sdk/overlay.yaml" \
-		-ignore "am-mock-server/server/overlay.yaml" \
+		-ignore "**/*.gen.yaml" \
 		-ignore ".github/**" \
 		-ignore ".idea/**" \
 		.

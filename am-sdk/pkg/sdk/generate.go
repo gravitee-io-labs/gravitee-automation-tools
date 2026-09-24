@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package certificate
+package sdk
 
-func (d Certificate) Identity() string {
-	return d.Key
-}
+//go:generate go run ../../overlays/mergeoverlay.go ../../overlays/models.yaml ../../overlays/operations.yaml ../../overlays/paths.yaml ../../gen/overlay.gen.yaml
+//go:generate go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config ../../gen/models.cfg.yaml ../../openapi/openapi.yaml
+//go:generate go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config ../../gen/client.cfg.yaml ../../openapi/openapi.yaml

@@ -1,4 +1,2 @@
 /.idea
-/am-sdk/pkg/sdk/overlay.yaml
-/am-mock-server/server/overlay.yaml
-/am-sdk/pkg/crd/domain/overlay.merged.yaml
+*.gen.yaml

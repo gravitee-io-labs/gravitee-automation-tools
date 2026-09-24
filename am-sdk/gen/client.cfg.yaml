@@ -12,15 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# yaml-language-server: $schema=../../../configuration-schema.json
-package: identityprovider
+package: sdk
 output: client.gen.go
 generate:
-  models: true
   client: true
   server-urls: true
 output-options:
+  prefer-skip-optional-pointer-on-container-types: true
   overlay:
-    path: ../overlay.yaml
-  include-tags:
-    - Identity Providers
+    path: ../../gen/overlay.gen.yaml

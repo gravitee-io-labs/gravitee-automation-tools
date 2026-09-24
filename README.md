@@ -17,19 +17,21 @@ apim-sdk/          placeholder (empty)
 
 Import the facade as `am`:
 
-`github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg`
+`github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg`
 
 `am.NewClient` takes an `apicontext.APIContext` (base URL, org, env, **one** of bearer or basic) and returns an `AMClient`. Org/env default to `DEFAULT`.
 
-**Capabilities** — list / upsert (PUT) / get / delete:
+**Capabilities** — list / upsert (PUT) / get / delete, called directly on the client (e.g. `client.ListDomainsWithResponse(ctx)`):
 
-| Field | Scope |
-|-------|--------|
-| `Domains` | environment |
-| `DataPlanes` | environment |
-| `Certificates` | domain |
-| `IdentityProviders` | domain |
-| `Reporters` | domain |
+| Resource | Scope |
+|----------|--------|
+| Domains | environment |
+| Data planes | environment |
+| Certificates | domain |
+| Identity providers | domain |
+| Reporters | domain |
+
+Models expose `WithDefaults()`, which fills unset fields with the OpenAPI defaults (nested structs included).
 
 Calls return the generated `(resp, err)` pair. `err` is transport/construction only.
 
@@ -42,7 +44,7 @@ Calls return the generated `(resp, err)` pair. `err` is transport/construction o
 | HTTP call | use `common/pkg/response`: `IsNotFound`, `IsUnauthorized`, `IsForbidden`, `IsServerError`, `IsNetworkError` |
 | 200 body | `response.Payload[T](resp)` |
 
-Not an API reference — generated methods live under `am-sdk/pkg/sdk/<resource>/`.
+Not an API reference — generated methods and models live in `am-sdk/pkg/sdk`.
 
 ## Mock server
 
@@ -58,6 +60,8 @@ go run ./am-mock-server --dry-run-reject
 | `--base-path` | `/automation` | API base path |
 | `--auth-file` | | Auth YAML (optional). Sample: `am-mock-server/examples/auth.yaml` |
 | `--dry-run-reject` | off | PUT `?dryRun=true` returns `200` `[{severity: ERROR, message}]` and does **not** persist. Without this flag, `dryRun` is ignored. |
+
+Like AM, upserts fill unset fields with their OpenAPI defaults, so the PUT and GET responses carry them.
 
 ## Prerequisites
 
