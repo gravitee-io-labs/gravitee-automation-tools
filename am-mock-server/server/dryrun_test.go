@@ -24,7 +24,7 @@ import (
 
 func TestDryRunPut_OffPersists(t *testing.T) {
 	am, srv := createAMServer(t)
-	body := Domain{Key: "test", Name: "Test domain"}
+	body := Domain{Key: "test", Name: "Test domain"}.WithDefaults()
 
 	resp := httpPut(t, domainsURL(srv)+"?dryRun=true", body)
 	defer resp.Body.Close()
@@ -32,7 +32,7 @@ func TestDryRunPut_OffPersists(t *testing.T) {
 
 	got, exists := defaultTenant(am).Domains.Get("test")
 	require.True(t, exists)
-	assert.Equal(t, body, got)
+	assertEqualIgnoringTimestamps(t, body, got)
 }
 
 func TestDryRunPut_DoesNotPersist(t *testing.T) {
@@ -51,7 +51,7 @@ func TestDryRunPut_DoesNotPersist(t *testing.T) {
 
 func TestDryRunPut_FalseStillPersists(t *testing.T) {
 	am, srv := createAMServerWithDryRunReject(t, true)
-	body := Domain{Key: "test", Name: "Test domain"}
+	body := Domain{Key: "test", Name: "Test domain"}.WithDefaults()
 
 	resp := httpPut(t, domainsURL(srv)+"?dryRun=false", body)
 	defer resp.Body.Close()
@@ -59,7 +59,7 @@ func TestDryRunPut_FalseStillPersists(t *testing.T) {
 
 	got, exists := defaultTenant(am).Domains.Get("test")
 	require.True(t, exists)
-	assert.Equal(t, body, got)
+	assertEqualIgnoringTimestamps(t, body, got)
 }
 
 func TestDryRunPut_LeavesExistingUnchanged(t *testing.T) {

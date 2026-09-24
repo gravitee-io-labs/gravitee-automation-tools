@@ -17,15 +17,15 @@ package server
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/certificate"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg/sdk"
 )
 
 func testCertificate() Certificate {
-	return Certificate{Key: "test", Name: new("Test certificate")}
+	return Certificate{Key: "test", Name: new("Test certificate")}.WithDefaults()
 }
 
-func testCertificateSDK() certificate.Certificate {
-	return certificate.Certificate{Key: "test", Name: new("Test certificate")}
+func testCertificateSDK() sdk.Certificate {
+	return sdk.Certificate{Key: "test", Name: new("Test certificate")}.WithDefaults()
 }
 
 func TestListCertificates(t *testing.T) {
@@ -68,8 +68,8 @@ func TestListCertificatesSDK(t *testing.T) {
 	defaultTenant(am).Certificates.Put(newChild(testCertificate(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
-	res, err := client.Certificates.ListCertificatesWithResponse(t.Context(), defaultDomainKey)
-	assertSDKOK(t, res, err, []certificate.Certificate{testCertificateSDK()})
+	res, err := client.ListCertificatesWithResponse(t.Context(), defaultDomainKey)
+	assertSDKOK(t, res, err, []sdk.Certificate{testCertificateSDK()})
 }
 
 func TestGetCertificateSDK(t *testing.T) {
@@ -77,7 +77,7 @@ func TestGetCertificateSDK(t *testing.T) {
 	defaultTenant(am).Certificates.Put(newChild(testCertificate(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
-	res, err := client.Certificates.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
+	res, err := client.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKOK(t, res, err, testCertificateSDK())
 }
 
@@ -85,7 +85,7 @@ func TestGetCertificate404SDK(t *testing.T) {
 	_, srv := createAMServerWithDomain(t)
 	client := newAMClient(t, srv)
 
-	res, err := client.Certificates.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
+	res, err := client.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDK404(t, res, err)
 }
 
@@ -94,10 +94,10 @@ func TestPutGetCertificateSDK(t *testing.T) {
 	client := newAMClient(t, srv)
 	body := testCertificateSDK()
 
-	put, err := client.Certificates.UpsertCertificateWithResponse(t.Context(), defaultDomainKey, body)
+	put, err := client.UpsertCertificateWithResponse(t.Context(), defaultDomainKey, body)
 	assertSDKOK(t, put, err, body)
 
-	get, err := client.Certificates.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
+	get, err := client.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKOK(t, get, err, body)
 }
 
@@ -106,9 +106,9 @@ func TestDeleteCertificateSDK(t *testing.T) {
 	defaultTenant(am).Certificates.Put(newChild(testCertificate(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
-	del, err := client.Certificates.DeleteCertificateWithResponse(t.Context(), defaultDomainKey, "test")
+	del, err := client.DeleteCertificateWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKNoContent(t, del, err)
 
-	get, err := client.Certificates.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
+	get, err := client.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDK404(t, get, err)
 }

@@ -20,5 +20,7 @@ generate:
   chi-server: true
   strict-server: true
 output-options:
+  user-templates:
+    typedef.tmpl: ../../am-sdk/templates/typedef.tmpl
   overlay:
-    path: overlay.yaml
+    path: ../gen/server/overlay.gen.yaml

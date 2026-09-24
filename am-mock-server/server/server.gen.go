@@ -229,6 +229,56 @@ type AccountSettings struct {
 	SendVerifyRegistrationAccountEmail *bool `json:"sendVerifyRegistrationAccountEmail,omitempty"`
 }
 
+// WithDefaults returns a copy of AccountSettings with unset fields set to their OpenAPI defaults.
+func (v AccountSettings) WithDefaults() AccountSettings {
+	if v.AutoLoginAfterRegistration == nil {
+		v.AutoLoginAfterRegistration = new(bool(false))
+	}
+	if v.AutoLoginAfterResetPassword == nil {
+		v.AutoLoginAfterResetPassword = new(bool(false))
+	}
+	if v.CompleteRegistrationWhenResetPassword == nil {
+		v.CompleteRegistrationWhenResetPassword = new(bool(false))
+	}
+	if v.DeletePasswordlessDevicesAfterResetPassword == nil {
+		v.DeletePasswordlessDevicesAfterResetPassword = new(bool(false))
+	}
+	if v.DynamicUserRegistration == nil {
+		v.DynamicUserRegistration = new(bool(false))
+	}
+	if v.Inherited == nil {
+		v.Inherited = new(bool(true))
+	}
+	if v.LoginAttemptsDetectionEnabled == nil {
+		v.LoginAttemptsDetectionEnabled = new(bool(false))
+	}
+	if v.MfaChallengeAttemptsDetectionEnabled == nil {
+		v.MfaChallengeAttemptsDetectionEnabled = new(bool(false))
+	}
+	if v.MfaChallengeSendVerifyAlertEmail == nil {
+		v.MfaChallengeSendVerifyAlertEmail = new(bool(false))
+	}
+	if v.RememberMe == nil {
+		v.RememberMe = new(bool(false))
+	}
+	if v.ResetPasswordConfirmIdentity == nil {
+		v.ResetPasswordConfirmIdentity = new(bool(false))
+	}
+	if v.ResetPasswordCustomForm == nil {
+		v.ResetPasswordCustomForm = new(bool(false))
+	}
+	if v.ResetPasswordInvalidateTokens == nil {
+		v.ResetPasswordInvalidateTokens = new(bool(false))
+	}
+	if v.SendRecoverAccountEmail == nil {
+		v.SendRecoverAccountEmail = new(bool(false))
+	}
+	if v.SendVerifyRegistrationAccountEmail == nil {
+		v.SendVerifyRegistrationAccountEmail = new(bool(false))
+	}
+	return v
+}
+
 // AutomationCIBASettings Client-Initiated Backchannel Authentication (CIBA) settings for the domain. CIBA lets a relying party initiate end-user authentication from a separate consumption device, without redirecting the user through the browser. Authentication device notifiers are not managed by the Automation API and are not exposed here.
 type AutomationCIBASettings = CIBASettings
 
@@ -253,6 +303,14 @@ type CIBASettings struct {
 	TokenReqInterval *int32 `json:"tokenReqInterval,omitempty"`
 }
 
+// WithDefaults returns a copy of CIBASettings with unset fields set to their OpenAPI defaults.
+func (v CIBASettings) WithDefaults() CIBASettings {
+	if v.Enabled == nil {
+		v.Enabled = new(bool(false))
+	}
+	return v
+}
+
 // AutomationCertificate A certificate managed under a domain by the Automation API. The key field is the stable, immutable identity used for idempotent create-or-update.
 type AutomationCertificate = Certificate
 
@@ -264,10 +322,10 @@ type Certificate struct {
 	Configuration *string `json:"configuration,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
 
 	// ExpiresAt Expiry timestamp (ISO-8601 / RFC 3339, UTC), when known for the certificate type. Read-only.
-	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
+	ExpiresAt *time.Time `drift:"ignore" json:"expiresAt,omitempty"`
 
 	// Key Stable, immutable identifier for the certificate within its domain. Lowercase alphanumeric and hyphens, starting and ending with an alphanumeric character. Used to identify the certificate on create-or-update.
 	//
@@ -288,7 +346,15 @@ type Certificate struct {
 	Type *string `json:"type,omitempty"`
 
 	// UpdatedAt Last-update timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt *time.Time `drift:"ignore" json:"updatedAt,omitempty"`
+}
+
+// WithDefaults returns a copy of Certificate with unset fields set to their OpenAPI defaults.
+func (v Certificate) WithDefaults() Certificate {
+	if v.System == nil {
+		v.System = new(bool(false))
+	}
+	return v
 }
 
 // AutomationCertificateSettings Domain-level certificate settings.
@@ -300,6 +366,11 @@ type CertificateSettings struct {
 	//
 	// Example: default
 	FallbackCertificate *string `json:"fallbackCertificate,omitempty"`
+}
+
+// WithDefaults returns a copy of CertificateSettings with unset fields set to their OpenAPI defaults.
+func (v CertificateSettings) WithDefaults() CertificateSettings {
+	return v
 }
 
 // AutomationClientRegistrationSettings OpenID Connect Dynamic Client Registration configuration for the domain.
@@ -338,6 +409,35 @@ type ClientRegistrationSettings struct {
 	OpenDynamicClientRegistrationEnabled *bool `json:"openDynamicClientRegistrationEnabled,omitempty"`
 }
 
+// WithDefaults returns a copy of ClientRegistrationSettings with unset fields set to their OpenAPI defaults.
+func (v ClientRegistrationSettings) WithDefaults() ClientRegistrationSettings {
+	if v.AllowHttpSchemeRedirectUri == nil {
+		v.AllowHttpSchemeRedirectUri = new(bool(false))
+	}
+	if v.AllowLocalhostRedirectUri == nil {
+		v.AllowLocalhostRedirectUri = new(bool(false))
+	}
+	if v.AllowRedirectUriParamsExpressionLanguage == nil {
+		v.AllowRedirectUriParamsExpressionLanguage = new(bool(false))
+	}
+	if v.AllowWildCardRedirectUri == nil {
+		v.AllowWildCardRedirectUri = new(bool(false))
+	}
+	if v.AllowedScopesEnabled == nil {
+		v.AllowedScopesEnabled = new(bool(false))
+	}
+	if v.ClientTemplateEnabled == nil {
+		v.ClientTemplateEnabled = new(bool(false))
+	}
+	if v.DynamicClientRegistrationEnabled == nil {
+		v.DynamicClientRegistrationEnabled = new(bool(false))
+	}
+	if v.OpenDynamicClientRegistrationEnabled == nil {
+		v.OpenDynamicClientRegistrationEnabled = new(bool(false))
+	}
+	return v
+}
+
 // AutomationDataPlane A data plane managed by the Automation API. Data planes store the runtime data of the domains bound to them. The id field is the stable, immutable identity used for idempotent create-or-update.
 type AutomationDataPlane = DataPlane
 
@@ -349,17 +449,17 @@ type DataPlane struct {
 	Configuration *map[string]interface{} `json:"configuration,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
 
 	// Database Name of the database the configuration points at. Read-only.
 	//
 	// Example: gravitee-am-acme
-	Database *string `json:"database,omitempty"`
+	Database *string `drift:"ignore" json:"database,omitempty"`
 
 	// EnvironmentId Identifier of the environment the data plane belongs to. Read-only.
 	//
 	// Example: DEFAULT
-	EnvironmentId *string `json:"environmentId,omitempty"`
+	EnvironmentId *string `drift:"ignore" json:"environmentId,omitempty"`
 
 	// GatewayUrl Base URL of the gateway serving the domains bound to this data plane.
 	//
@@ -369,7 +469,7 @@ type DataPlane struct {
 	// Hosts Hosts the configuration points at, as host:port. Read-only.
 	//
 	// Example: ["mongo:27017"]
-	Hosts *[]string `json:"hosts,omitempty"`
+	Hosts *[]string `drift:"ignore" json:"hosts,omitempty"`
 
 	// Id Stable, immutable identifier for the data plane within its environment. Lowercase alphanumeric and hyphens, starting and ending with an alphanumeric character. This is the value a domain's dataPlaneId refers to.
 	//
@@ -384,7 +484,7 @@ type DataPlane struct {
 	// OrganizationId Identifier of the organization the data plane belongs to. Read-only.
 	//
 	// Example: DEFAULT
-	OrganizationId *string `json:"organizationId,omitempty"`
+	OrganizationId *string `drift:"ignore" json:"organizationId,omitempty"`
 
 	// Type Data plane plugin type identifier, matching the dataplane-am-<type> plugin. Immutable after creation.
 	//
@@ -392,7 +492,12 @@ type DataPlane struct {
 	Type *string `json:"type,omitempty"`
 
 	// UpdatedAt Last-update timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt *time.Time `drift:"ignore" json:"updatedAt,omitempty"`
+}
+
+// WithDefaults returns a copy of DataPlane with unset fields set to their OpenAPI defaults.
+func (v DataPlane) WithDefaults() DataPlane {
+	return v
 }
 
 // AutomationDomain A security domain managed by the Automation API. The key field is the stable, immutable identity used for idempotent create-or-update. Certificates, identity providers, and reporters are not embedded; they are managed via the domain's sub-resource endpoints and referenced here by key.
@@ -413,12 +518,12 @@ type Domain struct {
 	CorsSettings *CorsSettings `json:"corsSettings,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
 
 	// DataPlaneId Identifier of the data plane this domain is connected to. Optional at creation and resolved from the environment's data planes when omitted. Immutable afterwards: an apply that names a different one is rejected.
 	//
 	// Example: default
-	DataPlaneId *string `json:"dataPlaneId,omitempty"`
+	DataPlaneId *string `drift:"ignore-remote-default" json:"dataPlaneId,omitempty"`
 
 	// Description Human-readable description of the domain.
 	//
@@ -426,7 +531,7 @@ type Domain struct {
 	Description *string `json:"description,omitempty"`
 
 	// DryRunErrors Validation errors returned when dryRun is true. Absent when validation succeeds.
-	DryRunErrors *[]DryRunError `json:"dryRunErrors,omitempty"`
+	DryRunErrors *[]DryRunError `drift:"ignore" json:"dryRunErrors,omitempty"`
 
 	// Enabled Whether the domain handles incoming authentication and authorization requests.
 	Enabled *bool `json:"enabled,omitempty"`
@@ -485,7 +590,7 @@ type Domain struct {
 	Uma *UMASettings `json:"uma,omitempty"`
 
 	// UpdatedAt Last-update timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt *time.Time `drift:"ignore" json:"updatedAt,omitempty"`
 
 	// VhostMode Whether the domain is exposed through its virtual hosts rather than the default context path. When true, vhosts must be supplied.
 	VhostMode *bool `json:"vhostMode,omitempty"`
@@ -500,6 +605,80 @@ type Domain struct {
 	WebProtectionSettings *WebProtectionSettings `json:"webProtectionSettings,omitempty"`
 }
 
+// WithDefaults returns a copy of Domain with unset fields set to their OpenAPI defaults.
+func (v Domain) WithDefaults() Domain {
+	if v.AccountSettings != nil {
+		withDefaults := v.AccountSettings.WithDefaults()
+		v.AccountSettings = &withDefaults
+	}
+	if v.CertificateSettings != nil {
+		withDefaults := v.CertificateSettings.WithDefaults()
+		v.CertificateSettings = &withDefaults
+	}
+	if v.CorsSettings != nil {
+		withDefaults := v.CorsSettings.WithDefaults()
+		v.CorsSettings = &withDefaults
+	}
+	if v.Enabled == nil {
+		v.Enabled = new(bool(true))
+	}
+	if v.KeyRetrievalSettings != nil {
+		withDefaults := v.KeyRetrievalSettings.WithDefaults()
+		v.KeyRetrievalSettings = &withDefaults
+	}
+	if v.LoginSettings != nil {
+		withDefaults := v.LoginSettings.WithDefaults()
+		v.LoginSettings = &withDefaults
+	}
+	if v.Master == nil {
+		v.Master = new(bool(false))
+	}
+	if v.Oidc != nil {
+		withDefaults := v.Oidc.WithDefaults()
+		v.Oidc = &withDefaults
+	}
+	if v.PasswordSettings != nil {
+		withDefaults := v.PasswordSettings.WithDefaults()
+		v.PasswordSettings = &withDefaults
+	}
+	if v.Saml != nil {
+		withDefaults := v.Saml.WithDefaults()
+		v.Saml = &withDefaults
+	}
+	if v.Scim != nil {
+		withDefaults := v.Scim.WithDefaults()
+		v.Scim = &withDefaults
+	}
+	if v.SecretExpirationSettings != nil {
+		withDefaults := v.SecretExpirationSettings.WithDefaults()
+		v.SecretExpirationSettings = &withDefaults
+	}
+	if v.SelfServiceAccountManagementSettings != nil {
+		withDefaults := v.SelfServiceAccountManagementSettings.WithDefaults()
+		v.SelfServiceAccountManagementSettings = &withDefaults
+	}
+	if v.TokenExchangeSettings != nil {
+		withDefaults := v.TokenExchangeSettings.WithDefaults()
+		v.TokenExchangeSettings = &withDefaults
+	}
+	if v.Uma != nil {
+		withDefaults := v.Uma.WithDefaults()
+		v.Uma = &withDefaults
+	}
+	if v.VhostMode == nil {
+		v.VhostMode = new(bool(false))
+	}
+	if v.WebAuthnSettings != nil {
+		withDefaults := v.WebAuthnSettings.WithDefaults()
+		v.WebAuthnSettings = &withDefaults
+	}
+	if v.WebProtectionSettings != nil {
+		withDefaults := v.WebProtectionSettings.WithDefaults()
+		v.WebProtectionSettings = &withDefaults
+	}
+	return v
+}
+
 // AutomationIdentityProvider An identity provider managed under a domain by the Automation API. The key field is the stable, immutable identity used for idempotent create-or-update.
 type AutomationIdentityProvider = IdentityProvider
 
@@ -511,7 +690,7 @@ type IdentityProvider struct {
 	Configuration *string `json:"configuration,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
 
 	// DomainWhitelist Email domains allowed to authenticate through this identity provider. When set, users whose email domain is not listed are rejected.
 	//
@@ -548,7 +727,15 @@ type IdentityProvider struct {
 	Type *string `json:"type,omitempty"`
 
 	// UpdatedAt Last-update timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt *time.Time `drift:"ignore" json:"updatedAt,omitempty"`
+}
+
+// WithDefaults returns a copy of IdentityProvider with unset fields set to their OpenAPI defaults.
+func (v IdentityProvider) WithDefaults() IdentityProvider {
+	if v.System == nil {
+		v.System = new(bool(false))
+	}
+	return v
 }
 
 // AutomationOidcSettings OpenID Connect settings for the domain. CIMD (client identity metadata document) settings are not exposed by the Automation API and are reset on update.
@@ -578,6 +765,30 @@ type OidcSettings struct {
 	WorkloadIdentitySettings *SpiffeDomainSettings `json:"workloadIdentitySettings,omitempty"`
 }
 
+// WithDefaults returns a copy of OidcSettings with unset fields set to their OpenAPI defaults.
+func (v OidcSettings) WithDefaults() OidcSettings {
+	if v.CibaSettings != nil {
+		withDefaults := v.CibaSettings.WithDefaults()
+		v.CibaSettings = &withDefaults
+	}
+	if v.ClientRegistrationSettings != nil {
+		withDefaults := v.ClientRegistrationSettings.WithDefaults()
+		v.ClientRegistrationSettings = &withDefaults
+	}
+	if v.RedirectUriStrictMatching == nil {
+		v.RedirectUriStrictMatching = new(bool(false))
+	}
+	if v.SecurityProfileSettings != nil {
+		withDefaults := v.SecurityProfileSettings.WithDefaults()
+		v.SecurityProfileSettings = &withDefaults
+	}
+	if v.WorkloadIdentitySettings != nil {
+		withDefaults := v.WorkloadIdentitySettings.WithDefaults()
+		v.WorkloadIdentitySettings = &withDefaults
+	}
+	return v
+}
+
 // AutomationReporter A reporter managed under a domain by the Automation API. Reporters persist audit events to a backend. The key field is the stable, immutable identity used for idempotent create-or-update.
 type AutomationReporter = Reporter
 
@@ -595,10 +806,10 @@ type Reporter struct {
 	Configuration *string `json:"configuration,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
+	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
 
 	// DataType Category of data the reporter handles, derived from its type. Read-only.
-	DataType *string `json:"dataType,omitempty"`
+	DataType *string `drift:"ignore" json:"dataType,omitempty"`
 
 	// Enabled Whether the reporter is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
@@ -622,7 +833,18 @@ type Reporter struct {
 	Type *string `json:"type,omitempty"`
 
 	// UpdatedAt Last-update timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
+	UpdatedAt *time.Time `drift:"ignore" json:"updatedAt,omitempty"`
+}
+
+// WithDefaults returns a copy of Reporter with unset fields set to their OpenAPI defaults.
+func (v Reporter) WithDefaults() Reporter {
+	if v.Enabled == nil {
+		v.Enabled = new(bool(true))
+	}
+	if v.System == nil {
+		v.System = new(bool(false))
+	}
+	return v
 }
 
 // AutomationSamlSettings Settings for the domain acting as a SAML 2.0 identity provider (IdP).
@@ -642,6 +864,14 @@ type SamlSettings struct {
 	//
 	// Example: https://auth.example.com/saml2/idp/entity
 	EntityId *string `json:"entityId,omitempty"`
+}
+
+// WithDefaults returns a copy of SamlSettings with unset fields set to their OpenAPI defaults.
+func (v SamlSettings) WithDefaults() SamlSettings {
+	if v.Enabled == nil {
+		v.Enabled = new(bool(false))
+	}
+	return v
 }
 
 // CorsSettings Cross-Origin Resource Sharing configuration controlling which web origins may call the domain's endpoints from a browser.
@@ -674,6 +904,23 @@ type CorsSettings struct {
 	MaxAge *int32 `json:"maxAge,omitempty"`
 }
 
+// WithDefaults returns a copy of CorsSettings with unset fields set to their OpenAPI defaults.
+func (v CorsSettings) WithDefaults() CorsSettings {
+	if v.AllowCredentials == nil {
+		v.AllowCredentials = new(bool(false))
+	}
+	if v.Enabled == nil {
+		v.Enabled = new(bool(false))
+	}
+	if v.Inherited == nil {
+		v.Inherited = new(bool(true))
+	}
+	if v.MaxAge == nil {
+		v.MaxAge = new(int32(86400))
+	}
+	return v
+}
+
 // CspSettings Content Security Policy configuration for the domain's login and consent pages.
 type CspSettings struct {
 	// Directives CSP directives, one per entry, in the form "directive-name value". A trailing semicolon is optional. Directive names must be valid CSP tokens and must not repeat; values are not interpreted. Directives that take no value, such as "upgrade-insecure-requests", may be supplied on their own. When reportOnly is enabled, a "report-uri" or "report-to" directive is required.
@@ -694,10 +941,32 @@ type CspSettings struct {
 	ScriptInlineNonce *bool `json:"scriptInlineNonce,omitempty"`
 }
 
+// WithDefaults returns a copy of CspSettings with unset fields set to their OpenAPI defaults.
+func (v CspSettings) WithDefaults() CspSettings {
+	if v.Enabled == nil {
+		v.Enabled = new(bool(false))
+	}
+	if v.Inherited == nil {
+		v.Inherited = new(bool(true))
+	}
+	if v.ReportOnly == nil {
+		v.ReportOnly = new(bool(false))
+	}
+	if v.ScriptInlineNonce == nil {
+		v.ScriptInlineNonce = new(bool(true))
+	}
+	return v
+}
+
 // DryRunError Validation errors returned when dryRun is true. Absent when validation succeeds.
 type DryRunError struct {
 	Message  *string   `json:"message,omitempty"`
 	Severity *Severity `json:"severity,omitempty"`
+}
+
+// WithDefaults returns a copy of DryRunError with unset fields set to their OpenAPI defaults.
+func (v DryRunError) WithDefaults() DryRunError {
+	return v
 }
 
 // Error Error response body returned for failed requests.
@@ -709,6 +978,11 @@ type Error struct {
 
 	// Message Human-readable description of the error.
 	Message *string `json:"message,omitempty"`
+}
+
+// WithDefaults returns a copy of Error with unset fields set to their OpenAPI defaults.
+func (v Error) WithDefaults() Error {
+	return v
 }
 
 // FormField A single field shown on a user-facing form, such as registration.
@@ -727,6 +1001,11 @@ type FormField struct {
 	//
 	// Example: email
 	Type *string `json:"type,omitempty"`
+}
+
+// WithDefaults returns a copy of FormField with unset fields set to their OpenAPI defaults.
+func (v FormField) WithDefaults() FormField {
+	return v
 }
 
 // KeyRetrievalSettings Fetch, SSRF and cache limits applied to every trusted domain in the security domain.
@@ -748,6 +1027,29 @@ type KeyRetrievalSettings struct {
 
 	// MaxResponseSizeKb Maximum key material response size, in kilobytes.
 	MaxResponseSizeKb *int32 `json:"maxResponseSizeKb,omitempty"`
+}
+
+// WithDefaults returns a copy of KeyRetrievalSettings with unset fields set to their OpenAPI defaults.
+func (v KeyRetrievalSettings) WithDefaults() KeyRetrievalSettings {
+	if v.AllowPrivateIpAddress == nil {
+		v.AllowPrivateIpAddress = new(bool(false))
+	}
+	if v.AllowUnsecuredHttpUri == nil {
+		v.AllowUnsecuredHttpUri = new(bool(false))
+	}
+	if v.CacheMaxEntries == nil {
+		v.CacheMaxEntries = new(int32(50))
+	}
+	if v.CacheTtlSeconds == nil {
+		v.CacheTtlSeconds = new(int32(300))
+	}
+	if v.FetchTimeoutMs == nil {
+		v.FetchTimeoutMs = new(int32(5000))
+	}
+	if v.MaxResponseSizeKb == nil {
+		v.MaxResponseSizeKb = new(int32(32))
+	}
+	return v
 }
 
 // LoginSettings Configuration of the domain's login flow and the features offered on the sign-in page.
@@ -798,6 +1100,47 @@ type LoginSettings struct {
 	ResetPasswordOnExpiration *bool `json:"resetPasswordOnExpiration,omitempty"`
 }
 
+// WithDefaults returns a copy of LoginSettings with unset fields set to their OpenAPI defaults.
+func (v LoginSettings) WithDefaults() LoginSettings {
+	if v.CertificateBasedAuthEnabled == nil {
+		v.CertificateBasedAuthEnabled = new(bool(false))
+	}
+	if v.ForgotPasswordEnabled == nil {
+		v.ForgotPasswordEnabled = new(bool(false))
+	}
+	if v.HideForm == nil {
+		v.HideForm = new(bool(false))
+	}
+	if v.IdentifierFirstEnabled == nil {
+		v.IdentifierFirstEnabled = new(bool(false))
+	}
+	if v.Inherited == nil {
+		v.Inherited = new(bool(true))
+	}
+	if v.MagicLinkAuthEnabled == nil {
+		v.MagicLinkAuthEnabled = new(bool(false))
+	}
+	if v.PasswordlessDeviceNamingEnabled == nil {
+		v.PasswordlessDeviceNamingEnabled = new(bool(false))
+	}
+	if v.PasswordlessEnabled == nil {
+		v.PasswordlessEnabled = new(bool(false))
+	}
+	if v.PasswordlessEnforcePasswordEnabled == nil {
+		v.PasswordlessEnforcePasswordEnabled = new(bool(false))
+	}
+	if v.PasswordlessRememberDeviceEnabled == nil {
+		v.PasswordlessRememberDeviceEnabled = new(bool(false))
+	}
+	if v.RegisterEnabled == nil {
+		v.RegisterEnabled = new(bool(false))
+	}
+	if v.RememberMeEnabled == nil {
+		v.RememberMeEnabled = new(bool(false))
+	}
+	return v
+}
+
 // PasswordSettings Password policy applied to users of the domain: complexity requirements, expiry, and history.
 type PasswordSettings struct {
 	// ExcludePasswordsInDictionary Whether passwords found in a common-password dictionary are rejected.
@@ -837,6 +1180,23 @@ type PasswordSettings struct {
 	PasswordHistoryEnabled *bool `json:"passwordHistoryEnabled,omitempty"`
 }
 
+// WithDefaults returns a copy of PasswordSettings with unset fields set to their OpenAPI defaults.
+func (v PasswordSettings) WithDefaults() PasswordSettings {
+	if v.Inherited == nil {
+		v.Inherited = new(bool(true))
+	}
+	if v.MaxLength == nil {
+		v.MaxLength = new(int32(128))
+	}
+	if v.MinLength == nil {
+		v.MinLength = new(int32(8))
+	}
+	if v.PasswordHistoryEnabled == nil {
+		v.PasswordHistoryEnabled = new(bool(false))
+	}
+	return v
+}
+
 // ReporterAttributeMapping Exports one additional attribute, read from the audit context by expression, under a chosen field name.
 type ReporterAttributeMapping struct {
 	// ExportedName The name the evaluated value takes on the exported payload.
@@ -850,6 +1210,11 @@ type ReporterAttributeMapping struct {
 	Expression *string `json:"expression,omitempty"`
 }
 
+// WithDefaults returns a copy of ReporterAttributeMapping with unset fields set to their OpenAPI defaults.
+func (v ReporterAttributeMapping) WithDefaults() ReporterAttributeMapping {
+	return v
+}
+
 // ResetPasswordSettings Rules applied to a self-service password reset.
 type ResetPasswordSettings struct {
 	// OldPasswordRequired Whether the user must supply their current password to set a new one.
@@ -857,6 +1222,14 @@ type ResetPasswordSettings struct {
 
 	// TokenAge Lifetime, in seconds, of the password-reset token.
 	TokenAge *int32 `json:"tokenAge,omitempty"`
+}
+
+// WithDefaults returns a copy of ResetPasswordSettings with unset fields set to their OpenAPI defaults.
+func (v ResetPasswordSettings) WithDefaults() ResetPasswordSettings {
+	if v.OldPasswordRequired == nil {
+		v.OldPasswordRequired = new(bool(false))
+	}
+	return v
 }
 
 // SCIMSettings Configuration of the domain's SCIM 2.0 provisioning endpoints.
@@ -871,6 +1244,17 @@ type SCIMSettings struct {
 	IdpSelectionRule *string `json:"idpSelectionRule,omitempty"`
 }
 
+// WithDefaults returns a copy of SCIMSettings with unset fields set to their OpenAPI defaults.
+func (v SCIMSettings) WithDefaults() SCIMSettings {
+	if v.Enabled == nil {
+		v.Enabled = new(bool(false))
+	}
+	if v.IdpSelectionEnabled == nil {
+		v.IdpSelectionEnabled = new(bool(false))
+	}
+	return v
+}
+
 // SecretExpirationSettings Controls whether client secrets in the domain expire and after how long.
 type SecretExpirationSettings struct {
 	// Enabled Whether client-secret expiration is enabled.
@@ -882,6 +1266,11 @@ type SecretExpirationSettings struct {
 	ExpiryTimeSeconds *int64 `json:"expiryTimeSeconds,omitempty"`
 }
 
+// WithDefaults returns a copy of SecretExpirationSettings with unset fields set to their OpenAPI defaults.
+func (v SecretExpirationSettings) WithDefaults() SecretExpirationSettings {
+	return v
+}
+
 // SecurityProfileSettings Financial-grade API (FAPI) security profile configuration for the domain.
 type SecurityProfileSettings struct {
 	// EnableFapiBrazil Whether the Open Banking Brasil Financial-grade API security profile (version 1.0) is applied.
@@ -891,6 +1280,17 @@ type SecurityProfileSettings struct {
 	EnablePlainFapi *bool `json:"enablePlainFapi,omitempty"`
 }
 
+// WithDefaults returns a copy of SecurityProfileSettings with unset fields set to their OpenAPI defaults.
+func (v SecurityProfileSettings) WithDefaults() SecurityProfileSettings {
+	if v.EnableFapiBrazil == nil {
+		v.EnableFapiBrazil = new(bool(false))
+	}
+	if v.EnablePlainFapi == nil {
+		v.EnablePlainFapi = new(bool(false))
+	}
+	return v
+}
+
 // SelfServiceAccountManagementSettings Controls whether end users can manage their own account (for example, reset their password) and the rules that apply.
 type SelfServiceAccountManagementSettings struct {
 	// Enabled Whether self-service account management is enabled for end users.
@@ -898,6 +1298,18 @@ type SelfServiceAccountManagementSettings struct {
 
 	// ResetPassword Rules applied to a self-service password reset.
 	ResetPassword *ResetPasswordSettings `json:"resetPassword,omitempty"`
+}
+
+// WithDefaults returns a copy of SelfServiceAccountManagementSettings with unset fields set to their OpenAPI defaults.
+func (v SelfServiceAccountManagementSettings) WithDefaults() SelfServiceAccountManagementSettings {
+	if v.Enabled == nil {
+		v.Enabled = new(bool(false))
+	}
+	if v.ResetPassword != nil {
+		withDefaults := v.ResetPassword.WithDefaults()
+		v.ResetPassword = &withDefaults
+	}
+	return v
 }
 
 // Severity defines model for Severity.
@@ -925,7 +1337,7 @@ type SpiffeDomainSettings struct {
 	ClockSkewSeconds *int32 `json:"clockSkewSeconds,omitempty"`
 
 	// DefaultAllowedAlgorithms Default allowlist of signature algorithms accepted for SPIFFE JWT validation.
-	DefaultAllowedAlgorithms *[]string `json:"defaultAllowedAlgorithms,omitempty"`
+	DefaultAllowedAlgorithms *[]string `drift:"ignore-remote-default" json:"defaultAllowedAlgorithms,omitempty"`
 
 	// Enabled Whether SPIFFE workload identity support is enabled for the domain.
 	Enabled *bool `json:"enabled,omitempty"`
@@ -942,6 +1354,20 @@ type SpiffeDomainSettings struct {
 	MaxResponseSizeKb *int32 `json:"maxResponseSizeKb,omitempty"`
 }
 
+// WithDefaults returns a copy of SpiffeDomainSettings with unset fields set to their OpenAPI defaults.
+func (v SpiffeDomainSettings) WithDefaults() SpiffeDomainSettings {
+	if v.ClockSkewSeconds == nil {
+		v.ClockSkewSeconds = new(int32(30))
+	}
+	if v.Enabled == nil {
+		v.Enabled = new(bool(false))
+	}
+	if v.MaxJwtLifetimeSeconds == nil {
+		v.MaxJwtLifetimeSeconds = new(int32(300))
+	}
+	return v
+}
+
 // TokenExchangeOAuthSettings OAuth-specific token-exchange behavior, such as how scopes are handled, with optional inheritance from domain defaults.
 type TokenExchangeOAuthSettings struct {
 	// Inherited Whether these settings are inherited from the domain defaults rather than defined here.
@@ -949,6 +1375,17 @@ type TokenExchangeOAuthSettings struct {
 
 	// ScopeHandling How scopes are handled when issuing the exchanged token. DOWNSCOPING restricts the issued token to a subset of the original scopes.
 	ScopeHandling *TokenExchangeOAuthSettingsScopeHandling `json:"scopeHandling,omitempty"`
+}
+
+// WithDefaults returns a copy of TokenExchangeOAuthSettings with unset fields set to their OpenAPI defaults.
+func (v TokenExchangeOAuthSettings) WithDefaults() TokenExchangeOAuthSettings {
+	if v.Inherited == nil {
+		v.Inherited = new(bool(true))
+	}
+	if v.ScopeHandling == nil {
+		v.ScopeHandling = new(TokenExchangeOAuthSettingsScopeHandling("downscoping"))
+	}
+	return v
 }
 
 // TokenExchangeOAuthSettingsScopeHandling How scopes are handled when issuing the exchanged token. DOWNSCOPING restricts the issued token to a subset of the original scopes.
@@ -991,6 +1428,27 @@ type TokenExchangeSettings struct {
 	TrustedIssuers *[]TrustedIssuer `json:"trustedIssuers,omitempty"`
 }
 
+// WithDefaults returns a copy of TokenExchangeSettings with unset fields set to their OpenAPI defaults.
+func (v TokenExchangeSettings) WithDefaults() TokenExchangeSettings {
+	if v.AllowDelegation == nil {
+		v.AllowDelegation = new(bool(false))
+	}
+	if v.AllowImpersonation == nil {
+		v.AllowImpersonation = new(bool(true))
+	}
+	if v.Enabled == nil {
+		v.Enabled = new(bool(false))
+	}
+	if v.MaxDelegationDepth == nil {
+		v.MaxDelegationDepth = new(int32(25))
+	}
+	if v.TokenExchangeOAuthSettings != nil {
+		withDefaults := v.TokenExchangeOAuthSettings.WithDefaults()
+		v.TokenExchangeOAuthSettings = &withDefaults
+	}
+	return v
+}
+
 // TrustedIssuer An external token issuer whose JWTs are accepted as subject or actor tokens during token exchange, validated with the configured key material.
 //
 // Deprecated: this type has been marked as deprecated upstream, but no `x-deprecated-reason` was set
@@ -1021,6 +1479,14 @@ type TrustedIssuer struct {
 	UserBindingEnabled *bool `json:"userBindingEnabled,omitempty"`
 }
 
+// WithDefaults returns a copy of TrustedIssuer with unset fields set to their OpenAPI defaults.
+func (v TrustedIssuer) WithDefaults() TrustedIssuer {
+	if v.UserBindingEnabled == nil {
+		v.UserBindingEnabled = new(bool(false))
+	}
+	return v
+}
+
 // TrustedIssuerKeyResolutionMethod How the issuer's signing key is resolved. JWKS_URL fetches keys from a JWKS endpoint; PEM uses an inline X.509 certificate.
 type TrustedIssuerKeyResolutionMethod string
 
@@ -1028,6 +1494,14 @@ type TrustedIssuerKeyResolutionMethod string
 type UMASettings struct {
 	// Enabled Whether User-Managed Access is enabled for the domain.
 	Enabled *bool `json:"enabled,omitempty"`
+}
+
+// WithDefaults returns a copy of UMASettings with unset fields set to their OpenAPI defaults.
+func (v UMASettings) WithDefaults() UMASettings {
+	if v.Enabled == nil {
+		v.Enabled = new(bool(false))
+	}
+	return v
 }
 
 // UserBindingCriterion A single rule that matches a domain user attribute against a value derived from the external token claims.
@@ -1041,6 +1515,11 @@ type UserBindingCriterion struct {
 	//
 	// Example: {#token['email']}
 	Expression *string `json:"expression,omitempty"`
+}
+
+// WithDefaults returns a copy of UserBindingCriterion with unset fields set to their OpenAPI defaults.
+func (v UserBindingCriterion) WithDefaults() UserBindingCriterion {
+	return v
 }
 
 // VirtualHost A host and path the domain is exposed on. The host and path combination must be unique across all domains.
@@ -1057,6 +1536,14 @@ type VirtualHost struct {
 	//
 	// Example: /customers
 	Path *string `json:"path,omitempty"`
+}
+
+// WithDefaults returns a copy of VirtualHost with unset fields set to their OpenAPI defaults.
+func (v VirtualHost) WithDefaults() VirtualHost {
+	if v.OverrideEntrypoint == nil {
+		v.OverrideEntrypoint = new(bool(false))
+	}
+	return v
 }
 
 // WebAuthnSettings WebAuthn (FIDO2) relying-party configuration governing passwordless and multi-factor authentication for the domain.
@@ -1101,6 +1588,26 @@ type WebAuthnSettings struct {
 	UserVerification *WebAuthnSettingsUserVerification `json:"userVerification,omitempty"`
 }
 
+// WithDefaults returns a copy of WebAuthnSettings with unset fields set to their OpenAPI defaults.
+func (v WebAuthnSettings) WithDefaults() WebAuthnSettings {
+	if v.AttestationConveyancePreference == nil {
+		v.AttestationConveyancePreference = new(WebAuthnSettingsAttestationConveyancePreference("none"))
+	}
+	if v.EnforceAuthenticatorIntegrity == nil {
+		v.EnforceAuthenticatorIntegrity = new(bool(false))
+	}
+	if v.ForceRegistration == nil {
+		v.ForceRegistration = new(bool(false))
+	}
+	if v.RequireResidentKey == nil {
+		v.RequireResidentKey = new(bool(false))
+	}
+	if v.UserVerification == nil {
+		v.UserVerification = new(WebAuthnSettingsUserVerification("preferred"))
+	}
+	return v
+}
+
 // WebAuthnSettingsAttestationConveyancePreference Relying-party preference for attestation conveyance during credential creation. NONE requests no attestation, INDIRECT allows anonymized attestation, and DIRECT requests the authenticator's attestation statement.
 type WebAuthnSettingsAttestationConveyancePreference string
 
@@ -1122,6 +1629,23 @@ type WebProtectionSettings struct {
 	Xss *XssProtectionSettings `json:"xss,omitempty"`
 }
 
+// WithDefaults returns a copy of WebProtectionSettings with unset fields set to their OpenAPI defaults.
+func (v WebProtectionSettings) WithDefaults() WebProtectionSettings {
+	if v.Csp != nil {
+		withDefaults := v.Csp.WithDefaults()
+		v.Csp = &withDefaults
+	}
+	if v.Xframe != nil {
+		withDefaults := v.Xframe.WithDefaults()
+		v.Xframe = &withDefaults
+	}
+	if v.Xss != nil {
+		withDefaults := v.Xss.WithDefaults()
+		v.Xss = &withDefaults
+	}
+	return v
+}
+
 // XFrameSettings Controls whether the domain's pages may be embedded in frames on other origins.
 type XFrameSettings struct {
 	// Action X-Frame-Options action. Supported values: DENY, SAMEORIGIN. Leave empty to omit the header.
@@ -1136,6 +1660,17 @@ type XFrameSettings struct {
 	Inherited *bool `json:"inherited,omitempty"`
 }
 
+// WithDefaults returns a copy of XFrameSettings with unset fields set to their OpenAPI defaults.
+func (v XFrameSettings) WithDefaults() XFrameSettings {
+	if v.Enabled == nil {
+		v.Enabled = new(bool(false))
+	}
+	if v.Inherited == nil {
+		v.Inherited = new(bool(true))
+	}
+	return v
+}
+
 // XssProtectionSettings Controls the legacy X-XSS-Protection response header.
 type XssProtectionSettings struct {
 	// Action Value of the X-XSS-Protection header.
@@ -1148,6 +1683,17 @@ type XssProtectionSettings struct {
 
 	// Inherited Whether X-XSS-Protection settings are inherited from the gateway defaults (gravitee.yml). When null, legacy behaviour applies: enabled=true overrides and enabled=false inherits.
 	Inherited *bool `json:"inherited,omitempty"`
+}
+
+// WithDefaults returns a copy of XssProtectionSettings with unset fields set to their OpenAPI defaults.
+func (v XssProtectionSettings) WithDefaults() XssProtectionSettings {
+	if v.Enabled == nil {
+		v.Enabled = new(bool(false))
+	}
+	if v.Inherited == nil {
+		v.Inherited = new(bool(true))
+	}
+	return v
 }
 
 // UpsertDomainParams defines parameters for UpsertDomain.

@@ -17,15 +17,15 @@ package server
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg/sdk/reporter"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg/sdk"
 )
 
 func testReporter() Reporter {
-	return Reporter{Key: "test", Name: new("Test reporter")}
+	return Reporter{Key: "test", Name: new("Test reporter")}.WithDefaults()
 }
 
-func testReporterSDK() reporter.Reporter {
-	return reporter.Reporter{Key: "test", Name: new("Test reporter")}
+func testReporterSDK() sdk.Reporter {
+	return sdk.Reporter{Key: "test", Name: new("Test reporter")}.WithDefaults()
 }
 
 func TestListReporters(t *testing.T) {
@@ -68,8 +68,8 @@ func TestListReportersSDK(t *testing.T) {
 	defaultTenant(am).Reporters.Put(newChild(testReporter(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
-	res, err := client.Reporters.ListReportersWithResponse(t.Context(), defaultDomainKey)
-	assertSDKOK(t, res, err, []reporter.Reporter{testReporterSDK()})
+	res, err := client.ListReportersWithResponse(t.Context(), defaultDomainKey)
+	assertSDKOK(t, res, err, []sdk.Reporter{testReporterSDK()})
 }
 
 func TestGetReporterSDK(t *testing.T) {
@@ -77,7 +77,7 @@ func TestGetReporterSDK(t *testing.T) {
 	defaultTenant(am).Reporters.Put(newChild(testReporter(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
-	res, err := client.Reporters.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
+	res, err := client.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKOK(t, res, err, testReporterSDK())
 }
 
@@ -85,7 +85,7 @@ func TestGetReporter404SDK(t *testing.T) {
 	_, srv := createAMServerWithDomain(t)
 	client := newAMClient(t, srv)
 
-	res, err := client.Reporters.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
+	res, err := client.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDK404(t, res, err)
 }
 
@@ -94,10 +94,10 @@ func TestPutGetReporterSDK(t *testing.T) {
 	client := newAMClient(t, srv)
 	body := testReporterSDK()
 
-	put, err := client.Reporters.UpsertReporterWithResponse(t.Context(), defaultDomainKey, body)
+	put, err := client.UpsertReporterWithResponse(t.Context(), defaultDomainKey, body)
 	assertSDKOK(t, put, err, body)
 
-	get, err := client.Reporters.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
+	get, err := client.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKOK(t, get, err, body)
 }
 
@@ -106,9 +106,9 @@ func TestDeleteReporterSDK(t *testing.T) {
 	defaultTenant(am).Reporters.Put(newChild(testReporter(), defaultDomainKey))
 	client := newAMClient(t, srv)
 
-	del, err := client.Reporters.DeleteReporterWithResponse(t.Context(), defaultDomainKey, "test")
+	del, err := client.DeleteReporterWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDKNoContent(t, del, err)
 
-	get, err := client.Reporters.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
+	get, err := client.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
 	assertSDK404(t, get, err)
 }

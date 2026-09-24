@@ -22,7 +22,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	am "github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/pkg"
+	am "github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg"
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/apicontext"
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/response"
 	"github.com/stretchr/testify/assert"
@@ -177,7 +177,7 @@ func assertListEqual[T any](t *testing.T, url string, expected []T) {
 	res := httpGetURL(t, url)
 	defer res.Body.Close()
 	failOnNotOK(t, res)
-	assert.Equal(t, expected, decodeToSliceOf[T](t, res))
+	assertEqualIgnoringTimestamps(t, expected, decodeToSliceOf[T](t, res))
 }
 
 func assertGetEqual[T any](t *testing.T, url, key string, expected T) {
@@ -185,7 +185,7 @@ func assertGetEqual[T any](t *testing.T, url, key string, expected T) {
 	resp := httpGet(t, url, key)
 	defer resp.Body.Close()
 	failOnNotOK(t, resp)
-	assert.Equal(t, expected, decodeTo[T](t, resp))
+	assertEqualIgnoringTimestamps(t, expected, decodeTo[T](t, resp))
 }
 
 func assertGet404(t *testing.T, url, key, kind string) {
@@ -201,7 +201,7 @@ func assertPutEqual[T any](t *testing.T, url string, body T) {
 	resp := httpPut(t, url, body)
 	defer resp.Body.Close()
 	failOnNotOK(t, resp)
-	assert.Equal(t, body, decodeTo[T](t, resp))
+	assertEqualIgnoringTimestamps(t, body, decodeTo[T](t, resp))
 }
 
 func assertDeleteGone(t *testing.T, url, key, kind string) {
@@ -217,7 +217,36 @@ func assertSDKOK[T any](t *testing.T, resp response.StatusCoder, err error, expe
 	assert.False(t, response.IsNetworkError(resp, err))
 	got, ok := response.Payload[T](resp)
 	require.True(t, ok)
-	assert.Equal(t, expected, got)
+	assertEqualIgnoringTimestamps(t, expected, got)
+}
+
+// assertEqualIgnoringTimestamps compares expected and actual as JSON, without the server-set createdAt/updatedAt.
+func assertEqualIgnoringTimestamps(t *testing.T, expected, actual any) {
+	t.Helper()
+	assert.Equal(t, withoutTimestamps(t, expected), withoutTimestamps(t, actual))
+}
+
+func withoutTimestamps(t *testing.T, v any) any {
+	t.Helper()
+	var generic any
+	require.NoError(t, json.Unmarshal(encode(t, v).Bytes(), &generic))
+	return stripTimestamps(generic)
+}
+
+func stripTimestamps(v any) any {
+	switch v := v.(type) {
+	case map[string]any:
+		delete(v, "createdAt")
+		delete(v, "updatedAt")
+		for k, child := range v {
+			v[k] = stripTimestamps(child)
+		}
+	case []any:
+		for i, child := range v {
+			v[i] = stripTimestamps(child)
+		}
+	}
+	return v
 }
 
 func assertSDK404(t *testing.T, resp response.StatusCoder, err error) {
