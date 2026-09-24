@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-mock-server/v1.1.2...am-mock-server/v1.1.3) (2026-09-24)
+
+
+### Bug Fixes
+
+* return the request payload when not rejecting ([77c3af3](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/77c3af30485cbab96a85253dea54dd8d8c480cb0))
+
 ## [1.1.2](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-mock-server/v1.1.1...am-mock-server/v1.1.2) (2026-09-24)
 
 
