@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-mock-server/v1.0.2...am-mock-server/v1.1.0) (2026-09-24)
+
+
+### Features
+
+* **am-mock-server:** fill OpenAPI defaults and server-managed fields on upsert ([117e036](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/117e036402af235d3217a27482653694b29e62c8))
+* **am-mock-server:** reject requests that do not match the OpenAPI spec ([8ef82bd](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/8ef82bd8c5e108611a71a00a66befe2415814b52))
+
+
+### Bug Fixes
+
+* add IdJagSettings and KeyRetrievalSettings ([ffc00fa](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/ffc00fa6241e38ab637bbc58768f4fcf9083a344))
+
 ## [1.0.2](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-mock-server/v1.0.1...am-mock-server/v1.0.2) (2026-09-22)
 
 
