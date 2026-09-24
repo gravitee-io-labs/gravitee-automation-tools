@@ -15,7 +15,6 @@
 package server
 
 import (
-	"io"
 	"net/http"
 	"testing"
 
@@ -31,9 +30,8 @@ func TestDryRunPut_NoRejectReturnsEmptyAndDoesNotPersist(t *testing.T) {
 	defer resp.Body.Close()
 	failOnNotOK(t, resp)
 
-	raw, err := io.ReadAll(resp.Body)
-	require.NoError(t, err)
-	assert.Empty(t, raw)
+	domain := decodeTo[Domain](t, resp)
+	assert.Nil(t, domain.CreatedAt, "dry run should not persist")
 
 	_, exists := defaultTenant(am).Domains.Get("test")
 	assert.False(t, exists)
