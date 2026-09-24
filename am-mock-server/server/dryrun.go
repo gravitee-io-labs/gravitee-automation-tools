@@ -16,6 +16,7 @@ package server
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"strconv"
 )
@@ -33,6 +34,9 @@ func DryRun(reject bool) func(http.Handler) http.Handler {
 				w.WriteHeader(http.StatusOK)
 				if reject {
 					_ = json.NewEncoder(w).Encode(dryRunErrors)
+				} else {
+					_, _ = io.Copy(w, r.Body)
+					return
 				}
 				return
 			}
