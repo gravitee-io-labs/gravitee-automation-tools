@@ -5,7 +5,7 @@ go 1.26.1
 require (
 	github.com/getkin/kin-openapi v0.149.0
 	github.com/go-chi/chi/v5 v5.3.2
-	github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2 v2.0.0
+	github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2 v2.0.1
 	github.com/gravitee-io-labs/gravitee-automation-tools/common v1.0.0
 	github.com/oapi-codegen/nethttp-middleware v1.1.2
 	github.com/oapi-codegen/runtime v1.7.0
