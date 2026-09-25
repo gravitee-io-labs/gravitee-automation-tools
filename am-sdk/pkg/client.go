@@ -26,16 +26,26 @@ import (
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/errors"
 )
 
-// AMClient is the generated Automation API client, sharing one base URL, org/env, auth, and HTTP timeout.
+// AMClient is the generated Automation API client, sharing one base URL, org/env, auth, and HTTP client.
 type AMClient struct {
 	sdk.ClientWithResponsesInterface
+	server string
+	editor sdk.RequestEditorFn
 }
 
 // NewClient builds an AMClient from ac. Trailing slashes are stripped from BaseURL.
 // OrgID and EnvID are baked into the server URL (empty becomes "DEFAULT").
-// timeoutMs is the HTTP client timeout in milliseconds; 0 means no timeout.
 // Auth must be exactly one of bearer or basic.
-func NewClient(ac apicontext.APIContext, timeoutMs int) (*AMClient, error) {
+// Without timeoutMs the HTTP client has no timeout. Otherwise timeoutMs[0] is the timeout
+// in milliseconds (0 means no timeout); use WithHTTPClient for any other HTTP setting.
+func NewClient(ac apicontext.APIContext, timeoutMs ...int) (*AMClient, error) {
+	if len(timeoutMs) > 0 {
+		client, err := NewClient(ac)
+		if err != nil {
+			return nil, err
+		}
+		return client.WithHTTPClient(&http.Client{Timeout: time.Duration(timeoutMs[0]) * time.Millisecond})
+	}
 
 	baseUrl, err := url.Parse(strings.TrimRight(ac.BaseURL, "/"))
 	if err != nil {
@@ -56,14 +66,19 @@ func NewClient(ac apicontext.APIContext, timeoutMs int) (*AMClient, error) {
 		return nil, err
 	}
 
+	return (&AMClient{server: server, editor: editor}).WithHTTPClient(&http.Client{})
+}
+
+// WithHTTPClient returns a new AMClient with the same server URL and auth, sending requests through httpClient.
+// The receiver is left unchanged.
+func (c *AMClient) WithHTTPClient(httpClient *http.Client) (*AMClient, error) {
 	client, err := sdk.NewClientWithResponses(
-		server,
-		sdk.WithHTTPClient(&http.Client{Timeout: time.Duration(timeoutMs) * time.Millisecond}),
-		sdk.WithRequestEditorFn(editor),
+		c.server,
+		sdk.WithHTTPClient(httpClient),
+		sdk.WithRequestEditorFn(c.editor),
 	)
 	if err != nil {
 		return nil, err
 	}
-
-	return &AMClient{client}, nil
+	return &AMClient{ClientWithResponsesInterface: client, server: c.server, editor: c.editor}, nil
 }
