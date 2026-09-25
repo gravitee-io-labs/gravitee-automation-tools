@@ -20,15 +20,17 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/apicontext"
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/errors"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewClient_NoAuth(t *testing.T) {
 	var ac apicontext.APIContext
-	_, err := NewClient(ac, 0)
+	_, err := NewClient(ac)
 	assert.Error(t, err, errors.NoAuthProvided)
 }
 
@@ -39,7 +41,7 @@ func TestNewClient_InvalidAuth(t *testing.T) {
 			BearerToken: new(""),
 		},
 	}
-	_, err := NewClient(ac, 0)
+	_, err := NewClient(ac)
 	assert.Error(t, err, errors.ManyAuthProvided)
 }
 
@@ -47,7 +49,7 @@ func TestNewClient_InvalidURL(t *testing.T) {
 	ac := apicontext.APIContext{
 		BaseURL: "::",
 	}
-	_, err := NewClient(ac, 0)
+	_, err := NewClient(ac)
 	assert.Error(t, err)
 }
 
@@ -56,7 +58,7 @@ func TestNewClient_Valid(t *testing.T) {
 		BaseURL: "http://localhost/automation/",
 		Auth:    apicontext.Auth{BearerToken: new("123")},
 	}
-	client, err := NewClient(ac, 0)
+	client, err := NewClient(ac)
 	assert.NoError(t, err)
 	assert.NotNil(t, client.ClientWithResponsesInterface)
 }
@@ -128,7 +130,7 @@ func TestNewClient_Call(t *testing.T) {
 				w.WriteHeader(http.StatusOK)
 			}))
 			defer s.Close()
-			client, err := NewClient(tt.apiContextSupplier(s.URL), 0)
+			client, err := NewClient(tt.apiContextSupplier(s.URL))
 			assert.NoError(t, err)
 			r, err := client.ListDomainsWithResponse(context.Background())
 			assert.NoError(t, err)
@@ -138,4 +140,78 @@ func TestNewClient_Call(t *testing.T) {
 			assert.Equal(t, tt.expectedUri, givenUri)
 		})
 	}
+}
+
+func TestNewClient_WithoutTimeout(t *testing.T) {
+	s := slowServer(t, 50*time.Millisecond)
+	client, err := NewClient(bearerContext(s.URL))
+	require.NoError(t, err)
+
+	_, err = client.ListDomainsWithResponse(context.Background())
+	assert.NoError(t, err)
+}
+
+func TestNewClient_WithTimeout(t *testing.T) {
+	s := slowServer(t, 200*time.Millisecond)
+	client, err := NewClient(bearerContext(s.URL), 10)
+	require.NoError(t, err)
+
+	_, err = client.ListDomainsWithResponse(context.Background())
+	assert.ErrorContains(t, err, "Client.Timeout exceeded")
+}
+
+func TestNewClient_WithTimeoutAndInvalidAuth(t *testing.T) {
+	_, err := NewClient(apicontext.APIContext{BaseURL: "http://localhost"}, 10)
+	assert.ErrorIs(t, err, errors.NoAuthProvided)
+}
+
+func TestWithHTTPClient_ReturnsNewClientUsingGivenHTTPClient(t *testing.T) {
+	var givenAuth string
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		givenAuth = r.Header.Get("Authorization")
+		_, _ = w.Write([]byte("[]"))
+	}))
+	defer s.Close()
+	client, err := NewClient(bearerContext(s.URL))
+	require.NoError(t, err)
+	transport := &countingTransport{}
+
+	withHTTPClient, err := client.WithHTTPClient(&http.Client{Transport: transport})
+	require.NoError(t, err)
+	_, err = withHTTPClient.ListDomainsWithResponse(context.Background())
+	require.NoError(t, err)
+
+	assert.NotSame(t, client, withHTTPClient)
+	assert.Equal(t, 1, transport.calls)
+	assert.Equal(t, "Bearer 123", givenAuth)
+
+	_, err = client.ListDomainsWithResponse(context.Background())
+	require.NoError(t, err)
+	assert.Equal(t, 1, transport.calls, "original client must keep its own HTTP client")
+}
+
+type countingTransport struct {
+	calls int
+}
+
+func (c *countingTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+	c.calls++
+	return http.DefaultTransport.RoundTrip(r)
+}
+
+func bearerContext(serverURL string) apicontext.APIContext {
+	return apicontext.APIContext{
+		BaseURL: serverURL + "/automation",
+		Auth:    apicontext.Auth{BearerToken: new("123")},
+	}
+}
+
+func slowServer(t *testing.T, delay time.Duration) *httptest.Server {
+	t.Helper()
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		time.Sleep(delay)
+		_, _ = w.Write([]byte("[]"))
+	}))
+	t.Cleanup(s.Close)
+	return s
 }
