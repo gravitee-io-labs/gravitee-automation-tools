@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-sdk/v2.0.2...am-sdk/v2.1.0) (2026-09-25)
+
+
+### Features
+
+* **am-sdk:** make NewClient timeout optional and add WithHTTPClient ([e598e97](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/e598e97814e3efed9b06275998a00dbab23c47f7))
+
 ## [2.0.2](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-sdk/v2.0.1...am-sdk/v2.0.2) (2026-09-24)
 
 
