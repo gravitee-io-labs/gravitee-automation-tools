@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/common/v1.0.0...common/v1.1.0) (2026-09-28)
+
+
+### Features
+
+* **common:** add Unstructured and Stringified free-form objects ([8a96eea](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/8a96eeacbd2c8e868e49949786f8847f0781daeb))
+* **common:** let Stringified read object trees and expose Object to drift ([3f45d74](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/3f45d746981263de549908856bfb56442a377961))
+
 ## 1.0.0 (2026-09-11)
 
 
