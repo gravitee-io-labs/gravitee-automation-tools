@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.2.0](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-sdk/v2.1.0...am-sdk/v2.2.0) (2026-09-28)
+
+
+### Features
+
+* **am-sdk:** type plugin configurations as unstructured objects ([ddb1d11](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/ddb1d11bc37dd349353c295a7897580d3986e39f))
+
+
+### Bug Fixes
+
+* **deps:** bump common to v1.1.0 ([f60bd10](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/f60bd100c7570bad6e9d64889612f5c77afab4b3))
+
 ## [2.1.0](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-sdk/v2.0.2...am-sdk/v2.1.0) (2026-09-25)
 
 
