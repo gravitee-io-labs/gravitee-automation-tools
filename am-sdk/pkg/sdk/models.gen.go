@@ -5,6 +5,8 @@ package sdk
 
 import (
 	"time"
+
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/unstructured"
 )
 
 // Defines values for Severity.
@@ -310,7 +312,7 @@ type Certificate struct {
 	// Configuration Plugin-specific configuration as a JSON-encoded string. Its shape is defined by the selected certificate type.
 	//
 	// Example: {"jks":{"content":"...","name":"keystore.jks"},"storepass":"secret","alias":"mykey","keypass":"secret"}
-	Configuration *string `json:"configuration,omitempty"`
+	Configuration *unstructured.Stringified `drift:"unstructured" json:"configuration,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
 	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
@@ -440,7 +442,7 @@ type DataPlane struct {
 	// Configuration Connection settings. Write-only: it can hold credentials.
 	//
 	// Example: {"mongodb":{"dbname":"gravitee-am-acme","host":"mongo","port":27017}}
-	Configuration map[string]interface{} `json:"configuration,omitempty"`
+	Configuration *unstructured.Unstructured `drift:"unstructured" json:"configuration,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
 	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
@@ -681,7 +683,7 @@ type IdentityProvider struct {
 	// Configuration Plugin-specific configuration as a JSON-encoded string. Its shape is defined by the selected identity provider type.
 	//
 	// Example: {"users":[{"username":"admin","password":"..."}]}
-	Configuration *string `json:"configuration,omitempty"`
+	Configuration *unstructured.Stringified `drift:"unstructured" json:"configuration,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
 	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
@@ -800,7 +802,7 @@ type Reporter struct {
 	// Configuration Plugin-specific configuration as a JSON-encoded string. Its shape is defined by the selected reporter type.
 	//
 	// Example: {"bootstrapServers":"kafka:9092","topic":"audit"}
-	Configuration *string `json:"configuration,omitempty"`
+	Configuration *unstructured.Stringified `drift:"unstructured" json:"configuration,omitempty"`
 
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
 	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
