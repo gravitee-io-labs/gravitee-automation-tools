@@ -7,12 +7,27 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  statuses: write
 
 jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
+        id: release
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      # Release PRs only touch changelogs and versions: mark the required ci-ok check green without building.
+      - name: Mark release PRs as CI OK
+        if: steps.release.outputs.prs_created == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRS: ${{ steps.release.outputs.prs }}
+        run: |
+          for PR in $(jq -r '.[].number' <<< "$PRS"); do
+            SHA=$(gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json headRefOid -q .headRefOid)
+            gh api "repos/$GITHUB_REPOSITORY/statuses/$SHA" \
+              -f state=success -f context=ci-ok -f description="Release PR: build not required"
+          done
