@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.0](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-mock-server/v1.1.3...am-mock-server/v1.2.0) (2026-09-28)
+
+
+### Features
+
+* **am-sdk:** type plugin configurations as unstructured objects ([ddb1d11](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/ddb1d11bc37dd349353c295a7897580d3986e39f))
+
+
+### Bug Fixes
+
+* **deps:** bump am-sdk to v2.1.0 ([a7680dc](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/a7680dcae1e6175441a337e68e2848a6cce66fd4))
+* **deps:** bump am-sdk to v2.2.0 ([3393c88](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/3393c88e73e350efe1c2a60b1ab7bd3a40d1c9b9))
+* **deps:** bump common to v1.1.0 ([f60bd10](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/f60bd100c7570bad6e9d64889612f5c77afab4b3))
+
 ## [1.1.3](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-mock-server/v1.1.2...am-mock-server/v1.1.3) (2026-09-24)
 
 
