@@ -3,9 +3,6 @@ name: CI
 on:
   pull_request:
     branches: [main]
-    paths-ignore:
-      - "**.md"
-      - .release-please-manifest.json
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -15,13 +12,31 @@ permissions:
   contents: read
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.diff.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: diff
+        run: |
+          git diff --name-only "origin/${{ github.base_ref }}...HEAD" \
+            | grep -vE '(\.md$|^\.release-please-manifest\.json$)' \
+            && echo code=true >> "$GITHUB_OUTPUT" || echo code=false >> "$GITHUB_OUTPUT"
+
   oas:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: make check-oas
 
   generate:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,6 +53,8 @@ jobs:
           fi
 
   lint:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -48,6 +65,8 @@ jobs:
       - run: make lint
 
   test:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -55,3 +74,11 @@ jobs:
         with:
           go-version-file: go.work
       - run: make test
+
+  ci-ok:
+    if: always()
+    needs: [changes, oas, generate, lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo '${{ toJSON(needs) }}' | jq -e 'all(.[]; .result == "success" or .result == "skipped")'
