@@ -211,21 +211,21 @@ type ClientInterface interface {
 
 	// UpsertCertificateWithBody Create or update a certificate
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
+	// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate. When dryRun is true, the endpoint validates the payload without persisting; the returned certificate carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
-	UpsertCertificateWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpsertCertificateWithBody(ctx context.Context, domainKey string, params *UpsertCertificateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpsertCertificate Create or update a certificate
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
+	// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate. When dryRun is true, the endpoint validates the payload without persisting; the returned certificate carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
-	UpsertCertificate(ctx context.Context, domainKey string, body UpsertCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpsertCertificate(ctx context.Context, domainKey string, params *UpsertCertificateParams, body UpsertCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteCertificate Delete a certificate
 	//
@@ -250,21 +250,21 @@ type ClientInterface interface {
 
 	// UpsertIdentityProviderWithBody Create or update an identity provider
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
+	// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider. When dryRun is true, the endpoint validates the payload without persisting; the returned identity provider carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
-	UpsertIdentityProviderWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpsertIdentityProviderWithBody(ctx context.Context, domainKey string, params *UpsertIdentityProviderParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpsertIdentityProvider Create or update an identity provider
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
+	// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider. When dryRun is true, the endpoint validates the payload without persisting; the returned identity provider carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
-	UpsertIdentityProvider(ctx context.Context, domainKey string, body UpsertIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpsertIdentityProvider(ctx context.Context, domainKey string, params *UpsertIdentityProviderParams, body UpsertIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteIdentityProvider Delete an identity provider
 	//
@@ -289,21 +289,21 @@ type ClientInterface interface {
 
 	// UpsertReporterWithBody Create or update a reporter
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
+	// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter. When dryRun is true, the endpoint validates the payload without persisting; the returned reporter carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes any type of body and a specified content type.
 	//
 	// Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
-	UpsertReporterWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpsertReporterWithBody(ctx context.Context, domainKey string, params *UpsertReporterParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpsertReporter Create or update a reporter
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
+	// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter. When dryRun is true, the endpoint validates the payload without persisting; the returned reporter carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes a body of the `application/json` content type.
 	//
 	// Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
-	UpsertReporter(ctx context.Context, domainKey string, body UpsertReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpsertReporter(ctx context.Context, domainKey string, params *UpsertReporterParams, body UpsertReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteReporter Delete a reporter
 	//
@@ -517,13 +517,13 @@ func (c *Client) ListCertificates(ctx context.Context, domainKey string, reqEdit
 
 // UpsertCertificateWithBody Create or update a certificate
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
+// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate. When dryRun is true, the endpoint validates the payload without persisting; the returned certificate carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes any type of body and a specified content type.
 //
 // Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
-func (c *Client) UpsertCertificateWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpsertCertificateRequestWithBody(c.Server, domainKey, contentType, body)
+func (c *Client) UpsertCertificateWithBody(ctx context.Context, domainKey string, params *UpsertCertificateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertCertificateRequestWithBody(c.Server, domainKey, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -536,13 +536,13 @@ func (c *Client) UpsertCertificateWithBody(ctx context.Context, domainKey string
 
 // UpsertCertificate Create or update a certificate
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
+// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate. When dryRun is true, the endpoint validates the payload without persisting; the returned certificate carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
-func (c *Client) UpsertCertificate(ctx context.Context, domainKey string, body UpsertCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpsertCertificateRequest(c.Server, domainKey, body)
+func (c *Client) UpsertCertificate(ctx context.Context, domainKey string, params *UpsertCertificateParams, body UpsertCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertCertificateRequest(c.Server, domainKey, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -606,13 +606,13 @@ func (c *Client) ListIdentityProviders(ctx context.Context, domainKey string, re
 
 // UpsertIdentityProviderWithBody Create or update an identity provider
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
+// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider. When dryRun is true, the endpoint validates the payload without persisting; the returned identity provider carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes any type of body and a specified content type.
 //
 // Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
-func (c *Client) UpsertIdentityProviderWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpsertIdentityProviderRequestWithBody(c.Server, domainKey, contentType, body)
+func (c *Client) UpsertIdentityProviderWithBody(ctx context.Context, domainKey string, params *UpsertIdentityProviderParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertIdentityProviderRequestWithBody(c.Server, domainKey, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -625,13 +625,13 @@ func (c *Client) UpsertIdentityProviderWithBody(ctx context.Context, domainKey s
 
 // UpsertIdentityProvider Create or update an identity provider
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
+// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider. When dryRun is true, the endpoint validates the payload without persisting; the returned identity provider carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
-func (c *Client) UpsertIdentityProvider(ctx context.Context, domainKey string, body UpsertIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpsertIdentityProviderRequest(c.Server, domainKey, body)
+func (c *Client) UpsertIdentityProvider(ctx context.Context, domainKey string, params *UpsertIdentityProviderParams, body UpsertIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertIdentityProviderRequest(c.Server, domainKey, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -695,13 +695,13 @@ func (c *Client) ListReporters(ctx context.Context, domainKey string, reqEditors
 
 // UpsertReporterWithBody Create or update a reporter
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
+// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter. When dryRun is true, the endpoint validates the payload without persisting; the returned reporter carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes any type of body and a specified content type.
 //
 // Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
-func (c *Client) UpsertReporterWithBody(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpsertReporterRequestWithBody(c.Server, domainKey, contentType, body)
+func (c *Client) UpsertReporterWithBody(ctx context.Context, domainKey string, params *UpsertReporterParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertReporterRequestWithBody(c.Server, domainKey, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -714,13 +714,13 @@ func (c *Client) UpsertReporterWithBody(ctx context.Context, domainKey string, c
 
 // UpsertReporter Create or update a reporter
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
+// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter. When dryRun is true, the endpoint validates the payload without persisting; the returned reporter carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes a body of the `application/json` content type.
 //
 // Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
-func (c *Client) UpsertReporter(ctx context.Context, domainKey string, body UpsertReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpsertReporterRequest(c.Server, domainKey, body)
+func (c *Client) UpsertReporter(ctx context.Context, domainKey string, params *UpsertReporterParams, body UpsertReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpsertReporterRequest(c.Server, domainKey, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1097,18 +1097,18 @@ func NewListCertificatesRequest(server string, domainKey string) (*http.Request,
 }
 
 // NewUpsertCertificateRequest calls the generic UpsertCertificate builder with application/json body
-func NewUpsertCertificateRequest(server string, domainKey string, body UpsertCertificateJSONRequestBody) (*http.Request, error) {
+func NewUpsertCertificateRequest(server string, domainKey string, params *UpsertCertificateParams, body UpsertCertificateJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewUpsertCertificateRequestWithBody(server, domainKey, "application/json", bodyReader)
+	return NewUpsertCertificateRequestWithBody(server, domainKey, params, "application/json", bodyReader)
 }
 
 // NewUpsertCertificateRequestWithBody constructs an http.Request for the UpsertCertificate method, with any body, and a specified content type
-func NewUpsertCertificateRequestWithBody(server string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
+func NewUpsertCertificateRequestWithBody(server string, domainKey string, params *UpsertCertificateParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1131,6 +1131,33 @@ func NewUpsertCertificateRequestWithBody(server string, domainKey string, conten
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.DryRun != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "dryRun", *params.DryRun, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "boolean", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
@@ -1260,18 +1287,18 @@ func NewListIdentityProvidersRequest(server string, domainKey string) (*http.Req
 }
 
 // NewUpsertIdentityProviderRequest calls the generic UpsertIdentityProvider builder with application/json body
-func NewUpsertIdentityProviderRequest(server string, domainKey string, body UpsertIdentityProviderJSONRequestBody) (*http.Request, error) {
+func NewUpsertIdentityProviderRequest(server string, domainKey string, params *UpsertIdentityProviderParams, body UpsertIdentityProviderJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewUpsertIdentityProviderRequestWithBody(server, domainKey, "application/json", bodyReader)
+	return NewUpsertIdentityProviderRequestWithBody(server, domainKey, params, "application/json", bodyReader)
 }
 
 // NewUpsertIdentityProviderRequestWithBody constructs an http.Request for the UpsertIdentityProvider method, with any body, and a specified content type
-func NewUpsertIdentityProviderRequestWithBody(server string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
+func NewUpsertIdentityProviderRequestWithBody(server string, domainKey string, params *UpsertIdentityProviderParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1294,6 +1321,33 @@ func NewUpsertIdentityProviderRequestWithBody(server string, domainKey string, c
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.DryRun != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "dryRun", *params.DryRun, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "boolean", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
@@ -1423,18 +1477,18 @@ func NewListReportersRequest(server string, domainKey string) (*http.Request, er
 }
 
 // NewUpsertReporterRequest calls the generic UpsertReporter builder with application/json body
-func NewUpsertReporterRequest(server string, domainKey string, body UpsertReporterJSONRequestBody) (*http.Request, error) {
+func NewUpsertReporterRequest(server string, domainKey string, params *UpsertReporterParams, body UpsertReporterJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewUpsertReporterRequestWithBody(server, domainKey, "application/json", bodyReader)
+	return NewUpsertReporterRequestWithBody(server, domainKey, params, "application/json", bodyReader)
 }
 
 // NewUpsertReporterRequestWithBody constructs an http.Request for the UpsertReporter method, with any body, and a specified content type
-func NewUpsertReporterRequestWithBody(server string, domainKey string, contentType string, body io.Reader) (*http.Request, error) {
+func NewUpsertReporterRequestWithBody(server string, domainKey string, params *UpsertReporterParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1457,6 +1511,33 @@ func NewUpsertReporterRequestWithBody(server string, domainKey string, contentTy
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.DryRun != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "dryRun", *params.DryRun, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "boolean", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
 	}
 
 	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
@@ -1696,21 +1777,21 @@ type ClientWithResponsesInterface interface {
 
 	// UpsertCertificateWithBodyWithResponse Create or update a certificate
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
+	// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate. When dryRun is true, the endpoint validates the payload without persisting; the returned certificate carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
-	UpsertCertificateWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertCertificateResponse, error)
+	UpsertCertificateWithBodyWithResponse(ctx context.Context, domainKey string, params *UpsertCertificateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertCertificateResponse, error)
 
 	// UpsertCertificateWithResponse Create or update a certificate
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
+	// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate. When dryRun is true, the endpoint validates the payload without persisting; the returned certificate carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
-	UpsertCertificateWithResponse(ctx context.Context, domainKey string, body UpsertCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertCertificateResponse, error)
+	UpsertCertificateWithResponse(ctx context.Context, domainKey string, params *UpsertCertificateParams, body UpsertCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertCertificateResponse, error)
 
 	// DeleteCertificateWithResponse Delete a certificate
 	//
@@ -1741,21 +1822,21 @@ type ClientWithResponsesInterface interface {
 
 	// UpsertIdentityProviderWithBodyWithResponse Create or update an identity provider
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
+	// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider. When dryRun is true, the endpoint validates the payload without persisting; the returned identity provider carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
-	UpsertIdentityProviderWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertIdentityProviderResponse, error)
+	UpsertIdentityProviderWithBodyWithResponse(ctx context.Context, domainKey string, params *UpsertIdentityProviderParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertIdentityProviderResponse, error)
 
 	// UpsertIdentityProviderWithResponse Create or update an identity provider
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
+	// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider. When dryRun is true, the endpoint validates the payload without persisting; the returned identity provider carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
-	UpsertIdentityProviderWithResponse(ctx context.Context, domainKey string, body UpsertIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertIdentityProviderResponse, error)
+	UpsertIdentityProviderWithResponse(ctx context.Context, domainKey string, params *UpsertIdentityProviderParams, body UpsertIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertIdentityProviderResponse, error)
 
 	// DeleteIdentityProviderWithResponse Delete an identity provider
 	//
@@ -1786,21 +1867,21 @@ type ClientWithResponsesInterface interface {
 
 	// UpsertReporterWithBodyWithResponse Create or update a reporter
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
+	// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter. When dryRun is true, the endpoint validates the payload without persisting; the returned reporter carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
-	UpsertReporterWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertReporterResponse, error)
+	UpsertReporterWithBodyWithResponse(ctx context.Context, domainKey string, params *UpsertReporterParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertReporterResponse, error)
 
 	// UpsertReporterWithResponse Create or update a reporter
 	//
-	// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
+	// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter. When dryRun is true, the endpoint validates the payload without persisting; the returned reporter carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 	//
 	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 	//
 	// Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
-	UpsertReporterWithResponse(ctx context.Context, domainKey string, body UpsertReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertReporterResponse, error)
+	UpsertReporterWithResponse(ctx context.Context, domainKey string, params *UpsertReporterParams, body UpsertReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertReporterResponse, error)
 
 	// DeleteReporterWithResponse Delete a reporter
 	//
@@ -3088,13 +3169,13 @@ func (c *ClientWithResponses) ListCertificatesWithResponse(ctx context.Context, 
 
 // UpsertCertificateWithBodyWithResponse Create or update a certificate
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
+// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate. When dryRun is true, the endpoint validates the payload without persisting; the returned certificate carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
-func (c *ClientWithResponses) UpsertCertificateWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertCertificateResponse, error) {
-	rsp, err := c.UpsertCertificateWithBody(ctx, domainKey, contentType, body, reqEditors...)
+func (c *ClientWithResponses) UpsertCertificateWithBodyWithResponse(ctx context.Context, domainKey string, params *UpsertCertificateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertCertificateResponse, error) {
+	rsp, err := c.UpsertCertificateWithBody(ctx, domainKey, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -3103,13 +3184,13 @@ func (c *ClientWithResponses) UpsertCertificateWithBodyWithResponse(ctx context.
 
 // UpsertCertificateWithResponse Create or update a certificate
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate.
+// Idempotent create-or-update. Uses the key field in the body to identify the certificate within the domain. Re-applying an unchanged definition is a no-op. The system flag is immutable; changing it requires deleting and recreating the certificate. When dryRun is true, the endpoint validates the payload without persisting; the returned certificate carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with PUT /domains/{domainKey}/certificates (the `UpsertCertificate` operationId).
-func (c *ClientWithResponses) UpsertCertificateWithResponse(ctx context.Context, domainKey string, body UpsertCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertCertificateResponse, error) {
-	rsp, err := c.UpsertCertificate(ctx, domainKey, body, reqEditors...)
+func (c *ClientWithResponses) UpsertCertificateWithResponse(ctx context.Context, domainKey string, params *UpsertCertificateParams, body UpsertCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertCertificateResponse, error) {
+	rsp, err := c.UpsertCertificate(ctx, domainKey, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -3163,13 +3244,13 @@ func (c *ClientWithResponses) ListIdentityProvidersWithResponse(ctx context.Cont
 
 // UpsertIdentityProviderWithBodyWithResponse Create or update an identity provider
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
+// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider. When dryRun is true, the endpoint validates the payload without persisting; the returned identity provider carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
-func (c *ClientWithResponses) UpsertIdentityProviderWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertIdentityProviderResponse, error) {
-	rsp, err := c.UpsertIdentityProviderWithBody(ctx, domainKey, contentType, body, reqEditors...)
+func (c *ClientWithResponses) UpsertIdentityProviderWithBodyWithResponse(ctx context.Context, domainKey string, params *UpsertIdentityProviderParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertIdentityProviderResponse, error) {
+	rsp, err := c.UpsertIdentityProviderWithBody(ctx, domainKey, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -3178,13 +3259,13 @@ func (c *ClientWithResponses) UpsertIdentityProviderWithBodyWithResponse(ctx con
 
 // UpsertIdentityProviderWithResponse Create or update an identity provider
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider.
+// Idempotent create-or-update. Uses the key field in the body to identify the identity provider within the domain. On first apply the identity provider is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the identity provider. When dryRun is true, the endpoint validates the payload without persisting; the returned identity provider carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with PUT /domains/{domainKey}/identities (the `UpsertIdentityProvider` operationId).
-func (c *ClientWithResponses) UpsertIdentityProviderWithResponse(ctx context.Context, domainKey string, body UpsertIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertIdentityProviderResponse, error) {
-	rsp, err := c.UpsertIdentityProvider(ctx, domainKey, body, reqEditors...)
+func (c *ClientWithResponses) UpsertIdentityProviderWithResponse(ctx context.Context, domainKey string, params *UpsertIdentityProviderParams, body UpsertIdentityProviderJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertIdentityProviderResponse, error) {
+	rsp, err := c.UpsertIdentityProvider(ctx, domainKey, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -3238,13 +3319,13 @@ func (c *ClientWithResponses) ListReportersWithResponse(ctx context.Context, dom
 
 // UpsertReporterWithBodyWithResponse Create or update a reporter
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
+// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter. When dryRun is true, the endpoint validates the payload without persisting; the returned reporter carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
-func (c *ClientWithResponses) UpsertReporterWithBodyWithResponse(ctx context.Context, domainKey string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertReporterResponse, error) {
-	rsp, err := c.UpsertReporterWithBody(ctx, domainKey, contentType, body, reqEditors...)
+func (c *ClientWithResponses) UpsertReporterWithBodyWithResponse(ctx context.Context, domainKey string, params *UpsertReporterParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertReporterResponse, error) {
+	rsp, err := c.UpsertReporterWithBody(ctx, domainKey, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -3253,13 +3334,13 @@ func (c *ClientWithResponses) UpsertReporterWithBodyWithResponse(ctx context.Con
 
 // UpsertReporterWithResponse Create or update a reporter
 //
-// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter.
+// Idempotent create-or-update. Uses the key field in the body to identify the reporter within the domain. On first apply the reporter is created; subsequent applies update it. The system flag is immutable; changing it requires deleting and recreating the reporter. When dryRun is true, the endpoint validates the payload without persisting; the returned reporter carries a dryRunErrors list (empty on success, populated with validation errors otherwise).
 //
 // Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
 //
 // Corresponds with PUT /domains/{domainKey}/reporters (the `UpsertReporter` operationId).
-func (c *ClientWithResponses) UpsertReporterWithResponse(ctx context.Context, domainKey string, body UpsertReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertReporterResponse, error) {
-	rsp, err := c.UpsertReporter(ctx, domainKey, body, reqEditors...)
+func (c *ClientWithResponses) UpsertReporterWithResponse(ctx context.Context, domainKey string, params *UpsertReporterParams, body UpsertReporterJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertReporterResponse, error) {
+	rsp, err := c.UpsertReporter(ctx, domainKey, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

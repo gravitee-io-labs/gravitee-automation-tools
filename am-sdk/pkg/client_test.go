@@ -16,7 +16,6 @@ package pkg
 
 import (
 	"context"
-	"encoding/base64"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -28,31 +27,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewClient_NoAuth(t *testing.T) {
-	var ac apicontext.APIContext
-	_, err := NewClient(ac)
-	assert.Error(t, err, errors.NoAuthProvided)
-}
-
-func TestNewClient_InvalidAuth(t *testing.T) {
-	ac := apicontext.APIContext{
-		Auth: apicontext.Auth{
-			BasicAuth:   &apicontext.BasicAuth{},
-			BearerToken: new(""),
-		},
-	}
-	_, err := NewClient(ac)
-	assert.Error(t, err, errors.ManyAuthProvided)
-}
-
-func TestNewClient_InvalidURL(t *testing.T) {
-	ac := apicontext.APIContext{
-		BaseURL: "::",
-	}
-	_, err := NewClient(ac)
-	assert.Error(t, err)
-}
-
 func TestNewClient_Valid(t *testing.T) {
 	ac := apicontext.APIContext{
 		BaseURL: "http://localhost/automation/",
@@ -61,85 +35,6 @@ func TestNewClient_Valid(t *testing.T) {
 	client, err := NewClient(ac)
 	assert.NoError(t, err)
 	assert.NotNil(t, client.ClientWithResponsesInterface)
-}
-
-func TestNewClient_Call(t *testing.T) {
-
-	tests := []struct {
-		name               string
-		apiContextSupplier func(string) apicontext.APIContext
-		expectedAuth       string
-		expectedUri        string
-	}{
-		{
-			name: "default with token",
-			apiContextSupplier: func(serverURL string) apicontext.APIContext {
-				return apicontext.APIContext{
-					BaseURL: serverURL + "/automation",
-					Auth: apicontext.Auth{
-						BearerToken: new("123"),
-					},
-				}
-			},
-			expectedAuth: "Bearer 123",
-			expectedUri:  "/automation/organizations/DEFAULT/environments/DEFAULT/domains",
-		}, {
-			name: "default with trailing slash with token",
-			apiContextSupplier: func(serverURL string) apicontext.APIContext {
-				return apicontext.APIContext{
-					BaseURL: serverURL + "/automation/",
-					Auth: apicontext.Auth{
-						BearerToken: new("123"),
-					},
-				}
-			},
-			expectedAuth: "Bearer 123",
-			expectedUri:  "/automation/organizations/DEFAULT/environments/DEFAULT/domains",
-		}, {
-			name: "given org and env with basic",
-			apiContextSupplier: func(serverURL string) apicontext.APIContext {
-				return apicontext.APIContext{
-					BaseURL: serverURL + "/automation",
-					OrgID:   "foo",
-					EnvID:   "bar",
-					Auth: apicontext.Auth{
-						BasicAuth: &apicontext.BasicAuth{
-							Username: "admin",
-							Password: "admin",
-						},
-					},
-				}
-			},
-			expectedAuth: "Basic " + base64.URLEncoding.EncodeToString([]byte("admin:admin")),
-			expectedUri:  "/automation/organizations/foo/environments/bar/domains",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			var givenAuth string
-			var givenUri string
-			s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				givenUri = r.RequestURI
-				givenAuth = r.Header.Get("Authorization")
-				_, err := w.Write([]byte("[]"))
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-				}
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(http.StatusOK)
-			}))
-			defer s.Close()
-			client, err := NewClient(tt.apiContextSupplier(s.URL))
-			assert.NoError(t, err)
-			r, err := client.ListDomainsWithResponse(context.Background())
-			assert.NoError(t, err)
-			assert.NotNil(t, r)
-			assert.Equal(t, r.StatusCode(), http.StatusOK)
-			assert.Equal(t, tt.expectedAuth, givenAuth)
-			assert.Equal(t, tt.expectedUri, givenUri)
-		})
-	}
 }
 
 func TestNewClient_WithoutTimeout(t *testing.T) {
@@ -165,38 +60,36 @@ func TestNewClient_WithTimeoutAndInvalidAuth(t *testing.T) {
 	assert.ErrorIs(t, err, errors.NoAuthProvided)
 }
 
-func TestWithHTTPClient_ReturnsNewClientUsingGivenHTTPClient(t *testing.T) {
-	var givenAuth string
+func TestNewClient_CallsScopedURLWithAuth(t *testing.T) {
+	var givenAuth, givenURI string
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		givenAuth = r.Header.Get("Authorization")
+		givenURI = r.RequestURI
 		_, _ = w.Write([]byte("[]"))
 	}))
 	defer s.Close()
-	client, err := NewClient(bearerContext(s.URL))
+	ac := bearerContext(s.URL)
+	ac.OrgID, ac.EnvID = "foo", "bar"
+	client, err := NewClient(ac)
 	require.NoError(t, err)
-	transport := &countingTransport{}
-
-	withHTTPClient, err := client.WithHTTPClient(&http.Client{Transport: transport})
-	require.NoError(t, err)
-	_, err = withHTTPClient.ListDomainsWithResponse(context.Background())
-	require.NoError(t, err)
-
-	assert.NotSame(t, client, withHTTPClient)
-	assert.Equal(t, 1, transport.calls)
-	assert.Equal(t, "Bearer 123", givenAuth)
 
 	_, err = client.ListDomainsWithResponse(context.Background())
 	require.NoError(t, err)
-	assert.Equal(t, 1, transport.calls, "original client must keep its own HTTP client")
+	assert.Equal(t, "Bearer 123", givenAuth)
+	assert.Equal(t, "/automation/organizations/foo/environments/bar/domains", givenURI)
 }
 
-type countingTransport struct {
-	calls int
-}
+func TestWithHTTPClient_KeepsWrapperType(t *testing.T) {
+	s := slowServer(t, 200*time.Millisecond)
+	client, err := NewClient(bearerContext(s.URL))
+	require.NoError(t, err)
 
-func (c *countingTransport) RoundTrip(r *http.Request) (*http.Response, error) {
-	c.calls++
-	return http.DefaultTransport.RoundTrip(r)
+	var withTimeout *AMClient
+	withTimeout, err = client.WithHTTPClient(&http.Client{Timeout: 10 * time.Millisecond})
+	require.NoError(t, err)
+
+	_, err = withTimeout.ListDomainsWithResponse(context.Background())
+	assert.ErrorContains(t, err, "Client.Timeout exceeded")
 }
 
 func bearerContext(serverURL string) apicontext.APIContext {

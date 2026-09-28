@@ -315,6 +315,9 @@ type Certificate struct {
 	// CreatedAt Creation timestamp (ISO-8601 / RFC 3339, UTC). Read-only.
 	CreatedAt *time.Time `drift:"ignore" json:"createdAt,omitempty"`
 
+	// DryRunErrors Validation errors returned when dryRun is true. Absent when validation succeeds.
+	DryRunErrors []DryRunError `drift:"ignore" json:"dryRunErrors,omitempty"`
+
 	// ExpiresAt Expiry timestamp (ISO-8601 / RFC 3339, UTC), when known for the certificate type. Read-only.
 	ExpiresAt *time.Time `drift:"ignore" json:"expiresAt,omitempty"`
 
@@ -688,6 +691,9 @@ type IdentityProvider struct {
 	// Example: ["example.com"]
 	DomainWhitelist []string `json:"domainWhitelist,omitempty"`
 
+	// DryRunErrors Validation errors returned when dryRun is true. Absent when validation succeeds.
+	DryRunErrors []DryRunError `drift:"ignore" json:"dryRunErrors,omitempty"`
+
 	// GroupMapper Group mapper: assigns AM groups based on provider attribute values. Each entry maps a group to the user attribute expressions that grant it.
 	GroupMapper map[string][]string `json:"groupMapper,omitempty"`
 
@@ -801,6 +807,9 @@ type Reporter struct {
 
 	// DataType Category of data the reporter handles, derived from its type. Read-only.
 	DataType *string `drift:"ignore" json:"dataType,omitempty"`
+
+	// DryRunErrors Validation errors returned when dryRun is true. Absent when validation succeeds.
+	DryRunErrors []DryRunError `drift:"ignore" json:"dryRunErrors,omitempty"`
 
 	// Enabled Whether the reporter is enabled.
 	Enabled *bool `json:"enabled,omitempty"`
@@ -1711,6 +1720,24 @@ func (v XssProtectionSettings) WithDefaults() XssProtectionSettings {
 // UpsertDomainParams defines parameters for UpsertDomain.
 type UpsertDomainParams struct {
 	// DryRun When true, validates the payload without persisting. The returned domain includes a dryRunErrors field.
+	DryRun *bool `form:"dryRun,omitempty" json:"dryRun,omitempty"`
+}
+
+// UpsertCertificateParams defines parameters for UpsertCertificate.
+type UpsertCertificateParams struct {
+	// DryRun When true, validates the payload without persisting. The returned certificate includes a dryRunErrors field.
+	DryRun *bool `form:"dryRun,omitempty" json:"dryRun,omitempty"`
+}
+
+// UpsertIdentityProviderParams defines parameters for UpsertIdentityProvider.
+type UpsertIdentityProviderParams struct {
+	// DryRun When true, validates the payload without persisting. The returned identity provider includes a dryRunErrors field.
+	DryRun *bool `form:"dryRun,omitempty" json:"dryRun,omitempty"`
+}
+
+// UpsertReporterParams defines parameters for UpsertReporter.
+type UpsertReporterParams struct {
+	// DryRun When true, validates the payload without persisting. The returned reporter includes a dryRunErrors field.
 	DryRun *bool `form:"dryRun,omitempty" json:"dryRun,omitempty"`
 }
 

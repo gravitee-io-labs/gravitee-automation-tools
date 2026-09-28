@@ -33,9 +33,9 @@ func TestNested_IsolatedByDomain(t *testing.T) {
 
 	certA := sdk.Certificate{Key: "cert", Name: new("A cert")}.WithDefaults()
 	certB := sdk.Certificate{Key: "cert", Name: new("B cert")}.WithDefaults()
-	up, err := client.UpsertCertificateWithResponse(t.Context(), "dom-a", certA)
+	up, err := client.UpsertCertificateWithResponse(t.Context(), "dom-a", nil, certA)
 	assertSDKOK(t, up, err, certA)
-	up, err = client.UpsertCertificateWithResponse(t.Context(), "dom-b", certB)
+	up, err = client.UpsertCertificateWithResponse(t.Context(), "dom-b", nil, certB)
 	assertSDKOK(t, up, err, certB)
 
 	listA, err := client.ListCertificatesWithResponse(t.Context(), "dom-a")
@@ -65,13 +65,13 @@ func TestNested_DeleteDomainCascades(t *testing.T) {
 	idpDrop := sdk.IdentityProvider{Key: "id", Name: new("drop idp")}.WithDefaults()
 	repDrop := sdk.Reporter{Key: "rd", Name: new("drop reporter")}.WithDefaults()
 
-	up, err := client.UpsertCertificateWithResponse(t.Context(), "keep", certKeep)
+	up, err := client.UpsertCertificateWithResponse(t.Context(), "keep", nil, certKeep)
 	assertSDKOK(t, up, err, certKeep)
-	up, err = client.UpsertCertificateWithResponse(t.Context(), "drop", certDrop)
+	up, err = client.UpsertCertificateWithResponse(t.Context(), "drop", nil, certDrop)
 	assertSDKOK(t, up, err, certDrop)
-	idp, err := client.UpsertIdentityProviderWithResponse(t.Context(), "drop", idpDrop)
+	idp, err := client.UpsertIdentityProviderWithResponse(t.Context(), "drop", nil, idpDrop)
 	assertSDKOK(t, idp, err, idpDrop)
-	rep, err := client.UpsertReporterWithResponse(t.Context(), "drop", repDrop)
+	rep, err := client.UpsertReporterWithResponse(t.Context(), "drop", nil, repDrop)
 	assertSDKOK(t, rep, err, repDrop)
 
 	del, err := client.DeleteDomainWithResponse(t.Context(), "drop")

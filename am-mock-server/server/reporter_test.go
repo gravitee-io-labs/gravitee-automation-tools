@@ -94,7 +94,7 @@ func TestPutGetReporterSDK(t *testing.T) {
 	client := newAMClient(t, srv)
 	body := testReporterSDK()
 
-	put, err := client.UpsertReporterWithResponse(t.Context(), defaultDomainKey, body)
+	put, err := client.UpsertReporterWithResponse(t.Context(), defaultDomainKey, nil, body)
 	assertSDKOK(t, put, err, body)
 
 	get, err := client.GetReporterWithResponse(t.Context(), defaultDomainKey, "test")
