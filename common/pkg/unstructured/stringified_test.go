@@ -91,9 +91,10 @@ func TestStringifiedJSON(t *testing.T) {
 		}
 	})
 
-	t.Run("rejects a JSON tree", func(t *testing.T) {
+	t.Run("unmarshals a JSON tree", func(t *testing.T) {
 		var got stringDTO
-		assert.Error(t, json.Unmarshal([]byte(`{"data":{"key":"value"}}`), &got))
+		require.NoError(t, json.Unmarshal([]byte(`{"data": {"key":"value"}}`), &got))
+		assert.Equal(t, map[string]any{"key": "value"}, got.Data.Object)
 	})
 
 	t.Run("rejects a string that is not a JSON object", func(t *testing.T) {
@@ -151,9 +152,15 @@ func TestStringifiedYAML(t *testing.T) {
 		}
 	})
 
-	t.Run("rejects a YAML tree", func(t *testing.T) {
+	t.Run("unmarshals a YAML tree", func(t *testing.T) {
 		var got stringDTO
-		assert.Error(t, yaml.Unmarshal([]byte("data:\n  key: value\n"), &got))
+		require.NoError(t, yaml.Unmarshal([]byte("data:\n  key: value\n"), &got))
+		assert.Equal(t, map[string]any{"key": "value"}, got.Data.Object)
+	})
+
+	t.Run("rejects a YAML sequence", func(t *testing.T) {
+		var got stringDTO
+		assert.Error(t, yaml.Unmarshal([]byte("data: [a, b]\n"), &got))
 	})
 
 	t.Run("round-trips", func(t *testing.T) {
@@ -173,4 +180,16 @@ func TestStringifiedMapsToUnstructured(t *testing.T) {
 	got, err := json.Marshal(treeDTO{Name: fromAPI.Name, Data: fromAPI.Data.Unstructured})
 	require.NoError(t, err)
 	assert.Equal(t, `{"name":"test","data":{"key":"value"}}`, string(got))
+}
+
+func TestUnstructuredMapsToStringifiedViaJSON(t *testing.T) {
+	b, err := json.Marshal(treeDTO{Name: "test", Data: *From(map[string]any{"key": "value"})})
+	require.NoError(t, err)
+
+	var toAPI stringDTO
+	require.NoError(t, json.Unmarshal(b, &toAPI))
+
+	got, err := json.Marshal(toAPI)
+	require.NoError(t, err)
+	assert.Equal(t, `{"name":"test","data":"{\"key\":\"value\"}"}`, string(got))
 }

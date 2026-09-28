@@ -15,13 +15,15 @@
 package unstructured
 
 import (
+	"bytes"
 	"encoding/json"
 
 	"gopkg.in/yaml.v3"
 )
 
 // Stringified is an Unstructured serialized as a JSON-encoded string:
-// {"data":"{\"key\":\"value\"}"}. An empty string decodes to a nil object.
+// {"data":"{\"key\":\"value\"}"}. It also reads a plain object tree, so it can
+// be mapped from an Unstructured. An empty string decodes to a nil object.
 type Stringified struct {
 	Unstructured
 }
@@ -43,6 +45,9 @@ func (in Stringified) MarshalJSON() ([]byte, error) {
 }
 
 func (in *Stringified) UnmarshalJSON(data []byte) error {
+	if isJSONObject(data) {
+		return in.Unstructured.UnmarshalJSON(data)
+	}
 	var s string
 	if err := json.Unmarshal(data, &s); err != nil {
 		return err
@@ -58,6 +63,9 @@ func (in Stringified) MarshalYAML() (any, error) {
 }
 
 func (in *Stringified) UnmarshalYAML(node *yaml.Node) error {
+	if node.Kind == yaml.MappingNode {
+		return in.Unstructured.UnmarshalYAML(node)
+	}
 	var s string
 	if err := node.Decode(&s); err != nil {
 		return err
@@ -76,4 +84,8 @@ func (in *Stringified) decode(s string) error {
 		return nil
 	}
 	return in.Unstructured.UnmarshalJSON([]byte(s))
+}
+
+func isJSONObject(data []byte) bool {
+	return bytes.HasPrefix(bytes.TrimSpace(data), []byte("{"))
 }

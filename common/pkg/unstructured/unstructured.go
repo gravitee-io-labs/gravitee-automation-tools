@@ -25,7 +25,7 @@ import (
 // Unstructured is a free-form object serialized as a JSON/YAML tree:
 // {"data":{"key":"value"}}.
 type Unstructured struct {
-	Object map[string]any `json:"-"`
+	Object map[string]any
 }
 
 // New returns an empty object.
