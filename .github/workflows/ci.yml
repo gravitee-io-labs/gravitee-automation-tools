@@ -3,6 +3,8 @@ name: CI
 on:
   pull_request:
     branches: [main]
+  # Dispatched by auto-bump: PRs opened with GITHUB_TOKEN don't trigger pull_request.
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -22,6 +24,10 @@ jobs:
           fetch-depth: 0
       - id: diff
         run: |
+          if [ "${{ github.event_name }}" != pull_request ]; then
+            echo code=true >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           git diff --name-only "origin/${{ github.base_ref }}...HEAD" \
             | grep -vE '(\.md$|^\.release-please-manifest\.json$)' \
             && echo code=true >> "$GITHUB_OUTPUT" || echo code=false >> "$GITHUB_OUTPUT"
