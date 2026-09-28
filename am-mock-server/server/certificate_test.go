@@ -94,7 +94,7 @@ func TestPutGetCertificateSDK(t *testing.T) {
 	client := newAMClient(t, srv)
 	body := testCertificateSDK()
 
-	put, err := client.UpsertCertificateWithResponse(t.Context(), defaultDomainKey, body)
+	put, err := client.UpsertCertificateWithResponse(t.Context(), defaultDomainKey, nil, body)
 	assertSDKOK(t, put, err, body)
 
 	get, err := client.GetCertificateWithResponse(t.Context(), defaultDomainKey, "test")

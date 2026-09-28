@@ -22,7 +22,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	am "github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg/sdk"
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/apicontext"
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/response"
 	"github.com/stretchr/testify/assert"
@@ -55,19 +55,19 @@ func createAMServerWithDomain(t *testing.T) (*MockAM, *httptest.Server) {
 	return am, srv
 }
 
-func newTestClient(t *testing.T, srv *httptest.Server, orgID, envID, token string) *am.AMClient {
+func newTestClient(t *testing.T, srv *httptest.Server, orgID, envID, token string) *sdk.AMClient {
 	t.Helper()
-	client, err := am.NewClient(apicontext.APIContext{
+	client, err := sdk.NewAMClient(apicontext.APIContext{
 		BaseURL: srv.URL + BasePath,
 		OrgID:   orgID,
 		EnvID:   envID,
 		Auth:    apicontext.Auth{BearerToken: new(token)},
-	}, 0)
+	})
 	require.NoError(t, err)
 	return client
 }
 
-func newAMClient(t *testing.T, srv *httptest.Server) *am.AMClient {
+func newAMClient(t *testing.T, srv *httptest.Server) *sdk.AMClient {
 	t.Helper()
 	return newTestClient(t, srv, "", "", "test")
 }

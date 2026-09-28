@@ -15,9 +15,12 @@
 package server
 
 import (
+	"io"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
+	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg/sdk"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -45,7 +48,9 @@ func TestDryRunPut_DoesNotPersist(t *testing.T) {
 	defer resp.Body.Close()
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, []DryRunError{{Severity: new(SeverityError), Message: new(dryRunMessage)}}, decodeToSliceOf[DryRunError](t, resp))
+	got := decodeTo[Domain](t, resp)
+	assert.Equal(t, body.Name, got.Name)
+	assert.Equal(t, &dryRunErrors, got.DryRunErrors)
 	_, exists := defaultTenant(am).Domains.Get("test")
 	assert.False(t, exists)
 	assertGet404(t, domainsURL(srv), "test", "Domain")
@@ -72,21 +77,92 @@ func TestDryRunPut_LeavesExistingUnchanged(t *testing.T) {
 	resp := httpPut(t, domainsURL(srv)+"?dryRun=true", Domain{Key: "test", Name: "Changed", Path: "/test"})
 	defer resp.Body.Close()
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, []DryRunError{{Severity: new(SeverityError), Message: new(dryRunMessage)}}, decodeToSliceOf[DryRunError](t, resp))
+	assert.Equal(t, &dryRunErrors, decodeTo[Domain](t, resp).DryRunErrors)
 
 	got, exists := defaultTenant(am).Domains.Get("test")
 	require.True(t, exists)
 	assert.Equal(t, existing, got)
 }
 
+var nestedDryRunCases = []struct {
+	name   string
+	url    func(*httptest.Server) string
+	body   any
+	stored func(*MockAM) int
+}{
+	{"certificate", certificatesURL, testCertificate(), func(am *MockAM) int { return len(defaultTenant(am).Certificates.GetAll()) }},
+	{"identity provider", identitiesURL, testIdentityProvider(), func(am *MockAM) int { return len(defaultTenant(am).IdentityProviders.GetAll()) }},
+	{"reporter", reportersURL, testReporter(), func(am *MockAM) int { return len(defaultTenant(am).Reporters.GetAll()) }},
+}
+
+func TestDryRunPut_NestedNoRejectReturnsPayloadAndDoesNotPersist(t *testing.T) {
+	for _, tc := range nestedDryRunCases {
+		t.Run(tc.name, func(t *testing.T) {
+			am, srv := createAMServerWithDomain(t)
+
+			resp := httpPut(t, tc.url(srv)+"?dryRun=true", tc.body)
+			defer resp.Body.Close()
+			failOnNotOK(t, resp)
+
+			got, err := io.ReadAll(resp.Body)
+			require.NoError(t, err)
+			assert.JSONEq(t, encode(t, tc.body).String(), string(got))
+			assert.Zero(t, tc.stored(am), "dry run should not persist")
+		})
+	}
+}
+
 func TestDryRunPut_NestedDoesNotPersist(t *testing.T) {
+	for _, tc := range nestedDryRunCases {
+		t.Run(tc.name, func(t *testing.T) {
+			am, srv := createAMServerWithDryRunReject(t, true)
+			defaultTenant(am).Domains.Put(Domain{Key: defaultDomainKey, Name: "Test"})
+
+			resp := httpPut(t, tc.url(srv)+"?dryRun=true", tc.body)
+			defer resp.Body.Close()
+
+			assert.Equal(t, http.StatusOK, resp.StatusCode)
+			assert.Equal(t, dryRunErrors, decodeTo[struct{ DryRunErrors []DryRunError }](t, resp).DryRunErrors)
+			assert.Zero(t, tc.stored(am))
+		})
+	}
+}
+
+func TestDryRunPut_NestedFalseStillPersists(t *testing.T) {
+	for _, tc := range nestedDryRunCases {
+		t.Run(tc.name, func(t *testing.T) {
+			am, srv := createAMServerWithDryRunReject(t, true)
+			defaultTenant(am).Domains.Put(Domain{Key: defaultDomainKey, Name: "Test"})
+
+			resp := httpPut(t, tc.url(srv)+"?dryRun=false", tc.body)
+			defer resp.Body.Close()
+			failOnNotOK(t, resp)
+
+			assert.Equal(t, 1, tc.stored(am))
+		})
+	}
+}
+
+func TestDryRunPut_SDKNestedReturnsDryRunErrors(t *testing.T) {
 	am, srv := createAMServerWithDryRunReject(t, true)
 	defaultTenant(am).Domains.Put(Domain{Key: defaultDomainKey, Name: "Test"})
+	client := newAMClient(t, srv)
+	dryRun := new(true)
 
-	resp := httpPut(t, certificatesURL(srv)+"?dryRun=true", testCertificate())
-	defer resp.Body.Close()
+	cert, err := client.UpsertCertificateWithResponse(t.Context(), defaultDomainKey, &sdk.UpsertCertificateParams{DryRun: dryRun}, testCertificateSDK())
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, cert.StatusCode())
+	assert.Len(t, cert.JSON200.DryRunErrors, 1)
+	idp, err := client.UpsertIdentityProviderWithResponse(t.Context(), defaultDomainKey, &sdk.UpsertIdentityProviderParams{DryRun: dryRun}, testIdentityProviderSDK())
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, idp.StatusCode())
+	assert.Len(t, idp.JSON200.DryRunErrors, 1)
+	rep, err := client.UpsertReporterWithResponse(t.Context(), defaultDomainKey, &sdk.UpsertReporterParams{DryRun: dryRun}, testReporterSDK())
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, rep.StatusCode())
+	assert.Len(t, rep.JSON200.DryRunErrors, 1)
 
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.Equal(t, []DryRunError{{Severity: new(SeverityError), Message: new(dryRunMessage)}}, decodeToSliceOf[DryRunError](t, resp))
-	assert.Empty(t, defaultTenant(am).Certificates.GetAll())
+	for _, tc := range nestedDryRunCases {
+		assert.Zero(t, tc.stored(am), tc.name)
+	}
 }

@@ -94,7 +94,7 @@ func TestPutGetIdentityProviderSDK(t *testing.T) {
 	client := newAMClient(t, srv)
 	body := testIdentityProviderSDK()
 
-	put, err := client.UpsertIdentityProviderWithResponse(t.Context(), defaultDomainKey, body)
+	put, err := client.UpsertIdentityProviderWithResponse(t.Context(), defaultDomainKey, nil, body)
 	assertSDKOK(t, put, err, body)
 
 	get, err := client.GetIdentityProviderWithResponse(t.Context(), defaultDomainKey, "test")

@@ -12,48 +12,61 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package pkg is the AM Automation SDK facade. Import it as am.
-package pkg
+package sdk
 
 import (
 	"net/http"
-	"time"
+	"net/url"
+	"strings"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg/sdk"
 	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/apicontext"
+	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/errors"
 )
 
 // AMClient is the generated Automation API client, sharing one base URL, org/env, auth, and HTTP client.
-//
-// Deprecated: use sdk.AMClient instead.
 type AMClient struct {
-	*sdk.AMClient
+	ClientWithResponsesInterface
+	server string
+	editor RequestEditorFn
 }
 
-// NewClient builds an AMClient from ac. Trailing slashes are stripped from BaseURL.
+// NewAMClient builds an AMClient from ac. Trailing slashes are stripped from BaseURL.
 // OrgID and EnvID are baked into the server URL (empty becomes "DEFAULT").
 // Auth must be exactly one of bearer or basic.
-// Without timeoutMs the HTTP client has no timeout. Otherwise timeoutMs[0] is the timeout
-// in milliseconds (0 means no timeout); use WithHTTPClient for any other HTTP setting.
-//
-// Deprecated: use sdk.NewAMClient instead.
-func NewClient(ac apicontext.APIContext, timeoutMs ...int) (*AMClient, error) {
-	client, err := sdk.NewAMClient(ac)
+// The HTTP client has no timeout; use WithHTTPClient to set one or any other HTTP setting.
+func NewAMClient(ac apicontext.APIContext) (*AMClient, error) {
+	baseUrl, err := url.Parse(strings.TrimRight(ac.BaseURL, "/"))
+	if err != nil {
+		return nil, errors.NewClientError(err)
+	}
+
+	editor, err := ac.AuthInterceptor()
 	if err != nil {
 		return nil, err
 	}
-	if len(timeoutMs) == 0 {
-		return &AMClient{AMClient: client}, nil
+
+	server, err := NewScopedServerURL(
+		ScopedServerURLBaseUrlVariable(baseUrl.String()),
+		ScopedServerURLEnvIdVariable(ac.GetEnvIdOrDefault()),
+		ScopedServerURLOrgIdVariable(ac.GetOrgIdOrDefault()),
+	)
+	if err != nil {
+		return nil, err
 	}
-	return (&AMClient{AMClient: client}).WithHTTPClient(&http.Client{Timeout: time.Duration(timeoutMs[0]) * time.Millisecond})
+
+	return (&AMClient{server: server, editor: editor}).WithHTTPClient(&http.Client{})
 }
 
 // WithHTTPClient returns a new AMClient with the same server URL and auth, sending requests through httpClient.
 // The receiver is left unchanged.
 func (c *AMClient) WithHTTPClient(httpClient *http.Client) (*AMClient, error) {
-	client, err := c.AMClient.WithHTTPClient(httpClient)
+	client, err := NewClientWithResponses(
+		c.server,
+		WithHTTPClient(httpClient),
+		WithRequestEditorFn(c.editor),
+	)
 	if err != nil {
 		return nil, err
 	}
-	return &AMClient{AMClient: client}, nil
+	return &AMClient{ClientWithResponsesInterface: client, server: c.server, editor: c.editor}, nil
 }

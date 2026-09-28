@@ -25,22 +25,28 @@ const dryRunMessage = "Mock server is in dry-run-reject mode, all PUT request ar
 
 var dryRunErrors = []DryRunError{{Severity: new(SeverityError), Message: new(dryRunMessage)}}
 
-// DryRun skips PUT persistence when ?dryRun=true and returns a fixed DryRunError list.
+// DryRun skips PUT persistence when ?dryRun=true and echoes the payload back.
+// When reject is true, the echoed payload carries a fixed dryRunErrors list.
 func DryRun(reject bool) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if isDryRun(r) && r.Method == http.MethodPut {
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(http.StatusOK)
-				if reject {
-					_ = json.NewEncoder(w).Encode(dryRunErrors)
-				} else {
-					_, _ = io.Copy(w, r.Body)
-					return
-				}
+			if !isDryRun(r) || r.Method != http.MethodPut {
+				next.ServeHTTP(w, r)
 				return
 			}
-			next.ServeHTTP(w, r)
+			if !reject {
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = io.Copy(w, r.Body)
+				return
+			}
+			var payload map[string]any
+			if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			payload["dryRunErrors"] = dryRunErrors
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(payload)
 		})
 	}
 }
