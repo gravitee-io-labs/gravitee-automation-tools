@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-sdk/v2.2.0...am-sdk/v2.2.1) (2026-09-29)
+
+
+### Bug Fixes
+
+* sync oas (docs only) ([b38b5e3](https://github.com/gravitee-io-labs/gravitee-automation-tools/commit/b38b5e387a15e6613dd2df6b5f8fcb9a4b89b2d7))
+
 ## [2.2.0](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-sdk/v2.1.0...am-sdk/v2.2.0) (2026-09-28)
 
 
