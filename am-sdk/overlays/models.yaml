@@ -66,28 +66,28 @@ actions:
     update:
       x-go-type: unstructured.Stringified
       x-go-type-import:
-        path: github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/unstructured
+        path: github.com/gravitee-io/gravitee-automation-sdk/common/pkg/unstructured
       x-oapi-codegen-extra-tags:
         drift: unstructured
   - target: $.components.schemas.AutomationIdentityProvider.properties.configuration
     update:
       x-go-type: unstructured.Stringified
       x-go-type-import:
-        path: github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/unstructured
+        path: github.com/gravitee-io/gravitee-automation-sdk/common/pkg/unstructured
       x-oapi-codegen-extra-tags:
         drift: unstructured
   - target: $.components.schemas.AutomationReporter.properties.configuration
     update:
       x-go-type: unstructured.Stringified
       x-go-type-import:
-        path: github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/unstructured
+        path: github.com/gravitee-io/gravitee-automation-sdk/common/pkg/unstructured
       x-oapi-codegen-extra-tags:
         drift: unstructured
   - target: $.components.schemas.AutomationDataPlane.properties.configuration
     update:
       x-go-type: unstructured.Unstructured
       x-go-type-import:
-        path: github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/unstructured
+        path: github.com/gravitee-io/gravitee-automation-sdk/common/pkg/unstructured
       x-oapi-codegen-extra-tags:
         drift: unstructured
 

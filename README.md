@@ -17,7 +17,7 @@ apim-sdk/          placeholder (empty)
 
 Import the facade as `am`:
 
-`github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg`
+`github.com/gravitee-io/gravitee-automation-sdk/am-sdk/v2/pkg`
 
 `am.NewClient` takes an `apicontext.APIContext` (base URL, org, env, **one** of bearer or basic) and returns an `AMClient`. Org/env default to `DEFAULT`.
 

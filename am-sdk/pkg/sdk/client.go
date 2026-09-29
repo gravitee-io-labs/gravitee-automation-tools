@@ -19,8 +19,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/apicontext"
-	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/errors"
+	"github.com/gravitee-io/gravitee-automation-sdk/common/pkg/apicontext"
+	"github.com/gravitee-io/gravitee-automation-sdk/common/pkg/errors"
 )
 
 // AMClient is the generated Automation API client, sharing one base URL, org/env, auth, and HTTP client.

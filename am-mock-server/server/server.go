@@ -24,7 +24,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/auth"
+	"github.com/gravitee-io/gravitee-automation-sdk/common/pkg/auth"
 	nethttpmiddleware "github.com/oapi-codegen/nethttp-middleware"
 )
 

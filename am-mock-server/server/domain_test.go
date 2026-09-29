@@ -17,7 +17,7 @@ package server
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2/pkg/sdk"
+	"github.com/gravitee-io/gravitee-automation-sdk/am-sdk/v2/pkg/sdk"
 )
 
 func TestListDomains(t *testing.T) {

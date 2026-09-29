@@ -19,7 +19,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/store"
+	"github.com/gravitee-io/gravitee-automation-sdk/common/pkg/store"
 	"github.com/stretchr/testify/assert"
 )
 

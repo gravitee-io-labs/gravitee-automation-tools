@@ -20,7 +20,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/store"
+	"github.com/gravitee-io/gravitee-automation-sdk/common/pkg/store"
 )
 
 // MockAM is an in-memory StrictServer. Tenants are created on first request, keyed by org+env. Data is process-local.

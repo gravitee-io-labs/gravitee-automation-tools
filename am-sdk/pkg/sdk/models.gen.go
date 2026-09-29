@@ -6,7 +6,7 @@ package sdk
 import (
 	"time"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/unstructured"
+	"github.com/gravitee-io/gravitee-automation-sdk/common/pkg/unstructured"
 )
 
 // Defines values for Severity.

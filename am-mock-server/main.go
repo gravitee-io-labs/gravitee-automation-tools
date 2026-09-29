@@ -24,8 +24,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am-mock-server/server"
-	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/auth"
+	"github.com/gravitee-io/gravitee-automation-sdk/am-mock-server/server"
+	"github.com/gravitee-io/gravitee-automation-sdk/common/pkg/auth"
 	"github.com/spf13/cobra"
 )
 

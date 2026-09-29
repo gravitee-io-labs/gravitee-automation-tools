@@ -20,7 +20,7 @@ A major bump to v2+ also needs the `/vN` suffix on the module path (`go mod edit
 
 ## Tag Format
 
-Each module gets its own semver tag: `am-sdk/v0.2.0`, `common/v0.1.3`, `am-mock-server/v0.3.0`, etc. This is the standard Go multi-module convention — consumers use `go get github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk@v0.2.0`.
+Each module gets its own semver tag: `am-sdk/v0.2.0`, `common/v0.1.3`, `am-mock-server/v0.3.0`, etc. This is the standard Go multi-module convention — consumers use `go get github.com/gravitee-io/gravitee-automation-sdk/am-sdk@v0.2.0`.
 
 ## Module Types
 

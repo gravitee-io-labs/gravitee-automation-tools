@@ -1,4 +1,4 @@
-module github.com/gravitee-io-labs/gravitee-automation-tools/common
+module github.com/gravitee-io/gravitee-automation-sdk/common
 
 go 1.26.1
 
