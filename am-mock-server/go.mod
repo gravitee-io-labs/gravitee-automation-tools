@@ -1,12 +1,12 @@
-module github.com/gravitee-io-labs/gravitee-automation-tools/am-mock-server
+module github.com/gravitee-io/gravitee-automation-sdk/am-mock-server
 
 go 1.26.1
 
 require (
 	github.com/getkin/kin-openapi v0.149.0
 	github.com/go-chi/chi/v5 v5.3.2
-	github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2 v2.2.1
-	github.com/gravitee-io-labs/gravitee-automation-tools/common v1.1.0
+	github.com/gravitee-io/gravitee-automation-sdk/am-sdk/v2 v2.3.0
+	github.com/gravitee-io/gravitee-automation-sdk/common v1.2.0
 	github.com/oapi-codegen/nethttp-middleware v1.1.2
 	github.com/oapi-codegen/runtime v1.7.0
 	github.com/spf13/cobra v1.10.2
@@ -37,8 +37,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/gravitee-io-labs/gravitee-automation-tools/common => ../common
+replace github.com/gravitee-io/gravitee-automation-sdk/common => ../common
 
 tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
 
-replace github.com/gravitee-io-labs/gravitee-automation-tools/am-sdk/v2 => ../am-sdk
+replace github.com/gravitee-io/gravitee-automation-sdk/am-sdk/v2 => ../am-sdk

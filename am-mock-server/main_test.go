@@ -17,7 +17,7 @@ package main
 import (
 	"testing"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/am-mock-server/server"
+	"github.com/gravitee-io/gravitee-automation-sdk/am-mock-server/server"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

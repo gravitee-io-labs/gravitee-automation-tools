@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/apicontext"
-	"github.com/gravitee-io-labs/gravitee-automation-tools/common/pkg/errors"
+	"github.com/gravitee-io/gravitee-automation-sdk/common/pkg/apicontext"
+	"github.com/gravitee-io/gravitee-automation-sdk/common/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
