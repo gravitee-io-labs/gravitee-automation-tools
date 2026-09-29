@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/gravitee-io/gravitee-automation-sdk/compare/common/v1.1.0...common/v1.2.0) (2026-09-29)
+
+
+### Features
+
+* move modules to github.com/gravitee-io/gravitee-automation-sdk ([c542010](https://github.com/gravitee-io/gravitee-automation-sdk/commit/c5420109ea40bbae76b948c9d8fce9f01033604f))
+
 ## [1.1.0](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/common/v1.0.0...common/v1.1.0) (2026-09-28)
 
 
