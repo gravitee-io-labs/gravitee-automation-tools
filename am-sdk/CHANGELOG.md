@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/gravitee-io/gravitee-automation-sdk/compare/am-sdk/v2.2.1...am-sdk/v2.3.0) (2026-09-29)
+
+
+### Features
+
+* move modules to github.com/gravitee-io/gravitee-automation-sdk ([c542010](https://github.com/gravitee-io/gravitee-automation-sdk/commit/c5420109ea40bbae76b948c9d8fce9f01033604f))
+
 ## [2.2.1](https://github.com/gravitee-io-labs/gravitee-automation-tools/compare/am-sdk/v2.2.0...am-sdk/v2.2.1) (2026-09-29)
 
 
