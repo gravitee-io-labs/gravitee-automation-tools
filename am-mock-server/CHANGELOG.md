@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/gravitee-io/gravitee-automation-sdk/compare/am-mock-server/v1.3.0...am-mock-server/v1.3.1) (2026-09-29)
+
+
+### Bug Fixes
+
+* **am-mock-server:** name release archives am-mock-server ([d1208eb](https://github.com/gravitee-io/gravitee-automation-sdk/commit/d1208eb7c0d5b729971c97e71f93b6daae87e783))
+
 ## [1.3.0](https://github.com/gravitee-io/gravitee-automation-sdk/compare/am-mock-server/v1.2.1...am-mock-server/v1.3.0) (2026-09-29)
 
 
