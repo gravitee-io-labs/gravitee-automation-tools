@@ -14,6 +14,8 @@
 
 version: 2
 
+project_name: am-mock-server
+
 builds:
   - main: .
     binary: am-mock-server
@@ -29,7 +31,7 @@ builds:
       - -s -w
 
 archives:
-  - format: tar.gz
+  - formats: [tar.gz]
 
 release:
   disable: true
